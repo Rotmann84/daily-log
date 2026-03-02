@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alkohol-Tracker</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Tracker" />
+
+<style>
+:root{
+  --bg:#0f1115; --card:#151924; --text:#e8eaf0; --muted:#a6adbb;
+  --line:#262c3a; --btn:#232a3b; --btn2:#2c3550;
+  --danger:#5a1f1f; --ok:#1f4b2b; --warn:#4b3b1f;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  background:linear-gradient(180deg, #0b0d12, var(--bg));
+  color:var(--text);
+}
+.wrap{max-width:520px; margin:0 auto; padding:18px 16px 28px;}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin:0 0 12px;
+}
+h1{font-size:22px; margin:0;}
+
+.card{
+  background:rgba(21,25,36,0.92);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  margin-top:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.btns{display:flex; flex-direction:column; gap:10px;}
+button{
+  width:100%;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, var(--btn), var(--btn2));
+  color:var(--text);
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+}
+button:active{transform:scale(0.99);}
+.b-ok{background:linear-gradient(180deg, rgba(31,75,43,0.65), rgba(31,75,43,0.95));}
+.b-danger{background:linear-gradient(180deg, rgba(90,31,31,0.65), rgba(90,31,31,0.95));}
+
+.row{display:flex; gap:10px; flex-wrap:wrap;}
+.stat{
+  flex:1 1 140px;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.12);
+}
+.stat .k{color:var(--muted); font-size:12px; margin-bottom:6px;}
+.stat .v{font-size:22px; font-weight:700;}
+.stat .sub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.25;}
+
+.list{display:flex; flex-direction:column; gap:8px;}
+.item{
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.12);
+  font-size:14px;
+  gap:10px;
+}
+.item .left{display:flex; flex-direction:column; gap:4px; min-width:120px;}
+.item .reason{font-size:12px; color:var(--muted); line-height:1.25;}
+.tag{
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+.tag.no{background:rgba(31,75,43,0.25); color:#cfe9d8;}
+.tag.yes{background:rgba(90,31,31,0.25); color:#f0cfcf;}
+.tag.open{background:rgba(75,59,31,0.25); color:#f0e7cf;}
+
+details summary{
+  cursor:pointer;
+  color:var(--muted);
+  font-weight:600;
+  font-size:14px;
+}
+details .inner{margin-top:10px;}
+
+.toast{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  background:rgba(0,0,0,0.75); color:#fff;
+  padding:10px 12px; border-radius:12px;
+  font-size:13px; opacity:0;
+  transition:opacity 160ms ease;
+  border:1px solid rgba(255,255,255,0.12);
+}
+.toast.show{opacity:1;}
+
+.topBtn{
+  width:auto;
+  padding:10px 12px;
+  border-radius:14px;
+  font-size:12px;
+  font-weight:800;
+  background:rgba(0,0,0,0.18);
+}
+
+.hint{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px dashed rgba(255,255,255,0.14);
+  background:rgba(0,0,0,0.12);
+}
+
+/* Modal */
+.modalOverlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:14px;
+}
+.modal{
+  width:min(520px, 100%);
+  background:rgba(21,25,36,0.98);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.55);
+}
+.modalTitle{font-weight:800; font-size:16px; margin:2px 0 10px;}
+.modalSub{color:var(--muted); font-size:12px; margin:0 0 10px;}
+
+.segRow{display:flex; gap:10px; margin:10px 0 0;}
+.segRow button{padding:12px; border-radius:14px; font-size:14px; font-weight:800;}
+.segRow .pick{outline:2px solid rgba(255,255,255,0.12);}
+
+textarea{
+  width:100%;
+  min-height:84px;
+  max-height:220px;
+  resize:vertical;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.18);
+  color:var(--text);
+  font-size:14px;
+  outline:none;
+  margin-top:10px;
+}
+.modalRow{display:flex; gap:10px; margin-top:10px;}
+.modalRow button{padding:12px; font-size:14px; border-radius:14px;}
+.modalRow .ghost{background:rgba(0,0,0,0.12);}
+.modalRow .danger{background:linear-gradient(180deg, rgba(90,31,31,0.65), rgba(90,31,31,0.95));}
+
+.menuBtn{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:800;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <h1>Alkohol-Tracker</h1>
+    <button class="topBtn" id="btnCsvMenu" type="button">CSV importieren/exportieren</button>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="card">
+    <div class="btns">
+      <button class="b-ok" id="btnNo" type="button">Kein Alkohol</button>
+      <button class="b-danger" id="btnYes" type="button">Alkohol</button>
+    </div>
+
+    <div style="height:12px;"></div>
+    <div class="hint" id="emptyHint">
+      Hinweis: Tage werden erst gezählt, wenn du sie aktiv setzt (Kein Alkohol / Alkohol) oder per CSV importierst.
+      <br/>Du kannst die letzten 21 Tage jederzeit antippen und nachtragen.
+    </div>
+  </div>
+
+  <!-- SERIEN (nur sichtbar, wenn genug Daten vorhanden) -->
+  <div class="card" id="cardStreaks" style="display:none;">
+    <div class="row">
+      <div class="stat">
+        <div class="k">Aktuelle alkoholfreie Serie</div>
+        <div class="v" id="streakNow">—</div>
+        <div class="sub" id="streakNowSince">seit: —</div>
+      </div>
+
+      <div class="stat">
+        <div class="k">Längste alkoholfreie Serie</div>
+        <div class="v" id="streakBest">—</div>
+        <div class="sub" id="streakBestRange">Zeitraum: —</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATISTIK -->
+  <div class="card" id="cardStats">
+    <!-- Ohne Daten: nur leerer Gesamt-Reiter -->
+    <details id="statsOnlyOverall" open>
+      <summary>Gesamtstatistik</summary>
+      <div class="inner row">
+        <div class="stat"><div class="k">Gesamttage</div><div class="v">—</div></div>
+        <div class="stat"><div class="k">Alkohol-Tage</div><div class="v">—</div></div>
+        <div class="stat"><div class="k">Alkoholfrei</div><div class="v">—</div></div>
+        <div class="stat"><div class="k">Quote alkoholfrei</div><div class="v">—</div></div>
+      </div>
+    </details>
+
+    <!-- Mit Daten: dynamische Reiter -->
+    <div id="statsDynamic" style="display:none;"></div>
+  </div>
+
+  <!-- HISTORIE (letzte 21 Kalendertage, immer nach Import/ersten Einträgen sichtbar) -->
+  <div class="card" id="cardHistory" style="display:none;">
+    <details>
+      <summary>Letzte 21 Tage (tippen zum Nachtragen/Ändern)</summary>
+      <div style="height:10px;"></div>
+      <div class="list" id="history"></div>
+    </details>
+  </div>
+
+</div>
+
+<!-- Modal: Tag bearbeiten -->
+<div class="modalOverlay" id="modalDay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dayTitle">
+    <div class="modalTitle" id="dayTitle">Eintrag bearbeiten</div>
+    <div class="modalSub" id="daySub">Datum: —</div>
+
+    <div class="segRow">
+      <button id="pickNo" type="button" class="b-ok">Kein Alkohol</button>
+      <button id="pickYes" type="button" class="b-danger">Alkohol</button>
+    </div>
+
+    <textarea id="dayReason" placeholder="Anlass (optional, nur bei Alkohol)"></textarea>
+
+    <div class="modalRow">
+      <button class="ghost" id="dayCancel" type="button">Abbrechen</button>
+      <button class="danger" id="daySave" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: CSV Menu -->
+<div class="modalOverlay" id="modalCsv" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="csvTitle">
+    <div class="modalTitle" id="csvTitle">CSV importieren/exportieren</div>
+    <div class="modalSub">Spalten: Datum; Alkohol (Ja/Nein); Anlass</div>
+
+    <button class="menuBtn" id="btnImport" type="button">Import</button>
+    <div style="height:10px;"></div>
+    <button class="menuBtn" id="btnExport" type="button">Export</button>
+
+    <div class="modalRow">
+      <button class="ghost" id="csvClose" type="button">Schließen</button>
+    </div>
+
+    <input id="fileInput" type="file" accept=".csv,text/csv" style="display:none" />
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================
+   Konstanten
+========================= */
+const APP = Object.freeze({
+  STORAGE_KEY: "alcohol-tracker-public-v3",
+  META_KEY: "alcohol-tracker-public-v3:meta",
+  HISTORY_DAYS: 21,
+  MAX_REASON_LEN: 500
+});
+
+/*
+  Datenmodell (explizit!):
+  entries: { "YYYY-MM-DD": { a: 0|1, r?: "Anlass" } }
+  - Ein Tag zählt NUR, wenn er als Eintrag existiert (a=0 oder a=1)
+  meta: { trackStart: "YYYY-MM-DD", trackEnd: "YYYY-MM-DD" }  // min/max erfasster Tag
+*/
+
+/* =========================
+   Date Helpers
+========================= */
+const pad2 = (n) => String(n).padStart(2, "0");
+function keyFromDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function parseKey(k){ return new Date(k + "T00:00:00"); }
+function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function todayKey(){ return keyFromDate(new Date()); }
+
+/* =========================
+   Storage
+========================= */
+function loadEntries(){
+  try { return JSON.parse(localStorage.getItem(APP.STORAGE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveEntries(entries){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(entries)); }
+
+function loadMeta(){
+  try { return JSON.parse(localStorage.getItem(APP.META_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveMeta(meta){ localStorage.setItem(APP.META_KEY, JSON.stringify(meta)); }
+
+function hasRecord(entries, k){ return Object.prototype.hasOwnProperty.call(entries, k); }
+function isAlcohol(entries, k){ return hasRecord(entries, k) && entries[k].a === 1; }
+function isFree(entries, k){ return hasRecord(entries, k) && entries[k].a === 0; }
+function getReason(entries, k){ return (entries[k]?.r || "").trim(); }
+
+function updateMetaBounds(meta, k){
+  if (!meta.trackStart || k < meta.trackStart) meta.trackStart = k;
+  if (!meta.trackEnd || k > meta.trackEnd) meta.trackEnd = k;
+  return meta;
+}
+
+function hasAnyData(){
+  const entries = loadEntries();
+  return Object.keys(entries).length > 0;
+}
+
+/* =========================
+   UI Helpers
+========================= */
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 1200);
+}
+function setText(id, value){ document.getElementById(id).textContent = String(value); }
+
+function openOverlay(el){ el.style.display = "flex"; el.setAttribute("aria-hidden", "false"); }
+function closeOverlay(el){ el.style.display = "none"; el.setAttribute("aria-hidden", "true"); }
+
+/* =========================
+   Visibility
+========================= */
+function updateVisibility(){
+  const any = hasAnyData();
+  document.getElementById("cardHistory").style.display = any ? "" : "none";
+  document.getElementById("statsOnlyOverall").style.display = any ? "none" : "";
+  document.getElementById("statsDynamic").style.display = any ? "" : "none";
+  document.getElementById("cardStreaks").style.display = any ? "" : "none";
+  document.getElementById("emptyHint").style.display = ""; // bleibt als Hinweis immer ok
+}
+
+/* =========================
+   Stats (zählt NUR erfasste Tage)
+========================= */
+function computeStatsInRange(entries, startKey, endKey){
+  const start = parseKey(startKey);
+  const end = parseKey(endKey);
+  if (end < start) return { total:0, alcohol:0, free:0, rate:0 };
+
+  let total = 0, alcohol = 0, free = 0;
+
+  for (let dt = new Date(start); dt <= end; dt = addDays(dt, 1)){
+    const k = keyFromDate(dt);
+    if (!hasRecord(entries, k)) continue; // <- entscheidend: nur erfasste Tage zählen
+    total++;
+    if (entries[k].a === 1) alcohol++;
+    else free++;
+  }
+
+  const rate = total ? Math.round((free / total) * 100) : 0;
+  return { total, alcohol, free, rate };
+}
+
+/* =========================
+   Streaks (lückenlos erfasst!)
+========================= */
+function computeCurrentStreak(entries, trackEnd){
+  // "aktuell" endet am letzten erfassten Tag (trackEnd), nicht am Kalendertag.
+  if (!trackEnd || !hasRecord(entries, trackEnd)) return { len:0, startKey:null };
+
+  if (entries[trackEnd].a === 1) return { len:0, startKey:null };
+
+  let len = 0;
+  let dt = parseKey(trackEnd);
+
+  while (true){
+    const k = keyFromDate(dt);
+    if (!hasRecord(entries, k)) break;         // Lücke => Serie endet
+    if (entries[k].a === 1) break;             // Alkohol => Serie endet
+    len++;
+    dt = addDays(dt, -1);
+  }
+
+  const startKey = keyFromDate(addDays(parseKey(trackEnd), -(len - 1)));
+  return { len, startKey };
+}
+
+function computeBestStreak(entries, trackStart, trackEnd){
+  if (!trackStart || !trackEnd) return { bestLen:0, bestStart:null, bestEnd:null };
+
+  const start = parseKey(trackStart);
+  const end = parseKey(trackEnd);
+
+  let bestLen = 0, bestStart = null, bestEnd = null;
+  let curLen = 0, curStart = null;
+
+  for (let dt = new Date(start); dt <= end; dt = addDays(dt, 1)){
+    const k = keyFromDate(dt);
+
+    // Lücke unterbricht (weil nicht erfasst)
+    if (!hasRecord(entries, k)){
+      curLen = 0; curStart = null;
+      continue;
+    }
+
+    if (entries[k].a === 0){
+      if (curLen === 0) curStart = k;
+      curLen++;
+      if (curLen > bestLen){
+        bestLen = curLen; bestStart = curStart; bestEnd = k;
+      }
+    } else {
+      curLen = 0; curStart = null;
+    }
+  }
+
+  return { bestLen, bestStart, bestEnd };
+}
+
+/* =========================
+   Dynamic Stats UI (Years aus Meta)
+========================= */
+function statsBoxHTML(prefix, title, open){
+  return `
+    <details ${open ? "open" : ""}>
+      <summary>${title}</summary>
+      <div class="inner row">
+        <div class="stat"><div class="k">Gesamttage</div><div class="v" id="${prefix}Total">0</div></div>
+        <div class="stat"><div class="k">Alkohol-Tage</div><div class="v" id="${prefix}Alcohol">0</div></div>
+        <div class="stat"><div class="k">Alkoholfrei</div><div class="v" id="${prefix}Free">0</div></div>
+        <div class="stat"><div class="k">Quote alkoholfrei</div><div class="v" id="${prefix}Rate">0%</div></div>
+      </div>
+    </details>
+  `;
+}
+
+function renderDynamicStats(entries, meta){
+  const host = document.getElementById("statsDynamic");
+  host.innerHTML = "";
+
+  const start = meta.trackStart;
+  const end = meta.trackEnd;
+
+  const startYear = Number(start.slice(0,4));
+  const endYear = Number(end.slice(0,4));
+  const years = [];
+  for (let y = startYear; y <= endYear; y++) years.push(y);
+
+  const currentYear = (new Date()).getFullYear();
+  const topYear = years.includes(currentYear) ? currentYear : endYear;
+
+  host.insertAdjacentHTML("beforeend", statsBoxHTML("yTop", `Statistik ${topYear}`, true));
+  host.insertAdjacentHTML("beforeend", `<div style="height:12px;"></div>`);
+  host.insertAdjacentHTML("beforeend", statsBoxHTML("all", `Gesamtstatistik seit ${start}`, false));
+
+  const rest = years.filter(y => y !== topYear).sort((a,b)=>b-a);
+  for (const y of rest){
+    host.insertAdjacentHTML("beforeend", `<div style="height:12px;"></div>`);
+    host.insertAdjacentHTML("beforeend", statsBoxHTML(`y${y}`, `Statistik ${y}`, false));
+  }
+
+  // fill values
+  const topStart = `${topYear}-01-01`;
+  const topEnd = (topYear === endYear) ? end : `${topYear}-12-31`;
+  const sTop = computeStatsInRange(entries, topStart < start ? start : topStart, topEnd);
+  setText("yTopTotal", sTop.total);
+  setText("yTopAlcohol", sTop.alcohol);
+  setText("yTopFree", sTop.free);
+  setText("yTopRate", sTop.rate + "%");
+
+  const sAll = computeStatsInRange(entries, start, end);
+  setText("allTotal", sAll.total);
+  setText("allAlcohol", sAll.alcohol);
+  setText("allFree", sAll.free);
+  setText("allRate", sAll.rate + "%");
+
+  for (const y of rest){
+    const yStart = `${y}-01-01`;
+    const yEnd = (y === endYear) ? end : `${y}-12-31`;
+    const sY = computeStatsInRange(entries, yStart < start ? start : yStart, yEnd);
+    setText(`y${y}Total`, sY.total);
+    setText(`y${y}Alcohol`, sY.alcohol);
+    setText(`y${y}Free`, sY.free);
+    setText(`y${y}Rate`, sY.rate + "%");
+  }
+}
+
+/* =========================
+   CSV Export (nur erfasste Tage!)
+========================= */
+function csvCell(s){
+  const v = (s ?? "").toString();
+  return `"${v.replace(/"/g, '""')}"`;
+}
+function exportCSV(){
+  if (!hasAnyData()){
+    toast("Keine Daten zum Export");
+    return;
+  }
+
+  const entries = loadEntries();
+  const meta = loadMeta();
+  const keys = Object.keys(entries).sort(); // nur erfasste Tage
+  const startKey = meta.trackStart || keys[0];
+  const endKey = meta.trackEnd || keys[keys.length-1];
+
+  const lines = [];
+  lines.push("Datum;Alkohol;Anlass");
+  for (const k of keys){
+    const yes = entries[k].a === 1 ? "Ja" : "Nein";
+    const reason = (entries[k].a === 1) ? getReason(entries, k) : "";
+    lines.push([csvCell(k), csvCell(yes), csvCell(reason)].join(";"));
+  }
+
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `alkohol-tracker_${startKey}_bis_${endKey}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+  toast("CSV exportiert");
+}
+
+/* =========================
+   CSV Import (Ja UND Nein als Eintrag)
+========================= */
+function parseCsvLine(line, delimiter){
+  const out = [];
+  let cur = "", inQ = false;
+  for (let i = 0; i < line.length; i++){
+    const ch = line[i];
+    if (ch === '"'){
+      if (inQ && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (!inQ && ch === delimiter){
+      out.push(cur); cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out.map(s => s.trim());
+}
+function normalizeDateKey(s){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  return m ? s : null;
+}
+
+function importCSVText(text){
+  const linesRaw = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (linesRaw.length < 2){
+    toast("CSV leer/ungültig");
+    return;
+  }
+
+  const header = linesRaw[0];
+  const delimiter = header.includes(";") ? ";" : (header.includes(",") ? "," : ";");
+
+  const entries = {};
+  let meta = {};
+
+  let importedRows = 0, skipped = 0;
+
+  for (let i = 1; i < linesRaw.length; i++){
+    const cols = parseCsvLine(linesRaw[i], delimiter);
+    if (cols.length < 2){ skipped++; continue; }
+
+    const date = cols[0].replace(/^"|"$/g, "");
+    const alc  = cols[1].replace(/^"|"$/g, "");
+    const reason = (cols[2] || "").replace(/^"|"$/g, "");
+
+    const k = normalizeDateKey(date);
+    if (!k){ skipped++; continue; }
+
+    const isYes = /^ja$/i.test(alc);
+    const isNo  = /^nein$/i.test(alc);
+    if (!isYes && !isNo){ skipped++; continue; }
+
+    if (isYes){
+      entries[k] = { a: 1, r: reason.trim().slice(0, APP.MAX_REASON_LEN) };
+    } else {
+      entries[k] = { a: 0 }; // <- wichtig: Nein wird als expliziter Tag gespeichert
+    }
+
+    meta = updateMetaBounds(meta, k);
+    importedRows++;
+  }
+
+  if (!meta.trackStart){
+    toast("Keine gültigen Datumszeilen gefunden");
+    return;
+  }
+
+  saveEntries(entries);
+  saveMeta(meta);
+
+  render();
+  toast(`Import ok (${importedRows} Zeilen, ${skipped} übersprungen)`);
+}
+
+/* =========================
+   Day Modal (Nachtragen/Ändern)
+========================= */
+const dayModal = {
+  overlay: document.getElementById("modalDay"),
+  sub: document.getElementById("daySub"),
+  reason: document.getElementById("dayReason"),
+  pickNo: document.getElementById("pickNo"),
+  pickYes: document.getElementById("pickYes"),
+  btnSave: document.getElementById("daySave"),
+  btnCancel: document.getElementById("dayCancel"),
+  dateKey: null,
+  value: 0 // 0=no, 1=yes
+};
+
+function setDayPick(v){
+  dayModal.value = v;
+  dayModal.pickNo.classList.toggle("pick", v === 0);
+  dayModal.pickYes.classList.toggle("pick", v === 1);
+  dayModal.reason.style.display = (v === 1) ? "" : "none";
+}
+
+function openDayModal(k, presetValue /* optional */){
+  const entries = loadEntries();
+  dayModal.dateKey = k;
+  dayModal.sub.textContent = `Datum: ${k}`;
+
+  if (hasRecord(entries, k)){
+    const a = entries[k].a;
+    setDayPick(a === 1 ? 1 : 0);
+    dayModal.reason.value = (a === 1) ? getReason(entries, k) : "";
+  } else {
+    setDayPick(typeof presetValue === "number" ? presetValue : 0);
+    dayModal.reason.value = "";
+  }
+
+  openOverlay(dayModal.overlay);
+  if (dayModal.value === 1) setTimeout(() => dayModal.reason.focus(), 0);
+}
+
+function closeDayModal(){
+  closeOverlay(dayModal.overlay);
+  dayModal.dateKey = null;
+}
+
+dayModal.pickNo.addEventListener("click", () => setDayPick(0));
+dayModal.pickYes.addEventListener("click", () => setDayPick(1));
+dayModal.btnCancel.addEventListener("click", closeDayModal);
+dayModal.overlay.addEventListener("click", (e) => { if (e.target === dayModal.overlay) closeDayModal(); });
+
+dayModal.btnSave.addEventListener("click", () => {
+  if (!dayModal.dateKey) return;
+
+  const k = dayModal.dateKey;
+  const entries = loadEntries();
+  const meta = loadMeta();
+
+  if (dayModal.value === 1){
+    entries[k] = { a: 1, r: dayModal.reason.value.trim().slice(0, APP.MAX_REASON_LEN) };
+  } else {
+    entries[k] = { a: 0 };
+  }
+
+  saveEntries(entries);
+  saveMeta(updateMetaBounds(meta, k));
+
+  closeDayModal();
+  render();
+  toast("Gespeichert");
+});
+
+/* =========================
+   CSV Menu Modal
+========================= */
+const csvModal = {
+  overlay: document.getElementById("modalCsv"),
+  btnClose: document.getElementById("csvClose"),
+  btnImport: document.getElementById("btnImport"),
+  btnExport: document.getElementById("btnExport"),
+  fileInput: document.getElementById("fileInput")
+};
+
+function openCsvMenu(){ openOverlay(csvModal.overlay); }
+function closeCsvMenu(){ closeOverlay(csvModal.overlay); }
+
+csvModal.btnClose.addEventListener("click", closeCsvMenu);
+csvModal.overlay.addEventListener("click", (e) => { if (e.target === csvModal.overlay) closeCsvMenu(); });
+
+csvModal.btnExport.addEventListener("click", exportCSV);
+csvModal.btnImport.addEventListener("click", () => {
+  csvModal.fileInput.value = "";
+  csvModal.fileInput.click();
+});
+csvModal.fileInput.addEventListener("change", async () => {
+  const file = csvModal.fileInput.files && csvModal.fileInput.files[0];
+  if (!file) return;
+  try{
+    const text = await file.text();
+    importCSVText(text);
+    closeCsvMenu();
+  } catch {
+    toast("Import fehlgeschlagen");
+  }
+});
+
+/* ESC closes modals */
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (csvModal.overlay.style.display === "flex") closeCsvMenu();
+  if (dayModal.overlay.style.display === "flex") closeDayModal();
+});
+
+/* =========================
+   Actions
+========================= */
+function setNoToday(){
+  openDayModal(todayKey(), 0);
+}
+function setYesToday(){
+  openDayModal(todayKey(), 1);
+}
+
+/* =========================
+   Render
+========================= */
+function render(){
+  updateVisibility();
+
+  const any = hasAnyData();
+  if (!any) return;
+
+  const entries = loadEntries();
+  const meta = loadMeta();
+
+  // Need sane bounds; fallback if missing
+  const keys = Object.keys(entries).sort();
+  const trackStart = meta.trackStart || keys[0];
+  const trackEnd = meta.trackEnd || keys[keys.length-1];
+
+  // streaks
+  const cur = computeCurrentStreak(entries, trackEnd);
+  setText("streakNow", cur.len);
+  setText("streakNowSince", cur.len > 0 ? `seit: ${cur.startKey}` : "seit: —");
+
+  const best = computeBestStreak(entries, trackStart, trackEnd);
+  setText("streakBest", best.bestLen);
+  setText("streakBestRange", best.bestLen > 0 ? `Zeitraum: ${best.bestStart} – ${best.bestEnd}` : "Zeitraum: —");
+
+  // stats
+  renderDynamicStats(entries, { trackStart, trackEnd });
+
+  // history: last 21 CALENDAR days; show open days too; tap to edit/backfill
+  const hist = document.getElementById("history");
+  hist.innerHTML = "";
+  for (let i = 0; i < APP.HISTORY_DAYS; i++){
+    const dt = addDays(new Date(), -i);
+    const k = keyFromDate(dt);
+
+    const div = document.createElement("div");
+    div.className = "item";
+    div.style.cursor = "pointer";
+
+    let tagClass = "open";
+    let tagText = "Offen";
+    let reason = "";
+
+    if (hasRecord(entries, k)){
+      if (entries[k].a === 1){
+        tagClass = "yes"; tagText = "Alkohol"; reason = getReason(entries, k);
+      } else {
+        tagClass = "no"; tagText = "Kein Alkohol";
+      }
+    }
+
+    const left = document.createElement("div");
+    left.className = "left";
+    left.innerHTML = `<div>${k}</div>` + (tagClass === "yes" && reason ? `<div class="reason">${reason}</div>` : "");
+
+    const right = document.createElement("div");
+    right.className = "tag " + tagClass;
+    right.textContent = tagText;
+
+    div.appendChild(left);
+    div.appendChild(right);
+
+    div.addEventListener("click", () => openDayModal(k));
+    hist.appendChild(div);
+  }
+}
+
+/* =========================
+   Wire up
+========================= */
+document.getElementById("btnNo").addEventListener("click", setNoToday);
+document.getElementById("btnYes").addEventListener("click", setYesToday);
+document.getElementById("btnCsvMenu").addEventListener("click", openCsvMenu);
+
+render();
+</script>
+</body>
+</html>
