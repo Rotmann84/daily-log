@@ -828,19 +828,19 @@
         if (hasFull){
           const b = document.createElement("span");
           b.className = "badge full";
-          b.textContent = "Full";
+          b.textContent = "🏋️";
           badges.appendChild(b);
         }
         if (hasLight){
           const b = document.createElement("span");
           b.className = "badge light";
-          b.textContent = "Light";
+          b.textContent = "✨";
           badges.appendChild(b);
         }
         if (hasBike){
           const b = document.createElement("span");
           b.className = "badge bike";
-          b.textContent = "Bike";
+          b.textContent = "🚴";
           b.addEventListener("click", (ev) => {
             ev.stopPropagation();
             const lr = ensureLog(key);
