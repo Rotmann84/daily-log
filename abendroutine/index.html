@@ -2,9 +2,24 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
-  <title>Abendroutine (MVP)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
+  <title>Abendroutine</title>
+
+  <!-- PWA / Theme -->
   <meta name="theme-color" content="#0f2a1f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- iOS: Standalone (keine URL-Leiste nach "Zum Home-Bildschirm") -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Abendroutine" />
+
+  <!-- Icons (optional, aber empfohlen) -->
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+  <!-- Manifest -->
+  <link rel="manifest" href="./manifest.webmanifest" />
 
   <style>
     :root{
@@ -16,8 +31,8 @@
       --fg:#eef6f1;
       --muted:rgba(238,246,241,0.70);
 
-      --accent:#b9a26a;   /* Messing */
-      --accent2:#d6c289;  /* Gold */
+      --accent:#b9a26a;
+      --accent2:#d6c289;
 
       --ok:#36c26a;
       --warn:#f2b84b;
@@ -57,7 +72,6 @@
       justify-content:space-between;
       gap:12px;
     }
-
     h1{
       margin:0;
       font-size:20px;
@@ -73,22 +87,24 @@
       justify-content:flex-end;
     }
 
-    /* Pill base */
-    .pill{
+    .pill, .datePill{
       padding:9px 12px;
       border-radius:999px;
       border:1px solid var(--border);
       background: rgba(255,255,255,0.06);
-      color: var(--fg);
       font-weight: 900;
       font-size: 12px;
       line-height: 1;
-      cursor:pointer;
-      transition: transform .04s ease, background .12s ease, border-color .12s ease;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
       display:inline-flex;
       align-items:center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      user-select:none;
+    }
+    .pill{
+      cursor:pointer;
+      color: var(--fg);
+      transition: transform .04s ease, background .12s ease, border-color .12s ease;
     }
     .pill:active{ transform: scale(.99); }
     .pill.gold{
@@ -96,23 +112,7 @@
       color: var(--accent2);
       background: rgba(185,162,106,0.12);
     }
-
-    /* Date pill: same height as buttons */
-    .datePill{
-      padding:9px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.06);
-      color: var(--muted);
-      font-weight:900;
-      font-size:12px;
-      line-height:1;
-      display:inline-flex;
-      align-items:center;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      user-select:none;
-    }
+    .datePill{ color: var(--muted); }
 
     .panel{
       background: var(--panel);
@@ -122,12 +122,11 @@
       padding: 14px;
     }
 
-    /* pages */
     .page{ display:none; padding-bottom: 18px; }
     .page.active{ display:block; animation: fade .12s ease; }
     @keyframes fade{ from{opacity:.3; transform: translateY(2px);} to{opacity:1; transform: translateY(0);} }
 
-    /* HOME: square buttons stacked */
+    /* HOME */
     .homeStack{
       display:flex;
       flex-direction:column;
@@ -150,7 +149,7 @@
       align-items:center;
       justify-content:center;
       gap:10px;
-      transition: transform .05s ease, background .12s ease, border-color .12s ease;
+      transition: transform .05s ease;
       user-select:none;
     }
     .squareBtn:active{ transform: scale(.99); }
@@ -206,7 +205,7 @@
       justify-content:space-between;
       gap:12px;
       user-select:none;
-      transition: transform .04s ease, background .12s ease, border-color .12s ease;
+      transition: transform .04s ease;
     }
     .item:active{ transform: scale(.995); }
     .left{ display:flex; flex-direction:column; gap:4px; min-width:0; }
@@ -219,7 +218,6 @@
       gap:10px;
       flex: 0 0 auto;
     }
-
     .check{
       width:26px; height:26px;
       border-radius: 999px;
@@ -252,13 +250,9 @@
       font-weight: 900;
       display:grid;
       place-items:center;
-      transition: transform .04s ease, background .12s ease, border-color .12s ease;
+      transition: transform .04s ease;
     }
     .trash:active{ transform: scale(.99); }
-    .trash:hover{
-      background: rgba(0,0,0,0.16);
-      border-color: rgba(255,255,255,0.16);
-    }
 
     .empty{
       text-align:center;
@@ -331,7 +325,7 @@
     .badge.light{ border-color: rgba(214,194,137,0.25); color: rgba(214,194,137,0.85); background: rgba(185,162,106,0.08); }
     .badge.bike{ border-color: rgba(54,194,106,0.25); color: rgba(210,248,226,0.95); background: rgba(54,194,106,0.10); cursor:pointer; }
 
-    /* Modal */
+    /* Dialogs */
     dialog{
       border:none;
       border-radius: 20px;
@@ -356,7 +350,7 @@
       font-size:18px;
       font-weight:950;
       letter-spacing:.3px;
-      color: var(--accent2); /* Gold */
+      color: var(--accent2);
       text-shadow: 0 1px 0 rgba(0,0,0,0.35);
     }
 
@@ -390,7 +384,6 @@
       color: var(--accent2);
     }
 
-    /* Stats table */
     .statsGrid{
       display:grid;
       grid-template-columns: 1fr auto;
@@ -415,14 +408,10 @@
 
 <body>
   <div class="app">
-
     <header>
       <h1>Abendroutine</h1>
-
-      <!-- Right aligned: date + stats + back + calendar -->
       <div class="actions">
         <span class="datePill" id="datePill">—</span>
-
         <button class="pill" id="statsBtn" type="button" style="display:none;">Statistik</button>
         <button class="pill" id="backBtn" type="button" style="display:none;">Zurück</button>
         <button class="pill gold" id="calendarBtn" type="button">Kalender</button>
@@ -437,12 +426,10 @@
             <div class="iconBox">🏋️</div>
             <p class="sqLabel">Full-Set</p>
           </button>
-
           <button class="squareBtn" id="lightBtn" type="button">
             <div class="iconBox">✨</div>
             <p class="sqLabel">Light-Set</p>
           </button>
-
           <button class="squareBtn" id="bikeBtn" type="button">
             <div class="iconBox">🚴</div>
             <p class="sqLabel">Biking</p>
@@ -463,7 +450,6 @@
               <span id="modeText" style="color:rgba(214,194,137,0.92); font-weight:950;"></span>
             </div>
           </div>
-
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
             <span class="pill" id="progressPill">0/0</span>
             <button class="pill gold" id="addExerciseBtn" type="button">+ Übung</button>
@@ -493,7 +479,6 @@
         <div class="calGrid" id="calGrid"></div>
       </div>
     </section>
-
   </div>
 
   <!-- Modal: Neue Übung -->
@@ -516,12 +501,10 @@
           <label>Sets (optional)</label>
           <input id="sets" type="number" min="1" max="30" value="1" />
         </div>
-
         <div style="flex:1;" id="repsWrap">
           <label>Wiederholungen</label>
           <input id="reps" type="number" min="1" max="1000" value="10" />
         </div>
-
         <div style="flex:1; display:none;" id="secWrap">
           <label>Sekunden</label>
           <input id="seconds" type="number" min="5" max="7200" step="5" value="60" />
@@ -567,11 +550,13 @@
   </dialog>
 
   <script>
-    // =========================
-    // State + Storage
-    // =========================
-    const KEY = "abendroutine_square_nav_v4_full";
+    "use strict";
 
+    // --- Config (für Subfolder-Pages wichtig) ---
+    const APP_SCOPE = "/daily-log/abendroutine/"; // GitHub Pages Pfad
+
+    // --- Storage ---
+    const KEY = "abendroutine_square_nav_pwa_v1";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -587,7 +572,6 @@
       const t = fmt.format(d);
       return t.charAt(0).toUpperCase() + t.slice(1);
     };
-
     const niceDate = () => {
       const fmt = new Intl.DateTimeFormat("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
       return fmt.format(new Date());
@@ -596,10 +580,8 @@
     const load = () => {
       const raw = localStorage.getItem(KEY);
       if (!raw) return { exercises: [], logs: [], lastSeen: todayKey() };
-      try { return JSON.parse(raw); }
-      catch { return { exercises: [], logs: [], lastSeen: todayKey() }; }
+      try { return JSON.parse(raw); } catch { return { exercises: [], logs: [], lastSeen: todayKey() }; }
     };
-
     let state = load();
     const saveState = () => localStorage.setItem(KEY, JSON.stringify(state));
 
@@ -628,40 +610,30 @@
     };
     rolloverIfNeeded();
 
-    // =========================
-    // Routing
-    // =========================
+    // --- Routing ---
     const pages = {
       home: $("homePage"),
       workout: $("workoutPage"),
       calendar: $("calendarPage"),
     };
-
     let currentPage = "home";
-    let currentMode = null; // "full" | "light" | null
-    let calCursor = new Date();
-    calCursor.setDate(1);
+    let currentMode = null; // "full" | "light"
+    let calCursor = new Date(); calCursor.setDate(1);
 
     const setHeader = (page) => {
       $("backBtn").style.display = (page === "home") ? "none" : "inline-flex";
       $("statsBtn").style.display = (page === "calendar") ? "inline-flex" : "none";
       $("calendarBtn").style.display = (page === "calendar") ? "none" : "inline-flex";
     };
-
     const go = (page) => {
       currentPage = page;
-      for (const k of Object.keys(pages)) {
-        pages[k].classList.toggle("active", k === page);
-      }
+      for (const k in pages) pages[k].classList.toggle("active", k === page);
       setHeader(page);
-
       if (page === "workout") renderWorkout();
       if (page === "calendar") renderCalendar();
     };
 
-    // =========================
-    // Helpers
-    // =========================
+    // --- Helpers ---
     const escapeHtml = (s) => String(s)
       .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
       .replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -696,23 +668,17 @@
 
     const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : "";
 
-    // Full/Light calendar entry only if exercises exist AND at least one completed today
+    // Full/Light badge only if exercises exist AND at least one completed today
     const updateTodayModeIfEligible = () => {
       const log = ensureTodayLog();
       const anyExercises = state.exercises.length > 0;
       const anyCompleted = state.exercises.some(e => e.completedToday);
-
-      if (anyExercises && anyCompleted && (currentMode === "full" || currentMode === "light")) {
-        log.mode = currentMode;
-      } else {
-        log.mode = null;
-      }
+      if (anyExercises && anyCompleted && (currentMode === "full" || currentMode === "light")) log.mode = currentMode;
+      else log.mode = null;
       saveState();
     };
 
-    // =========================
-    // Workout flow
-    // =========================
+    // --- Workout flow ---
     const startWorkout = (mode) => {
       currentMode = mode;
       $("workoutTitle").textContent = `${modeLabel(mode)}-Set`;
@@ -722,17 +688,18 @@
     };
 
     const toggleExercise = (id) => {
-      state.exercises = state.exercises.map(e => e.id === id ? ({ ...e, completedToday: !e.completedToday }) : e);
+      // tiny perf: update in one pass
+      let toggledTo = false;
+      state.exercises = state.exercises.map(e => {
+        if (e.id !== id) return e;
+        toggledTo = !e.completedToday;
+        return { ...e, completedToday: toggledTo };
+      });
 
       const log = ensureTodayLog();
-      const doneNow = state.exercises.find(e => e.id === id)?.completedToday;
-
       const set = new Set(log.completedIds);
-      if (doneNow) set.add(id);
-      else set.delete(id);
+      if (toggledTo) set.add(id); else set.delete(id);
       log.completedIds = Array.from(set);
-
-      state.logs.sort((a,b) => b.dateKey.localeCompare(a.dateKey));
 
       updateTodayModeIfEligible();
       saveState();
@@ -748,89 +715,82 @@
 
     const deleteExercise = (id) => {
       if (!confirm("Übung wirklich löschen?")) return;
-
       state.exercises = state.exercises.filter(e => e.id !== id);
-      state.logs.forEach(l => {
-        l.completedIds = (l.completedIds || []).filter(x => x !== id);
-      });
-
+      for (const l of state.logs) l.completedIds = (l.completedIds || []).filter(x => x !== id);
       saveState();
       updateTodayModeIfEligible();
       renderWorkout();
     };
 
-    // =========================
-    // Render workout
-    // =========================
+    // Event delegation for list (perf)
+    $("exerciseList").addEventListener("click", (ev) => {
+      const trash = ev.target.closest("button[data-trash='1']");
+      if (trash) {
+        ev.stopPropagation();
+        deleteExercise(trash.dataset.id);
+        return;
+      }
+      const row = ev.target.closest("[data-ex-id]");
+      if (!row) return;
+      toggleExercise(row.dataset.exId);
+    });
+
     const renderWorkout = () => {
       const log = ensureTodayLog();
-
       const list = $("exerciseList");
-      list.innerHTML = "";
+      const empty = $("exerciseEmpty");
 
-      $("exerciseEmpty").style.display = state.exercises.length ? "none" : "block";
+      empty.style.display = state.exercises.length ? "none" : "block";
 
-      state.exercises.forEach(e => {
-        const div = document.createElement("div");
-        div.className = "item" + (e.completedToday ? " done" : "");
-        div.innerHTML = `
-          <div class="left">
-            <div class="name">${escapeHtml(e.name)}</div>
-            <div class="meta">${escapeHtml(formatMeta(e))}</div>
-          </div>
-          <div class="right">
-            <div class="check">✓</div>
-            <button class="trash" type="button" aria-label="Übung löschen" title="Löschen">🗑️</button>
+      // Build HTML in one go (fast)
+      let html = "";
+      for (const e of state.exercises) {
+        html += `
+          <div class="item ${e.completedToday ? "done" : ""}" data-ex-id="${escapeHtml(e.id)}">
+            <div class="left">
+              <div class="name">${escapeHtml(e.name)}</div>
+              <div class="meta">${escapeHtml(formatMeta(e))}</div>
+            </div>
+            <div class="right">
+              <div class="check">✓</div>
+              <button class="trash" type="button" data-trash="1" data-id="${escapeHtml(e.id)}" aria-label="Übung löschen" title="Löschen">🗑️</button>
+            </div>
           </div>
         `;
+      }
+      list.innerHTML = html;
 
-        div.addEventListener("click", () => toggleExercise(e.id));
-
-        const trashBtn = div.querySelector(".trash");
-        trashBtn.addEventListener("click", (ev) => {
-          ev.stopPropagation();
-          deleteExercise(e.id);
-        });
-
-        list.appendChild(div);
-      });
-
-      const done = state.exercises.filter(e => e.completedToday).length;
+      const done = state.exercises.reduce((a,e) => a + (e.completedToday ? 1 : 0), 0);
       $("progressPill").textContent = `${done}/${state.exercises.length}`;
 
       const st = dayStatus(log);
       $("todayText").textContent = st.text;
       $("todayDot").className = "dot " + st.kind;
 
-      // Finish visible only when at least one exercise exists + one completed
-      const eligible = (state.exercises.length > 0) && (done > 0);
-      $("finishBtn").style.display = eligible ? "inline-flex" : "none";
-
-      saveState();
+      $("finishBtn").style.display = (state.exercises.length > 0 && done > 0) ? "inline-flex" : "none";
     };
 
-    // =========================
-    // Biking: immediate calendar mark
-    // =========================
+    // --- Biking ---
     const markBikingToday = () => {
       const log = ensureTodayLog();
       log.bike = true;
       saveState();
     };
 
-    // =========================
-    // Calendar render (no x/x) + Bike removable
-    // =========================
+    // --- Calendar (Bike removable by tapping badge) ---
     const renderCalendar = () => {
       $("calTitle").textContent = monthTitle(calCursor);
 
       const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
-      const startDay = (first.getDay() + 6) % 7; // Monday=0
+      const startDay = (first.getDay() + 6) % 7; // Mo=0
       const totalCells = 42;
       const startDate = new Date(first);
       startDate.setDate(first.getDate() - startDay);
 
       const grid = $("calGrid");
+      const frag = document.createDocumentFragment();
+
+      // clear
       grid.innerHTML = "";
 
       for (let i=0; i<totalCells; i++){
@@ -848,12 +808,12 @@
         const cell = document.createElement("div");
         cell.className = "dayCell" + (inMonth ? "" : " out");
 
-        const dayTop = document.createElement("div");
-        dayTop.className = "dayTop";
+        const top = document.createElement("div");
+        top.className = "dayTop";
 
-        const dayNum = document.createElement("div");
-        dayNum.className = "dayNum";
-        dayNum.textContent = String(d.getDate());
+        const dn = document.createElement("div");
+        dn.className = "dayNum";
+        dn.textContent = String(d.getDate());
 
         const badges = document.createElement("div");
         badges.className = "badges";
@@ -864,41 +824,36 @@
           b.textContent = "Full";
           badges.appendChild(b);
         }
-
         if (hasLight){
           const b = document.createElement("span");
           b.className = "badge light";
           b.textContent = "Light";
           badges.appendChild(b);
         }
-
         if (hasBike){
           const b = document.createElement("span");
           b.className = "badge bike";
           b.textContent = "Bike";
-
-          // remove bike on tap
           b.addEventListener("click", (ev) => {
             ev.stopPropagation();
-            const logRef = ensureLog(key);
-            logRef.bike = false;
+            const lr = ensureLog(key);
+            lr.bike = false;
             saveState();
             renderCalendar();
           });
-
           badges.appendChild(b);
         }
 
-        dayTop.appendChild(dayNum);
-        dayTop.appendChild(badges);
-        cell.appendChild(dayTop);
-        grid.appendChild(cell);
+        top.appendChild(dn);
+        top.appendChild(badges);
+        cell.appendChild(top);
+        frag.appendChild(cell);
       }
+
+      grid.appendChild(frag);
     };
 
-    // =========================
-    // Stats (month: days up to current day for current month) + year to date
-    // =========================
+    // --- Stats (Month: days up to today for current month; past months full; future 0) + YTD ---
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
 
@@ -924,7 +879,6 @@
 
       const fullDim = daysInMonth(year, month0);
 
-      // Tage im Monat: aktueller Monat -> bis heute; vergangen -> voller Monat; Zukunft -> 0
       let denomDays;
       if (isSameMonth(calCursor, today)) denomDays = today.getDate();
       else if (isBeforeMonth(calCursor, today)) denomDays = fullDim;
@@ -932,9 +886,7 @@
 
       const monthLogs = state.logs.filter(l => parseYearMonth(l.dateKey) === ym);
 
-      // aktive Tage: irgendein Badge gesetzt, Tag zählt einfach
       const monthActive = monthLogs.filter(l => (l.mode === "full" || l.mode === "light" || !!l.bike)).length;
-
       const monthFull = monthLogs.filter(l => l.mode === "full").length;
       const monthLight = monthLogs.filter(l => l.mode === "light").length;
       const monthBike = monthLogs.filter(l => !!l.bike).length;
@@ -959,19 +911,11 @@
     };
 
     const renderStatsGrid = (gridEl, rows) => {
-      gridEl.innerHTML = "";
-      rows.forEach(([k,v]) => {
-        const kd = document.createElement("div");
-        kd.className = "k";
-        kd.textContent = k;
-
-        const vd = document.createElement("div");
-        vd.className = "v";
-        vd.textContent = v;
-
-        gridEl.appendChild(kd);
-        gridEl.appendChild(vd);
-      });
+      let html = "";
+      for (const [k,v] of rows) {
+        html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div>`;
+      }
+      gridEl.innerHTML = html;
     };
 
     const openStats = () => {
@@ -1000,18 +944,14 @@
       $("statsDlg").showModal();
     };
 
-    // =========================
-    // Modal: Add exercise
-    // =========================
+    // --- Exercise dialog ---
     const dlg = $("dlg");
-
     const applyGoalTypeUI = () => {
       const t = $("goalType").value;
       $("repsWrap").style.display = (t === "reps") ? "block" : "none";
       $("weightWrap").style.display = (t === "reps") ? "flex" : "none";
       $("secWrap").style.display = (t === "time") ? "block" : "none";
     };
-
     const openDialog = () => {
       $("name").value = "";
       $("goalType").value = "reps";
@@ -1024,15 +964,10 @@
       dlg.showModal();
     };
 
-    // =========================
-    // Wire events
-    // =========================
+    // --- Wire events ---
     $("fullBtn").addEventListener("click", () => startWorkout("full"));
     $("lightBtn").addEventListener("click", () => startWorkout("light"));
-    $("bikeBtn").addEventListener("click", () => {
-      markBikingToday();
-      go("calendar");
-    });
+    $("bikeBtn").addEventListener("click", () => { markBikingToday(); go("calendar"); });
 
     $("calendarBtn").addEventListener("click", () => go("calendar"));
     $("backBtn").addEventListener("click", () => go("home"));
@@ -1052,7 +987,6 @@
       const sets = Number($("sets").value) || null;
 
       let reps = null, seconds = null, weightKg = null;
-
       if (goalType === "reps") {
         reps = Number($("reps").value) || 0;
         const w = $("weight").value.trim().replace(",", ".");
@@ -1081,16 +1015,10 @@
 
     $("finishBtn").addEventListener("click", () => go("calendar"));
 
-    $("prevMonth").addEventListener("click", () => {
-      calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1);
-      renderCalendar();
-    });
-    $("nextMonth").addEventListener("click", () => {
-      calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1);
-      renderCalendar();
-    });
+    $("prevMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1); renderCalendar(); });
+    $("nextMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1); renderCalendar(); });
 
-    // Day rollover (tab open)
+    // --- Day rollover ---
     setInterval(() => {
       const before = state.lastSeen;
       rolloverIfNeeded();
@@ -1101,6 +1029,13 @@
         $("datePill").textContent = niceDate();
       }
     }, 60 * 1000);
+
+    // --- Service Worker (PWA / Offline / Perf) ---
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
+      });
+    }
 
     // Init
     $("datePill").textContent = niceDate();
