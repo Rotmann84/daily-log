@@ -3,24 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
   <title>Abendroutine</title>
 
+  <!-- PWA / Theme -->
   <meta name="theme-color" content="#0f2a1f" />
   <meta name="mobile-web-app-capable" content="yes" />
 
-  <!-- iOS standalone -->
+  <!-- iOS: Standalone (keine URL-Leiste nach "Zum Home-Bildschirm") -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Abendroutine" />
 
-  <link rel="manifest" href="./manifest.webmanifest" />
+  <!-- Icons (optional, aber empfohlen) -->
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+  <!-- Manifest -->
+  <link rel="manifest" href="./manifest.webmanifest" />
 
   <style>
     :root{
       --bg:#0f2a1f;
       --bg2:#0b231a;
-
       --panel:rgba(255,255,255,0.05);
       --border:rgba(255,255,255,0.10);
 
@@ -39,35 +43,23 @@
     }
 
     *{ box-sizing:border-box; }
-
-    /* ✅ Fix 2: Hintergrund auch auf html legen (iOS Overscroll “leuchtet” sonst durch) */
-    html{
-      height:100%;
-      background: linear-gradient(180deg, var(--bg), var(--bg2));
-      overscroll-behavior: none;
-    }
-
+    html,body{ height:100%; }
     body{
       margin:0;
-      min-height:100%;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--fg);
-      -webkit-tap-highlight-color: transparent;
-
-      /* ✅ Fix 2: Body-Hintergrund + keine “Rubberband”-Durchscheineffekte */
       background:
         radial-gradient(1200px 650px at 20% 0%, rgba(185,162,106,0.10), transparent 55%),
         radial-gradient(900px 520px at 90% 15%, rgba(54,194,106,0.10), transparent 55%),
         linear-gradient(180deg, var(--bg), var(--bg2));
-      overscroll-behavior: none;
+      color:var(--fg);
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* ✅ Fix 2: iOS safe viewport — 100dvh statt 100vh */
     .app{
       max-width: 740px;
       margin: 0 auto;
-      min-height: 100dvh;
-      padding: env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 16px) 16px;
+      min-height: 100%;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
       display:flex;
       flex-direction:column;
       gap:14px;
@@ -122,16 +114,12 @@
     }
     .datePill{ color: var(--muted); }
 
-    /* ✅ Fix 1: Panel clippt Inhalt (Kalender ragt nicht raus) */
     .panel{
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 14px;
-
-      overflow: hidden;          /* IMPORTANT */
-      isolation: isolate;        /* iOS GPU/blur clipping stabiler */
     }
 
     .page{ display:none; padding-bottom: 18px; }
@@ -249,6 +237,7 @@
       background: rgba(54,194,106,0.95);
       color:#0a1f16;
     }
+
     .trash{
       width:38px;
       height:38px;
@@ -292,10 +281,8 @@
       font-weight: 950;
     }
     .calGrid{
-      width:100%;
-      max-width:100%;
       display:grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr)); /* ✅ verhindert Überlaufen */
+      grid-template-columns: repeat(7, 1fr);
       gap:8px;
     }
     .dow{
@@ -306,7 +293,6 @@
       padding: 4px 0;
     }
     .dayCell{
-      min-width:0; /* ✅ iOS grid overflow guard */
       aspect-ratio: 1 / 1;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.08);
@@ -322,22 +308,40 @@
     .dayTop{ display:flex; justify-content:space-between; gap:6px; align-items:flex-start; }
     .dayNum{ font-weight: 950; font-size: 12px; }
 
-    .badges{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+    /* ✅ compact icon badges */
+    .badges{
+      display:flex;
+      gap:4px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
     .badge{
-      font-size:10px;
-      font-weight: 950;
-      letter-spacing:.2px;
-      padding: 4px 7px;
-      border-radius: 999px;
+      width:18px;
+      height:18px;
+      border-radius: 8px;
+      display:grid;
+      place-items:center;
+      font-size: 12px;
+      line-height: 1;
       border: 1px solid rgba(255,255,255,0.10);
       background: rgba(255,255,255,0.05);
       color: var(--muted);
-      white-space: nowrap;
       user-select:none;
     }
-    .badge.full{ border-color: rgba(214,194,137,0.35); color: rgba(214,194,137,0.90); background: rgba(185,162,106,0.10); }
-    .badge.light{ border-color: rgba(214,194,137,0.25); color: rgba(214,194,137,0.85); background: rgba(185,162,106,0.08); }
-    .badge.bike{ border-color: rgba(54,194,106,0.25); color: rgba(210,248,226,0.95); background: rgba(54,194,106,0.10); cursor:pointer; }
+    .badge.full{
+      border-color: rgba(214,194,137,0.35);
+      background: rgba(185,162,106,0.10);
+    }
+    .badge.light{
+      border-color: rgba(214,194,137,0.25);
+      background: rgba(185,162,106,0.08);
+    }
+    .badge.bike{
+      border-color: rgba(54,194,106,0.25);
+      background: rgba(54,194,106,0.10);
+      cursor:pointer;
+    }
 
     /* Dialogs */
     dialog{
@@ -416,6 +420,7 @@
       .squareBtn{ width: min(250px, 92vw); border-radius: 20px; }
       .iconBox{ width:56px; height:56px; border-radius: 16px; }
       .trash{ width:36px; height:36px; }
+      .badge{ width:16px; height:16px; font-size:11px; border-radius:7px; }
     }
   </style>
 </head>
@@ -432,6 +437,7 @@
       </div>
     </header>
 
+    <!-- HOME -->
     <section class="page active" id="homePage">
       <div class="panel">
         <div class="homeStack">
@@ -451,6 +457,7 @@
       </div>
     </section>
 
+    <!-- WORKOUT -->
     <section class="page" id="workoutPage">
       <div class="panel">
         <div class="bar">
@@ -474,6 +481,7 @@
       </div>
     </section>
 
+    <!-- CALENDAR -->
     <section class="page" id="calendarPage">
       <div class="panel">
         <div class="calHeader">
@@ -492,6 +500,7 @@
     </section>
   </div>
 
+  <!-- Modal: Neue Übung -->
   <dialog id="dlg">
     <div class="modal">
       <h2>Neue Übung</h2>
@@ -529,7 +538,7 @@
       </div>
 
       <label>Notiz (optional)</label>
-      <textarea id="note"></textarea>
+      <textarea id="note" placeholder=""></textarea>
 
       <div class="actionsRow">
         <button class="btn" id="cancel" type="button">Abbrechen</button>
@@ -538,6 +547,7 @@
     </div>
   </dialog>
 
+  <!-- Modal: Statistik -->
   <dialog id="statsDlg">
     <div class="modal">
       <h2>Statistik</h2>
@@ -561,7 +571,7 @@
   <script>
     "use strict";
 
-    const KEY = "abendroutine_square_nav_pwa_v2";
+    const KEY = "abendroutine_square_nav_pwa_v1";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -577,7 +587,6 @@
       const t = fmt.format(d);
       return t.charAt(0).toUpperCase() + t.slice(1);
     };
-
     const niceDate = () => {
       const fmt = new Intl.DateTimeFormat("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
       return fmt.format(new Date());
@@ -591,6 +600,7 @@
     let state = load();
     const saveState = () => localStorage.setItem(KEY, JSON.stringify(state));
 
+    // logs: [{ dateKey, mode:"full"|"light"|null, completedIds:[], bike:boolean }]
     const ensureLog = (dateKey) => {
       let log = state.logs.find(l => l.dateKey === dateKey);
       if (!log) {
@@ -615,9 +625,14 @@
     };
     rolloverIfNeeded();
 
-    const pages = { home: $("homePage"), workout: $("workoutPage"), calendar: $("calendarPage") };
+    // --- Routing ---
+    const pages = {
+      home: $("homePage"),
+      workout: $("workoutPage"),
+      calendar: $("calendarPage"),
+    };
     let currentPage = "home";
-    let currentMode = null;
+    let currentMode = null; // "full" | "light"
     let calCursor = new Date(); calCursor.setDate(1);
 
     const setHeader = (page) => {
@@ -625,7 +640,6 @@
       $("statsBtn").style.display = (page === "calendar") ? "inline-flex" : "none";
       $("calendarBtn").style.display = (page === "calendar") ? "none" : "inline-flex";
     };
-
     const go = (page) => {
       currentPage = page;
       for (const k in pages) pages[k].classList.toggle("active", k === page);
@@ -634,6 +648,7 @@
       if (page === "calendar") renderCalendar();
     };
 
+    // --- Helpers ---
     const escapeHtml = (s) => String(s)
       .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
       .replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -668,6 +683,7 @@
 
     const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : "";
 
+    // Full/Light badge only if exercises exist AND at least one completed today
     const updateTodayModeIfEligible = () => {
       const log = ensureTodayLog();
       const anyExercises = state.exercises.length > 0;
@@ -677,6 +693,7 @@
       saveState();
     };
 
+    // --- Workout flow ---
     const startWorkout = (mode) => {
       currentMode = mode;
       $("workoutTitle").textContent = `${modeLabel(mode)}-Set`;
@@ -719,6 +736,7 @@
       renderWorkout();
     };
 
+    // Event delegation for list (perf)
     $("exerciseList").addEventListener("click", (ev) => {
       const trash = ev.target.closest("button[data-trash='1']");
       if (trash) { ev.stopPropagation(); deleteExercise(trash.dataset.id); return; }
@@ -761,25 +779,26 @@
       $("finishBtn").style.display = (state.exercises.length > 0 && done > 0) ? "inline-flex" : "none";
     };
 
+    // --- Biking ---
     const markBikingToday = () => {
       const log = ensureTodayLog();
       log.bike = true;
       saveState();
     };
 
+    // --- Calendar (icons, Bike removable) ---
     const renderCalendar = () => {
       $("calTitle").textContent = monthTitle(calCursor);
 
       const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
-      const startDay = (first.getDay() + 6) % 7;
+      const startDay = (first.getDay() + 6) % 7; // Mo=0
       const totalCells = 42;
       const startDate = new Date(first);
       startDate.setDate(first.getDate() - startDay);
 
       const grid = $("calGrid");
-      grid.innerHTML = "";
-
       const frag = document.createDocumentFragment();
+      grid.innerHTML = "";
 
       for (let i=0; i<totalCells; i++){
         const d = new Date(startDate);
@@ -809,19 +828,19 @@
         if (hasFull){
           const b = document.createElement("span");
           b.className = "badge full";
-          b.textContent = "Full";
+          b.textContent = "🏋️";
           badges.appendChild(b);
         }
         if (hasLight){
           const b = document.createElement("span");
           b.className = "badge light";
-          b.textContent = "Light";
+          b.textContent = "✨";
           badges.appendChild(b);
         }
         if (hasBike){
           const b = document.createElement("span");
           b.className = "badge bike";
-          b.textContent = "Bike";
+          b.textContent = "🚴";
           b.addEventListener("click", (ev) => {
             ev.stopPropagation();
             const lr = ensureLog(key);
@@ -835,13 +854,13 @@
         top.appendChild(dn);
         top.appendChild(badges);
         cell.appendChild(top);
-
         frag.appendChild(cell);
       }
 
       grid.appendChild(frag);
     };
 
+    // --- Stats ---
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
 
@@ -860,6 +879,7 @@
 
     const computeMonthStats = () => {
       const today = new Date();
+
       const year = calCursor.getFullYear();
       const month0 = calCursor.getMonth();
       const ym = `${year}-${String(month0 + 1).padStart(2,"0")}`;
@@ -884,8 +904,10 @@
     const computeYearStats = () => {
       const today = new Date();
       const currentYear = today.getFullYear();
+      const yearKey = String(currentYear);
       const denomDays = dayOfYear(today);
-      const yearLogs = state.logs.filter(l => parseYear(l.dateKey) === String(currentYear));
+
+      const yearLogs = state.logs.filter(l => parseYear(l.dateKey) === yearKey);
 
       const yearActive = yearLogs.filter(l => (l.mode === "full" || l.mode === "light" || !!l.bike)).length;
       const yearFull = yearLogs.filter(l => l.mode === "full").length;
@@ -897,7 +919,9 @@
 
     const renderStatsGrid = (gridEl, rows) => {
       let html = "";
-      for (const [k,v] of rows) html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div>`;
+      for (const [k,v] of rows) {
+        html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div>`;
+      }
       gridEl.innerHTML = html;
     };
 
@@ -927,6 +951,7 @@
       $("statsDlg").showModal();
     };
 
+    // --- Exercise dialog ---
     const dlg = $("dlg");
     const applyGoalTypeUI = () => {
       const t = $("goalType").value;
@@ -946,6 +971,7 @@
       dlg.showModal();
     };
 
+    // --- Events ---
     $("fullBtn").addEventListener("click", () => startWorkout("full"));
     $("lightBtn").addEventListener("click", () => startWorkout("light"));
     $("bikeBtn").addEventListener("click", () => { markBikingToday(); go("calendar"); });
@@ -999,6 +1025,7 @@
     $("prevMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1); renderCalendar(); });
     $("nextMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1); renderCalendar(); });
 
+    // --- Day rollover ---
     setInterval(() => {
       const before = state.lastSeen;
       rolloverIfNeeded();
@@ -1010,13 +1037,14 @@
       }
     }, 60 * 1000);
 
-    // PWA SW
+    // --- Service Worker register (unchanged) ---
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
       });
     }
 
+    // Init
     $("datePill").textContent = niceDate();
     ensureTodayLog();
     updateTodayModeIfEligible();
