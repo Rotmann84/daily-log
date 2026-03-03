@@ -3,28 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-
   <title>Abendroutine</title>
 
-  <!-- PWA / Theme -->
   <meta name="theme-color" content="#0f2a1f" />
   <meta name="mobile-web-app-capable" content="yes" />
 
-  <!-- iOS: Standalone (keine URL-Leiste nach "Zum Home-Bildschirm") -->
+  <!-- iOS standalone -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Abendroutine" />
 
-  <!-- Icons (optional, aber empfohlen) -->
-  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-
-  <!-- Manifest -->
   <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 
   <style>
     :root{
       --bg:#0f2a1f;
       --bg2:#0b231a;
+
       --panel:rgba(255,255,255,0.05);
       --border:rgba(255,255,255,0.10);
 
@@ -43,23 +39,35 @@
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+
+    /* ✅ Fix 2: Hintergrund auch auf html legen (iOS Overscroll “leuchtet” sonst durch) */
+    html{
+      height:100%;
+      background: linear-gradient(180deg, var(--bg), var(--bg2));
+      overscroll-behavior: none;
+    }
+
     body{
       margin:0;
+      min-height:100%;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--fg);
+      -webkit-tap-highlight-color: transparent;
+
+      /* ✅ Fix 2: Body-Hintergrund + keine “Rubberband”-Durchscheineffekte */
       background:
         radial-gradient(1200px 650px at 20% 0%, rgba(185,162,106,0.10), transparent 55%),
         radial-gradient(900px 520px at 90% 15%, rgba(54,194,106,0.10), transparent 55%),
         linear-gradient(180deg, var(--bg), var(--bg2));
-      color:var(--fg);
-      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
     }
 
+    /* ✅ Fix 2: iOS safe viewport — 100dvh statt 100vh */
     .app{
       max-width: 740px;
       margin: 0 auto;
-      min-height: 100%;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 16px) 16px;
       display:flex;
       flex-direction:column;
       gap:14px;
@@ -114,12 +122,16 @@
     }
     .datePill{ color: var(--muted); }
 
+    /* ✅ Fix 1: Panel clippt Inhalt (Kalender ragt nicht raus) */
     .panel{
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 14px;
+
+      overflow: hidden;          /* IMPORTANT */
+      isolation: isolate;        /* iOS GPU/blur clipping stabiler */
     }
 
     .page{ display:none; padding-bottom: 18px; }
@@ -237,7 +249,6 @@
       background: rgba(54,194,106,0.95);
       color:#0a1f16;
     }
-
     .trash{
       width:38px;
       height:38px;
@@ -281,8 +292,10 @@
       font-weight: 950;
     }
     .calGrid{
+      width:100%;
+      max-width:100%;
       display:grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr)); /* ✅ verhindert Überlaufen */
       gap:8px;
     }
     .dow{
@@ -293,6 +306,7 @@
       padding: 4px 0;
     }
     .dayCell{
+      min-width:0; /* ✅ iOS grid overflow guard */
       aspect-ratio: 1 / 1;
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.08);
@@ -418,7 +432,6 @@
       </div>
     </header>
 
-    <!-- HOME -->
     <section class="page active" id="homePage">
       <div class="panel">
         <div class="homeStack">
@@ -438,7 +451,6 @@
       </div>
     </section>
 
-    <!-- WORKOUT -->
     <section class="page" id="workoutPage">
       <div class="panel">
         <div class="bar">
@@ -462,7 +474,6 @@
       </div>
     </section>
 
-    <!-- CALENDAR -->
     <section class="page" id="calendarPage">
       <div class="panel">
         <div class="calHeader">
@@ -481,7 +492,6 @@
     </section>
   </div>
 
-  <!-- Modal: Neue Übung -->
   <dialog id="dlg">
     <div class="modal">
       <h2>Neue Übung</h2>
@@ -519,7 +529,7 @@
       </div>
 
       <label>Notiz (optional)</label>
-      <textarea id="note" placeholder=""></textarea>
+      <textarea id="note"></textarea>
 
       <div class="actionsRow">
         <button class="btn" id="cancel" type="button">Abbrechen</button>
@@ -528,7 +538,6 @@
     </div>
   </dialog>
 
-  <!-- Modal: Statistik -->
   <dialog id="statsDlg">
     <div class="modal">
       <h2>Statistik</h2>
@@ -552,11 +561,7 @@
   <script>
     "use strict";
 
-    // --- Config (für Subfolder-Pages wichtig) ---
-    const APP_SCOPE = "/daily-log/abendroutine/"; // GitHub Pages Pfad
-
-    // --- Storage ---
-    const KEY = "abendroutine_square_nav_pwa_v1";
+    const KEY = "abendroutine_square_nav_pwa_v2";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -572,6 +577,7 @@
       const t = fmt.format(d);
       return t.charAt(0).toUpperCase() + t.slice(1);
     };
+
     const niceDate = () => {
       const fmt = new Intl.DateTimeFormat("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
       return fmt.format(new Date());
@@ -585,7 +591,6 @@
     let state = load();
     const saveState = () => localStorage.setItem(KEY, JSON.stringify(state));
 
-    // logs: [{ dateKey, mode:"full"|"light"|null, completedIds:[], bike:boolean }]
     const ensureLog = (dateKey) => {
       let log = state.logs.find(l => l.dateKey === dateKey);
       if (!log) {
@@ -610,14 +615,9 @@
     };
     rolloverIfNeeded();
 
-    // --- Routing ---
-    const pages = {
-      home: $("homePage"),
-      workout: $("workoutPage"),
-      calendar: $("calendarPage"),
-    };
+    const pages = { home: $("homePage"), workout: $("workoutPage"), calendar: $("calendarPage") };
     let currentPage = "home";
-    let currentMode = null; // "full" | "light"
+    let currentMode = null;
     let calCursor = new Date(); calCursor.setDate(1);
 
     const setHeader = (page) => {
@@ -625,6 +625,7 @@
       $("statsBtn").style.display = (page === "calendar") ? "inline-flex" : "none";
       $("calendarBtn").style.display = (page === "calendar") ? "none" : "inline-flex";
     };
+
     const go = (page) => {
       currentPage = page;
       for (const k in pages) pages[k].classList.toggle("active", k === page);
@@ -633,7 +634,6 @@
       if (page === "calendar") renderCalendar();
     };
 
-    // --- Helpers ---
     const escapeHtml = (s) => String(s)
       .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
       .replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -668,7 +668,6 @@
 
     const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : "";
 
-    // Full/Light badge only if exercises exist AND at least one completed today
     const updateTodayModeIfEligible = () => {
       const log = ensureTodayLog();
       const anyExercises = state.exercises.length > 0;
@@ -678,7 +677,6 @@
       saveState();
     };
 
-    // --- Workout flow ---
     const startWorkout = (mode) => {
       currentMode = mode;
       $("workoutTitle").textContent = `${modeLabel(mode)}-Set`;
@@ -688,7 +686,6 @@
     };
 
     const toggleExercise = (id) => {
-      // tiny perf: update in one pass
       let toggledTo = false;
       state.exercises = state.exercises.map(e => {
         if (e.id !== id) return e;
@@ -722,14 +719,9 @@
       renderWorkout();
     };
 
-    // Event delegation for list (perf)
     $("exerciseList").addEventListener("click", (ev) => {
       const trash = ev.target.closest("button[data-trash='1']");
-      if (trash) {
-        ev.stopPropagation();
-        deleteExercise(trash.dataset.id);
-        return;
-      }
+      if (trash) { ev.stopPropagation(); deleteExercise(trash.dataset.id); return; }
       const row = ev.target.closest("[data-ex-id]");
       if (!row) return;
       toggleExercise(row.dataset.exId);
@@ -742,7 +734,6 @@
 
       empty.style.display = state.exercises.length ? "none" : "block";
 
-      // Build HTML in one go (fast)
       let html = "";
       for (const e of state.exercises) {
         html += `
@@ -770,28 +761,25 @@
       $("finishBtn").style.display = (state.exercises.length > 0 && done > 0) ? "inline-flex" : "none";
     };
 
-    // --- Biking ---
     const markBikingToday = () => {
       const log = ensureTodayLog();
       log.bike = true;
       saveState();
     };
 
-    // --- Calendar (Bike removable by tapping badge) ---
     const renderCalendar = () => {
       $("calTitle").textContent = monthTitle(calCursor);
 
       const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
-      const startDay = (first.getDay() + 6) % 7; // Mo=0
+      const startDay = (first.getDay() + 6) % 7;
       const totalCells = 42;
       const startDate = new Date(first);
       startDate.setDate(first.getDate() - startDay);
 
       const grid = $("calGrid");
-      const frag = document.createDocumentFragment();
-
-      // clear
       grid.innerHTML = "";
+
+      const frag = document.createDocumentFragment();
 
       for (let i=0; i<totalCells; i++){
         const d = new Date(startDate);
@@ -847,13 +835,13 @@
         top.appendChild(dn);
         top.appendChild(badges);
         cell.appendChild(top);
+
         frag.appendChild(cell);
       }
 
       grid.appendChild(frag);
     };
 
-    // --- Stats (Month: days up to today for current month; past months full; future 0) + YTD ---
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
 
@@ -872,7 +860,6 @@
 
     const computeMonthStats = () => {
       const today = new Date();
-
       const year = calCursor.getFullYear();
       const month0 = calCursor.getMonth();
       const ym = `${year}-${String(month0 + 1).padStart(2,"0")}`;
@@ -897,10 +884,8 @@
     const computeYearStats = () => {
       const today = new Date();
       const currentYear = today.getFullYear();
-      const yearKey = String(currentYear);
       const denomDays = dayOfYear(today);
-
-      const yearLogs = state.logs.filter(l => parseYear(l.dateKey) === yearKey);
+      const yearLogs = state.logs.filter(l => parseYear(l.dateKey) === String(currentYear));
 
       const yearActive = yearLogs.filter(l => (l.mode === "full" || l.mode === "light" || !!l.bike)).length;
       const yearFull = yearLogs.filter(l => l.mode === "full").length;
@@ -912,9 +897,7 @@
 
     const renderStatsGrid = (gridEl, rows) => {
       let html = "";
-      for (const [k,v] of rows) {
-        html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div>`;
-      }
+      for (const [k,v] of rows) html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div>`;
       gridEl.innerHTML = html;
     };
 
@@ -944,7 +927,6 @@
       $("statsDlg").showModal();
     };
 
-    // --- Exercise dialog ---
     const dlg = $("dlg");
     const applyGoalTypeUI = () => {
       const t = $("goalType").value;
@@ -964,7 +946,6 @@
       dlg.showModal();
     };
 
-    // --- Wire events ---
     $("fullBtn").addEventListener("click", () => startWorkout("full"));
     $("lightBtn").addEventListener("click", () => startWorkout("light"));
     $("bikeBtn").addEventListener("click", () => { markBikingToday(); go("calendar"); });
@@ -1018,7 +999,6 @@
     $("prevMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1); renderCalendar(); });
     $("nextMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1); renderCalendar(); });
 
-    // --- Day rollover ---
     setInterval(() => {
       const before = state.lastSeen;
       rolloverIfNeeded();
@@ -1030,14 +1010,13 @@
       }
     }, 60 * 1000);
 
-    // --- Service Worker (PWA / Offline / Perf) ---
+    // PWA SW
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
       });
     }
 
-    // Init
     $("datePill").textContent = niceDate();
     ensureTodayLog();
     updateTodayModeIfEligible();
