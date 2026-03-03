@@ -75,7 +75,7 @@ button:active{transform:scale(0.99);}
   border:1px solid var(--line);
   background:rgba(0,0,0,0.12);
   display:flex; align-items:center; justify-content:space-between; gap:10px;
-  cursor:pointer;
+  cursor:default; /* nur Anzeige */
 }
 .todayBar .left{display:flex; flex-direction:column; gap:3px;}
 .todayBar .date{font-weight:800;}
@@ -205,7 +205,6 @@ textarea{
     <div class="headerActions">
       <!-- Import -->
       <button class="iconBtn" id="btnImportIcon" type="button" title="Import (CSV)" aria-label="Import (CSV)">
-        <!-- tray-arrow-down -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>
@@ -214,9 +213,8 @@ textarea{
         </svg>
       </button>
 
-      <!-- Export (luftiger/sprechender, weniger gedrungen) -->
+      <!-- Export (luftig) -->
       <button class="iconBtn" id="btnExportIcon" type="button" title="Export (CSV)" aria-label="Export (CSV)">
-        <!-- tray-arrow-up (re-balanced) -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 19h12a2 2 0 0 0 2-2v-3"/>
@@ -228,7 +226,6 @@ textarea{
 
       <!-- Delete -->
       <button class="iconBtn" id="btnDeleteIcon" type="button" title="Daten löschen" aria-label="Daten löschen">
-        <!-- trash -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M3 6h18"/>
@@ -248,8 +245,8 @@ textarea{
       <button class="b-danger" id="btnYes" type="button">Alkohol</button>
     </div>
 
-    <!-- Heutiger Status (statt Erklärungstext) -->
-    <div class="todayBar" id="todayBar" title="Tippen zum Ändern">
+    <!-- Heutiger Status: nur Anzeige -->
+    <div class="todayBar" id="todayBar" aria-label="Heutiger Status">
       <div class="left">
         <div class="date" id="todayDate">—</div>
         <div class="sub">Status heute</div>
@@ -301,10 +298,10 @@ textarea{
 
 </div>
 
-<!-- QUICK STATUS MENU -->
+<!-- QUICK STATUS MENU (nur für 21-Tage / Bearbeiten) -->
 <div class="modalOverlay" id="modalQuick" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="quickTitle">
-    <div class="modalTitle" id="quickTitle">Status setzen</div>
+    <div class="modalTitle" id="quickTitle">Status ändern</div>
     <div class="modalSub" id="quickSub">Datum: —</div>
 
     <button class="menuBtn b-ok" id="quickNo" type="button">Kein Alkohol</button>
@@ -359,12 +356,6 @@ const APP = Object.freeze({
   MAX_REASON_LEN: 500
 });
 
-/*
-  entries: { "YYYY-MM-DD": { a: 0|1, r?: string } }
-  - Tag zählt nur, wenn key existiert
-  meta: { trackStart, trackEnd }
-*/
-
 const pad2 = (n) => String(n).padStart(2, "0");
 function keyFromDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
 function parseKey(k){ return new Date(k + "T00:00:00"); }
@@ -385,7 +376,6 @@ function toast(msg){
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 1200);
 }
-
 function openOverlay(el){ el.style.display = "flex"; el.setAttribute("aria-hidden", "false"); }
 function closeOverlay(el){ el.style.display = "none"; el.setAttribute("aria-hidden", "true"); }
 
@@ -404,9 +394,7 @@ function hasAnyData(){
   return Object.keys(entries).length > 0;
 }
 
-/* =========================
-   Stats (count recorded days only)
-========================= */
+/* ===== Stats / streaks ===== */
 function computeStatsInRange(entries, startKey, endKey){
   const start = parseKey(startKey);
   const end = parseKey(endKey);
@@ -430,7 +418,6 @@ function computeCurrentStreak(entries, trackEnd){
 
   let len = 0;
   let dt = parseKey(trackEnd);
-
   while (true){
     const k = keyFromDate(dt);
     if (!hasRecord(entries, k)) break;
@@ -438,7 +425,6 @@ function computeCurrentStreak(entries, trackEnd){
     len++;
     dt = addDays(dt, -1);
   }
-
   const startKey = keyFromDate(addDays(parseKey(trackEnd), -(len - 1)));
   return { len, startKey };
 }
@@ -454,29 +440,18 @@ function computeBestStreak(entries, trackStart, trackEnd){
 
   for (let dt = new Date(start); dt <= end; dt = addDays(dt, 1)){
     const k = keyFromDate(dt);
-
-    if (!hasRecord(entries, k)){
-      curLen = 0; curStart = null;
-      continue;
-    }
-
+    if (!hasRecord(entries, k)){ curLen = 0; curStart = null; continue; }
     if (entries[k].a === 0){
       if (curLen === 0) curStart = k;
       curLen++;
-      if (curLen > bestLen){
-        bestLen = curLen; bestStart = curStart; bestEnd = k;
-      }
+      if (curLen > bestLen){ bestLen = curLen; bestStart = curStart; bestEnd = k; }
     } else {
       curLen = 0; curStart = null;
     }
   }
-
   return { bestLen, bestStart, bestEnd };
 }
 
-/* =========================
-   Dynamic Stats UI
-========================= */
 function setText(id, v){ document.getElementById(id).textContent = String(v); }
 
 function statsBoxHTML(prefix, title, open){
@@ -543,9 +518,7 @@ function renderDynamicStats(entries, meta){
   }
 }
 
-/* =========================
-   CSV Export/Import
-========================= */
+/* ===== CSV ===== */
 function csvCell(s){
   const v = (s ?? "").toString();
   return `"${v.replace(/"/g, '""')}"`;
@@ -553,10 +526,7 @@ function csvCell(s){
 function exportCSV(){
   const entries = loadEntries();
   const keys = Object.keys(entries).sort();
-  if (keys.length === 0){
-    toast("Keine Daten zum Export");
-    return;
-  }
+  if (keys.length === 0){ toast("Keine Daten zum Export"); return; }
 
   const meta = loadMeta();
   const startKey = meta.trackStart || keys[0];
@@ -571,14 +541,12 @@ function exportCSV(){
 
   const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
-
   const a = document.createElement("a");
   a.href = url;
   a.download = `alkohol-tracker_${startKey}_bis_${endKey}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
-
   URL.revokeObjectURL(url);
   toast("CSV exportiert");
 }
@@ -593,29 +561,22 @@ function parseCsvLine(line, delimiter){
       else inQ = !inQ;
     } else if (!inQ && ch === delimiter){
       out.push(cur); cur = "";
-    } else {
-      cur += ch;
-    }
+    } else cur += ch;
   }
   out.push(cur);
   return out.map(s => s.trim());
 }
-function normalizeDateKey(s){
-  return /^(\d{4})-(\d{2})-(\d{2})$/.test(s) ? s : null;
-}
+function normalizeDateKey(s){ return /^(\d{4})-(\d{2})-(\d{2})$/.test(s) ? s : null; }
+
 function importCSVText(text){
   const linesRaw = text.split(/\r?\n/).filter(l => l.trim().length > 0);
-  if (linesRaw.length < 2){
-    toast("CSV leer/ungültig");
-    return;
-  }
+  if (linesRaw.length < 2){ toast("CSV leer/ungültig"); return; }
 
   const header = linesRaw[0];
   const delimiter = header.includes(";") ? ";" : (header.includes(",") ? "," : ";");
 
   const entries = {};
   let meta = {};
-
   let importedRows = 0, skipped = 0;
 
   for (let i = 1; i < linesRaw.length; i++){
@@ -633,20 +594,14 @@ function importCSVText(text){
     const isNo  = /^nein$/i.test(alc);
     if (!isYes && !isNo){ skipped++; continue; }
 
-    if (isYes){
-      entries[k] = { a: 1, r: reason.trim().slice(0, APP.MAX_REASON_LEN) };
-    } else {
-      entries[k] = { a: 0 };
-    }
+    if (isYes) entries[k] = { a: 1, r: reason.trim().slice(0, APP.MAX_REASON_LEN) };
+    else entries[k] = { a: 0 };
 
     meta = updateMetaBounds(meta, k);
     importedRows++;
   }
 
-  if (!meta.trackStart){
-    toast("Keine gültigen Datumszeilen gefunden");
-    return;
-  }
+  if (!meta.trackStart){ toast("Keine gültigen Datumszeilen gefunden"); return; }
 
   saveEntries(entries);
   saveMeta(meta);
@@ -654,9 +609,7 @@ function importCSVText(text){
   toast(`Import ok (${importedRows} Zeilen, ${skipped} übersprungen)`);
 }
 
-/* =========================
-   Status UI (Heute)
-========================= */
+/* ===== Today UI ===== */
 function updateTodayUI(entries){
   const k = todayKey();
   setText("todayDate", k);
@@ -673,9 +626,7 @@ function updateTodayUI(entries){
   }
 }
 
-/* =========================
-   Modals: Quick / Reason / Delete
-========================= */
+/* ===== Modals: Quick (edit) & Reason ===== */
 const quick = {
   overlay: document.getElementById("modalQuick"),
   sub: document.getElementById("quickSub"),
@@ -686,23 +637,9 @@ function openQuick(k){
   quick.sub.textContent = `Datum: ${k}`;
   openOverlay(quick.overlay);
 }
-function closeQuick(){
-  closeOverlay(quick.overlay);
-  quick.k = null;
-}
-
+function closeQuick(){ closeOverlay(quick.overlay); quick.k = null; }
 quick.overlay.addEventListener("click", (e)=>{ if (e.target === quick.overlay) closeQuick(); });
 document.getElementById("quickCancel").addEventListener("click", closeQuick);
-
-function setDayNo(k){
-  const entries = loadEntries();
-  entries[k] = { a: 0 };
-  saveEntries(entries);
-  saveMeta(updateMetaBounds(loadMeta(), k));
-  closeQuick();
-  render();
-  toast("Kein Alkohol");
-}
 
 const reasonModal = {
   overlay: document.getElementById("modalReason"),
@@ -715,55 +652,69 @@ function openReason(k){
   reasonModal.sub.textContent = `Datum: ${k}`;
   const entries = loadEntries();
   reasonModal.input.value = (hasRecord(entries, k) && entries[k].a === 1) ? getReason(entries, k) : "";
-  closeQuick();
   openOverlay(reasonModal.overlay);
   setTimeout(()=>reasonModal.input.focus(), 0);
 }
-function closeReason(){
-  closeOverlay(reasonModal.overlay);
-  reasonModal.k = null;
-}
-
+function closeReason(){ closeOverlay(reasonModal.overlay); reasonModal.k = null; }
 reasonModal.overlay.addEventListener("click", (e)=>{ if (e.target === reasonModal.overlay) closeReason(); });
-document.getElementById("reasonCancel").addEventListener("click", () => { closeReason(); render(); });
+document.getElementById("reasonCancel").addEventListener("click", closeReason);
 
+function setDayNo(k){
+  const entries = loadEntries();
+  entries[k] = { a: 0 };
+  saveEntries(entries);
+  saveMeta(updateMetaBounds(loadMeta(), k));
+}
 function saveAlcohol(k, reason){
   const entries = loadEntries();
   entries[k] = { a: 1, r: (reason || "").trim().slice(0, APP.MAX_REASON_LEN) };
   saveEntries(entries);
   saveMeta(updateMetaBounds(loadMeta(), k));
-  closeReason();
-  render();
-  toast("Alkohol");
 }
-document.getElementById("reasonSave").addEventListener("click", ()=>{
-  if (!reasonModal.k) return;
-  saveAlcohol(reasonModal.k, reasonModal.input.value);
-});
-
 function setDayOpen(k){
   const entries = loadEntries();
   if (hasRecord(entries, k)){
     delete entries[k];
     saveEntries(entries);
-    saveMeta(recomputeMeta(entries)); // bounds sauber
+    saveMeta(recomputeMeta(entries));
   }
+}
+
+/* Quick menu actions (edit/backfill) */
+document.getElementById("quickNo").addEventListener("click", ()=>{
+  if (!quick.k) return;
+  setDayNo(quick.k);
+  closeQuick();
+  render();
+  toast("Kein Alkohol");
+});
+document.getElementById("quickYes").addEventListener("click", ()=>{
+  if (!quick.k) return;
+  const k = quick.k;
+  closeQuick();
+  openReason(k); // Anlass optional, Speichern erforderlich
+});
+document.getElementById("quickOpen").addEventListener("click", ()=>{
+  if (!quick.k) return;
+  setDayOpen(quick.k);
   closeQuick();
   render();
   toast("Offen");
-}
+});
 
-document.getElementById("quickNo").addEventListener("click", ()=>{ if (quick.k) setDayNo(quick.k); });
-document.getElementById("quickYes").addEventListener("click", ()=>{ if (quick.k) openReason(quick.k); });
-document.getElementById("quickOpen").addEventListener("click", ()=>{ if (quick.k) setDayOpen(quick.k); });
+/* Reason save */
+document.getElementById("reasonSave").addEventListener("click", ()=>{
+  if (!reasonModal.k) return;
+  saveAlcohol(reasonModal.k, reasonModal.input.value);
+  closeReason();
+  render();
+  toast("Alkohol");
+});
 
-/* Delete */
-const del = {
-  overlay: document.getElementById("modalDelete")
-};
+/* ===== Delete confirm ===== */
+const del = { overlay: document.getElementById("modalDelete") };
 function openDelete(){ openOverlay(del.overlay); }
 function closeDelete(){ closeOverlay(del.overlay); }
-
 del.overlay.addEventListener("click", (e)=>{ if (e.target === del.overlay) closeDelete(); });
 document.getElementById("delCancel").addEventListener("click", closeDelete);
 document.getElementById("delConfirm").addEventListener("click", ()=>{
@@ -774,9 +725,7 @@ document.getElementById("delConfirm").addEventListener("click", ()=>{
   toast("Daten gelöscht");
 });
 
-/* =========================
-   Visibility
-========================= */
+/* ===== Visibility ===== */
 function updateVisibility(){
   const any = hasAnyData();
   document.getElementById("cardHistory").style.display = any ? "" : "none";
@@ -785,9 +734,7 @@ function updateVisibility(){
   document.getElementById("cardStreaks").style.display = any ? "" : "none";
 }
 
-/* =========================
-   Render
-========================= */
+/* ===== Render ===== */
 function render(){
   const entries = loadEntries();
   updateTodayUI(entries);
@@ -801,9 +748,8 @@ function render(){
 
   const meta = loadMeta();
   const trackStart = meta.trackStart || keys[0];
-  const trackEnd = meta.trackEnd || keys[keys.length-1];
+  const trackEnd = meta.trackEnd || keys[keys.length - 1];
 
-  // streaks
   const cur = computeCurrentStreak(entries, trackEnd);
   setText("streakNow", cur.len);
   setText("streakNowSince", cur.len > 0 ? `seit: ${cur.startKey}` : "seit: —");
@@ -812,13 +758,10 @@ function render(){
   setText("streakBest", best.bestLen);
   setText("streakBestRange", best.bestLen > 0 ? `Zeitraum: ${best.bestStart} – ${best.bestEnd}` : "Zeitraum: —");
 
-  // stats
   renderDynamicStats(entries, { trackStart, trackEnd });
 
-  // history last 21 calendar days (open included)
   const hist = document.getElementById("history");
   hist.innerHTML = "";
-
   for (let i = 0; i < APP.HISTORY_DAYS; i++){
     const dt = addDays(new Date(), -i);
     const k = keyFromDate(dt);
@@ -829,11 +772,8 @@ function render(){
 
     let tagClass = "open", tagText = "Offen", reason = "";
     if (hasRecord(entries, k)){
-      if (entries[k].a === 1){
-        tagClass = "yes"; tagText = "Alkohol"; reason = getReason(entries, k);
-      } else {
-        tagClass = "no"; tagText = "Kein Alkohol";
-      }
+      if (entries[k].a === 1){ tagClass = "yes"; tagText = "Alkohol"; reason = getReason(entries, k); }
+      else { tagClass = "no"; tagText = "Kein Alkohol"; }
     }
 
     const left = document.createElement("div");
@@ -846,20 +786,28 @@ function render(){
 
     div.appendChild(left);
     div.appendChild(right);
+
+    // Quick-Menü NUR hier (rückwirkend/bearbeiten)
     div.addEventListener("click", () => openQuick(k));
 
     hist.appendChild(div);
   }
 }
 
-/* =========================
-   Wire up: Buttons & Header Icons
-========================= */
-document.getElementById("btnNo").addEventListener("click", ()=> openQuick(todayKey()));
-document.getElementById("btnYes").addEventListener("click", ()=> openQuick(todayKey()));
-document.getElementById("todayBar").addEventListener("click", ()=> openQuick(todayKey()));
+/* ===== Wire up: Main buttons set directly ===== */
+document.getElementById("btnNo").addEventListener("click", ()=>{
+  const k = todayKey();
+  setDayNo(k);
+  render();
+  toast("Kein Alkohol");
+});
 
-/* Import */
+document.getElementById("btnYes").addEventListener("click", ()=>{
+  // Alkohol für HEUTE -> Anlass optional, Speichern nötig
+  openReason(todayKey());
+});
+
+/* ===== Header icons ===== */
 const fileInput = document.getElementById("fileInput");
 document.getElementById("btnImportIcon").addEventListener("click", ()=>{
   fileInput.value = "";
@@ -868,20 +816,13 @@ document.getElementById("btnImportIcon").addEventListener("click", ()=>{
 fileInput.addEventListener("change", async ()=>{
   const file = fileInput.files && fileInput.files[0];
   if (!file) return;
-  try{
-    importCSVText(await file.text());
-  } catch {
-    toast("Import fehlgeschlagen");
-  }
+  try{ importCSVText(await file.text()); }
+  catch { toast("Import fehlgeschlagen"); }
 });
-
-/* Export */
 document.getElementById("btnExportIcon").addEventListener("click", exportCSV);
-
-/* Delete */
 document.getElementById("btnDeleteIcon").addEventListener("click", openDelete);
 
-/* ESC closes any modal */
+/* ESC closes modals */
 document.addEventListener("keydown", (e)=>{
   if (e.key !== "Escape") return;
   if (quick.overlay.style.display === "flex") closeQuick();
