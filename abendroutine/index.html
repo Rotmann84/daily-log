@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Abendroutine</title>
 
-  <!-- PWA -->
-  <meta name="theme-color" content="#0f2a1f" />
-  <meta name="mobile-web-app-capable" content="yes" />
-
-  <!-- iOS Standalone (keine URL-Leiste nach "Zum Home-Bildschirm") -->
+  <!-- iOS: Standalone (keine URL-Leiste nach "Zum Home-Bildschirm") -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Abendroutine" />
 
-  <link rel="manifest" href="./manifest.webmanifest" />
+  <!-- Android/Chromium: add-to-home-screen hint (optional) -->
+  <meta name="mobile-web-app-capable" content="yes" />
 
-  <!-- Icons (empfohlen) -->
+  <!-- Theme (mostly harmless without manifest) -->
+  <meta name="theme-color" content="#0f2a1f" />
+
+  <!-- Optional: If you add this file in the same folder, iOS uses it as app icon -->
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 
   <style>
@@ -42,9 +42,8 @@
     }
 
     *{ box-sizing:border-box; }
-
-    /* iOS: kein Overscroll-Glow / Rubberband artefacts */
     html, body { height:100%; }
+
     html{
       background:#0f2a1f;
       overscroll-behavior: none;
@@ -52,14 +51,14 @@
     body{
       margin:0;
       min-height:100%;
-      background: transparent; /* wichtig: Background kommt von ::before */
+      background: transparent; /* background comes from ::before */
       color:var(--fg);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior: none;
     }
 
-    /* Fix: Background als fester Layer -> kein "hellgrüner Streifen" */
+    /* Fixed background layer -> prevents iOS bottom "green strip" artifacts */
     body::before{
       content:"";
       position: fixed;
@@ -130,7 +129,7 @@
     }
     .datePill{ color: var(--muted); }
 
-    /* Fix: iOS-sicheres Clipping für Radius (Kalender/Cells ragen nicht raus) */
+    /* iOS-safe clipping for rounded panels */
     .panel{
       background: var(--panel);
       border: 1px solid var(--border);
@@ -350,9 +349,10 @@
       white-space: nowrap;
       user-select:none;
     }
-    .badge.full{ border-color: rgba(214,194,137,0.35); color: rgba(214,194,137,0.90); background: rgba(185,162,106,0.10); }
-    .badge.light{ border-color: rgba(214,194,137,0.25); color: rgba(214,194,137,0.85); background: rgba(185,162,106,0.08); }
-    .badge.bike{ border-color: rgba(54,194,106,0.25); color: rgba(210,248,226,0.95); background: rgba(54,194,106,0.10); cursor:pointer; }
+    /* ICON mode (no text label styling needed, still keeps nice pill) */
+    .badge.full{ border-color: rgba(214,194,137,0.35); color: rgba(214,194,137,0.92); background: rgba(185,162,106,0.10); }
+    .badge.light{ border-color: rgba(214,194,137,0.25); color: rgba(214,194,137,0.90); background: rgba(185,162,106,0.08); }
+    .badge.bike{ border-color: rgba(54,194,106,0.25); color: rgba(210,248,226,0.98); background: rgba(54,194,106,0.10); cursor:pointer; }
 
     /* Dialogs */
     dialog{
@@ -431,6 +431,7 @@
       .squareBtn{ width: min(250px, 92vw); border-radius: 20px; }
       .iconBox{ width:56px; height:56px; border-radius: 16px; }
       .trash{ width:36px; height:36px; }
+      .badge{ padding: 3px 6px; }
     }
   </style>
 </head>
@@ -581,7 +582,7 @@
   <script>
     "use strict";
 
-    const KEY = "abendroutine_square_nav_pwa_v3";
+    const KEY = "abendroutine_singlefile_v1";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -688,6 +689,7 @@
 
     const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : "";
 
+    // Full/Light entry only if exercises exist AND at least one completed today
     const updateTodayModeIfEligible = () => {
       const log = ensureTodayLog();
       const anyExercises = state.exercises.length > 0;
@@ -791,7 +793,7 @@
       $("calTitle").textContent = monthTitle(calCursor);
 
       const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
-      const startDay = (first.getDay() + 6) % 7;
+      const startDay = (first.getDay() + 6) % 7;  // Mo=0
       const totalCells = 42;
       const startDate = new Date(first);
       startDate.setDate(first.getDate() - startDay);
@@ -825,6 +827,7 @@
         const badges = document.createElement("div");
         badges.className = "badges";
 
+        // ICONS (not labels)
         if (hasFull){
           const b = document.createElement("span");
           b.className = "badge full";
@@ -841,6 +844,7 @@
           const b = document.createElement("span");
           b.className = "badge bike";
           b.textContent = "🚴";
+          // tap bike badge to remove
           b.addEventListener("click", (ev) => {
             ev.stopPropagation();
             const lr = ensureLog(key);
@@ -860,6 +864,7 @@
       grid.appendChild(frag);
     };
 
+    // Stats
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
 
@@ -945,6 +950,7 @@
       $("statsDlg").showModal();
     };
 
+    // Exercise dialog
     const dlg = $("dlg");
     const applyGoalTypeUI = () => {
       const t = $("goalType").value;
@@ -964,6 +970,7 @@
       dlg.showModal();
     };
 
+    // Wire
     $("fullBtn").addEventListener("click", () => startWorkout("full"));
     $("lightBtn").addEventListener("click", () => startWorkout("light"));
     $("bikeBtn").addEventListener("click", () => { markBikingToday(); go("calendar"); });
@@ -1028,13 +1035,7 @@
       }
     }, 60 * 1000);
 
-    // SW registration
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
-      });
-    }
-
+    // Init
     $("datePill").textContent = niceDate();
     ensureTodayLog();
     updateTodayModeIfEligible();
