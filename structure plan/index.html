@@ -175,12 +175,12 @@ gap:10px;
 .row{
 
 display:grid;
-grid-template-columns:60px 1fr 36px;
-gap:10px;
+grid-template-columns:auto 1fr 36px;
+gap:12px;
 
 align-items:center;
 
-padding:12px;
+padding:12px 14px;
 
 background:var(--card2);
 border:1px solid var(--line);
@@ -199,13 +199,16 @@ border-color:var(--doneLine);
 
 .timeInput{
 
-width:60px;
+width:auto;
+min-width:54px;
+max-width:58px;
+
 text-align:center;
 
 font-size:13px;
 font-weight:500;
 
-padding:6px 4px;
+padding:6px 6px;
 
 background:rgba(255,255,255,.04);
 border:1px solid rgba(255,255,255,.12);
