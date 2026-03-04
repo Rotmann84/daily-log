@@ -1,39 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Tagesplan</title>
 
 <style>
 
 :root{
---bg:#0b1320;
---card:#111c2e;
---card2:#16243c;
---text:#eaf2ff;
---muted:rgba(234,242,255,.75);
---line:rgba(234,242,255,.15);
---accent:#4da3ff;
---accentSoft:rgba(77,163,255,.2);
---shadow:0 10px 30px rgba(0,0,0,.35);
---radius:18px;
+--bg:#0c1424;
+--card:#121d33;
+--line:rgba(255,255,255,.1);
+--text:#e8f0ff;
+--accent:#3f8cff;
+--accentSoft:rgba(63,140,255,.25);
+--radius:16px;
 }
-
-*{box-sizing:border-box}
 
 body{
 margin:0;
-font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-background:
-radial-gradient(1000px 600px at 10% -10%,rgba(77,163,255,.25),transparent),
-radial-gradient(900px 500px at 100% 0%,rgba(77,163,255,.15),transparent),
-var(--bg);
+font-family:system-ui,-apple-system,Segoe UI,Roboto;
+background:radial-gradient(circle at 20% -10%,rgba(63,140,255,.25),transparent),var(--bg);
 color:var(--text);
 display:flex;
 justify-content:center;
 padding:20px;
-min-height:100vh;
 }
 
 .app{
@@ -43,14 +36,11 @@ flex-direction:column;
 gap:16px;
 }
 
-/* Header */
-
 .header{
-background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-border:1px solid var(--line);
-border-radius:var(--radius);
+background:var(--card);
 padding:16px;
-box-shadow:var(--shadow);
+border-radius:var(--radius);
+border:1px solid var(--line);
 }
 
 .titleRow{
@@ -67,25 +57,27 @@ font-size:22px;
 
 .date{
 font-size:14px;
-color:var(--muted);
+opacity:.8;
 }
 
-.progressWrap{
-background:rgba(0,0,0,.25);
-border:1px solid var(--line);
-height:14px;
-border-radius:999px;
+.progressBarWrap{
+background:#0b1220;
+border-radius:20px;
 overflow:hidden;
+height:12px;
 }
 
 .progressBar{
 height:100%;
 width:0%;
-background:linear-gradient(90deg,#4da3ff,#7cc4ff);
-transition:width .2s;
+background:linear-gradient(90deg,#3f8cff,#66a9ff);
 }
 
-/* Buttons */
+.progressText{
+margin-top:6px;
+font-size:12px;
+opacity:.7;
+}
 
 .controls{
 display:flex;
@@ -93,37 +85,25 @@ gap:10px;
 }
 
 button{
-border:1px solid var(--line);
-background:rgba(255,255,255,.05);
-color:var(--text);
-padding:10px 14px;
-border-radius:14px;
-cursor:pointer;
-font-size:14px;
-}
-
-button:hover{
-background:rgba(255,255,255,.08);
-}
-
-.btnPrimary{
 background:var(--accentSoft);
-border-color:rgba(77,163,255,.35);
+border:1px solid var(--accent);
+color:var(--text);
+padding:8px 14px;
+border-radius:12px;
+cursor:pointer;
 }
-
-/* Rows */
 
 .card{
-border:1px solid var(--line);
-border-radius:var(--radius);
+background:var(--card);
 padding:12px;
-background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+border-radius:var(--radius);
+border:1px solid var(--line);
 }
 
 .rows{
 display:flex;
 flex-direction:column;
-gap:10px;
+gap:8px;
 }
 
 .row{
@@ -132,40 +112,33 @@ grid-template-columns:30px 110px 1fr 60px 40px;
 gap:10px;
 align-items:center;
 padding:10px;
-background:rgba(0,0,0,.2);
+border-radius:12px;
+background:#0f182a;
 border:1px solid var(--line);
-border-radius:14px;
 }
 
 .row.done{
-background:rgba(77,163,255,.15);
+background:rgba(63,140,255,.15);
 }
 
 .drag{
 cursor:grab;
-text-align:center;
 font-size:18px;
+text-align:center;
 }
 
-input[type="text"],
-input[type="time"]{
-width:100%;
-background:rgba(255,255,255,.05);
+input{
+background:#0c1424;
 border:1px solid var(--line);
 color:var(--text);
-border-radius:10px;
-padding:8px;
-}
-
-.check{
-display:flex;
-justify-content:center;
+border-radius:8px;
+padding:6px;
 }
 
 input[type="checkbox"]{
-width:28px;
-height:28px;
-accent-color:#4da3ff;
+width:26px;
+height:26px;
+accent-color:var(--accent);
 cursor:pointer;
 }
 
@@ -180,10 +153,10 @@ position:fixed;
 bottom:20px;
 left:50%;
 transform:translateX(-50%);
-background:#0f1c30;
+background:#121d33;
 border:1px solid var(--line);
 padding:12px 18px;
-border-radius:14px;
+border-radius:12px;
 opacity:0;
 transition:.2s;
 }
@@ -193,25 +166,29 @@ opacity:1;
 }
 
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="app">
 
 <div class="header">
+
 <div class="titleRow">
 <h1>Tagesplan</h1>
 <div class="date" id="date"></div>
 </div>
 
-<div class="progressWrap">
-<div class="progressBar" id="progress"></div>
+<div class="progressBarWrap">
+<div class="progressBar" id="progressBar"></div>
 </div>
+
+<div class="progressText" id="progressText">0 / 0 erledigt</div>
+
 </div>
 
 <div class="controls">
-<button class="btnPrimary" onclick="addRow()">+ Zeile</button>
+<button onclick="addRow()">+ Zeile</button>
 <button onclick="clearPlan()">Reset</button>
 </div>
 
@@ -221,17 +198,23 @@ opacity:1;
 
 </div>
 
-<div class="toast" id="toast">🎉 Du hast es geschafft.</div>
+<div class="toast" id="toast">🎉 Du hast alles geschafft.</div>
 
 <script>
 
-const rowsEl = document.getElementById("rows")
-const progress = document.getElementById("progress")
-const toast = document.getElementById("toast")
+const rows=document.getElementById("rows")
+const progressBar=document.getElementById("progressBar")
+const progressText=document.getElementById("progressText")
+const toast=document.getElementById("toast")
 
-const key = "dayplan"
+function todayKey(){
+let d=new Date()
+return "plan-"+d.toISOString().split("T")[0]
+}
 
-let items = JSON.parse(localStorage.getItem(key) || "[]")
+let key=todayKey()
+
+let items=JSON.parse(localStorage.getItem(key)||"[]")
 
 function save(){
 localStorage.setItem(key,JSON.stringify(items))
@@ -239,27 +222,27 @@ localStorage.setItem(key,JSON.stringify(items))
 
 function render(){
 
-rowsEl.innerHTML=""
+rows.innerHTML=""
 
 items.forEach((item,i)=>{
 
-const row=document.createElement("div")
+let row=document.createElement("div")
 row.className="row"+(item.done?" done":"")
 
 row.draggable=true
 
 row.innerHTML=`
 <div class="drag">≡</div>
-<input type="time" value="${item.time||""}">
-<input type="text" value="${item.task||""}" placeholder="Tätigkeit">
-<div class="check"><input type="checkbox" ${item.done?"checked":""}></div>
+<input type="time" value="${item.time}">
+<input type="text" value="${item.task}" placeholder="Tätigkeit">
+<input type="checkbox" ${item.done?"checked":""}>
 <div class="del">✕</div>
 `
 
-const time=row.children[1]
-const task=row.children[2]
-const check=row.querySelector("input[type=checkbox]")
-const del=row.children[4]
+let time=row.children[1]
+let task=row.children[2]
+let check=row.children[3]
+let del=row.children[4]
 
 time.oninput=()=>{item.time=time.value;save()}
 task.oninput=()=>{item.task=task.value;save()}
@@ -275,16 +258,13 @@ del.onclick=()=>{
 items.splice(i,1)
 save()
 render()
-updateProgress()
 }
 
 row.ondragstart=e=>{
 e.dataTransfer.setData("index",i)
 }
 
-row.ondragover=e=>{
-e.preventDefault()
-}
+row.ondragover=e=>e.preventDefault()
 
 row.ondrop=e=>{
 let from=e.dataTransfer.getData("index")
@@ -294,7 +274,7 @@ save()
 render()
 }
 
-rowsEl.appendChild(row)
+rows.appendChild(row)
 
 })
 
@@ -319,8 +299,9 @@ function updateProgress(){
 let total=items.length
 let done=items.filter(i=>i.done).length
 
-let pct=total?done/total*100:0
-progress.style.width=pct+"%"
+progressBar.style.width=(total?done/total*100:0)+"%"
+
+progressText.innerText=`${done} / ${total} erledigt`
 
 if(total>0 && done===total){
 toast.classList.add("show")
@@ -331,25 +312,26 @@ setTimeout(()=>toast.classList.remove("show"),2000)
 
 function setDate(){
 let d=new Date()
-document.getElementById("date").innerText=d.toLocaleDateString("de-DE",{
-weekday:"short",
-day:"2-digit",
-month:"2-digit",
-year:"numeric"
-})
+document.getElementById("date").innerText=
+d.toLocaleDateString("de-DE",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"})
 }
 
 setDate()
 
-/* Reset um Mitternacht */
+/* Tageswechsel automatisch erkennen */
 
 setInterval(()=>{
-let now=new Date()
-if(now.getHours()===0 && now.getMinutes()===0){
-localStorage.removeItem(key)
+
+let newKey=todayKey()
+
+if(newKey!==key){
+
+key=newKey
 items=[]
 render()
+
 }
+
 },60000)
 
 render()
