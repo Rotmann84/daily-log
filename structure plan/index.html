@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#0c1424" />
   <title>Tagesplan</title>
+
   <style>
     :root{
       --bg:#0c1424;
@@ -13,10 +14,18 @@
       --line:rgba(255,255,255,.10);
       --text:#e8f0ff;
       --muted:rgba(232,240,255,.72);
+
       --accent:#3f8cff;
       --accentSoft:rgba(63,140,255,.22);
+
+      /* DONE = grün (wie gewünscht) */
+      --done:#39d98a;
+      --doneSoft:rgba(57,217,138,.18);
+      --doneLine:rgba(57,217,138,.28);
+
       --danger:#ff6b6b;
       --dangerSoft:rgba(255,107,107,.14);
+
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:16px;
     }
@@ -55,7 +64,7 @@
 
     .titleRow{
       display:flex;
-      align-items:center;
+      align-items:baseline;
       justify-content:space-between;
       gap:10px;
       margin-bottom:10px;
@@ -121,7 +130,6 @@
       transition: background .15s ease, transform .05s ease, border-color .15s ease;
       user-select:none;
     }
-
     button:hover{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.16); }
     button:active{ transform:translateY(1px); }
 
@@ -129,9 +137,15 @@
       background:var(--accentSoft);
       border-color:rgba(63,140,255,.35);
     }
-    .btnDanger{
-      background:rgba(255,255,255,.05);
-      border-color:rgba(255,255,255,.10);
+
+    .btnGhost{
+      background:transparent;
+      border-color:rgba(255,255,255,.12);
+      color:var(--muted);
+    }
+    .btnGhost:hover{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
     }
 
     /* Card + rows */
@@ -149,25 +163,36 @@
       gap:10px;
     }
 
+    /* Row layout: time small, title big, trash */
     .row{
       display:grid;
-      grid-template-columns: 120px 1fr 44px;
+      grid-template-columns: 96px 1fr 44px;
       gap:10px;
       align-items:center;
-      padding:10px;
-      border-radius:14px;
+      padding:12px 12px;
+      border-radius:16px;
       background:var(--card2);
       border:1px solid var(--line);
       min-height:56px;
+      cursor:pointer;
+      transition: background .12s ease, border-color .12s ease, transform .05s ease;
     }
+    .row:active{ transform:translateY(1px); }
 
     .row.done{
-      background:rgba(63,140,255,.14);
-      border-color:rgba(63,140,255,.22);
+      background:var(--doneSoft);
+      border-color:var(--doneLine);
     }
 
-    /* Inputs */
-    .timeInput, .titleInput{
+    /* “Input, aber clean”: keine harten Kanten, wirkt wie Text */
+    .timeWrap{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      min-width:0;
+    }
+
+    .timeInput{
       width:100%;
       background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.10);
@@ -175,15 +200,35 @@
       color:var(--text);
       outline:none;
       font-size:14px;
-      padding:10px 12px;
-    }
-
-    .timeInput{
+      padding:10px 10px;
       font-variant-numeric: tabular-nums;
+      cursor:text;
     }
 
+    .timeSuffix{
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    .titleInput{
+      width:100%;
+      background:transparent;
+      border:1px solid transparent;
+      border-radius:12px;
+      color:var(--text);
+      outline:none;
+      font-size:15px;
+      padding:10px 10px;
+      cursor:text;
+    }
     .titleInput::placeholder{
       color: rgba(232,240,255,.55);
+    }
+
+    .row.done .titleInput{
+      color: rgba(232,240,255,.95);
     }
 
     /* Trash */
@@ -196,7 +241,7 @@
       cursor:pointer;
       user-select:none;
       border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,107,107,.12);
+      background:var(--dangerSoft);
       transition: background .15s ease, border-color .15s ease, transform .05s ease;
       font-size:18px;
       line-height:1;
@@ -222,15 +267,15 @@
       pointer-events:none;
       transition: opacity .18s ease, transform .18s ease;
       max-width:min(720px, calc(100% - 24px));
+      color:var(--text);
     }
     .toast.show{
       opacity:1;
       transform:translateX(-50%) translateY(-2px);
     }
 
-    /* Responsive */
     @media (max-width:520px){
-      .row{ grid-template-columns: 110px 1fr 44px; }
+      .row{ grid-template-columns: 92px 1fr 44px; }
       h1{ font-size:20px; }
     }
   </style>
@@ -246,7 +291,7 @@
 
       <div class="progressTopRow">
         <div class="progressLabel" id="progressText">0 / 0 erledigt</div>
-        <div class="progressLabel" id="dateAboveProgress"></div>
+        <div class="progressLabel" id="hintText">Tippen auf Zeile = erledigt</div>
       </div>
 
       <div class="progressWrap" aria-label="Fortschritt">
@@ -256,7 +301,7 @@
 
     <div class="controls">
       <button class="btnPrimary" id="addBtn">+ Zeile</button>
-      <button class="btnDanger" id="resetBtn" title="Plan für heute löschen">Reset</button>
+      <button class="btnGhost" id="resetBtn" title="Plan für heute löschen">Reset</button>
     </div>
 
     <div class="card">
@@ -271,9 +316,8 @@
   const rowsEl = document.getElementById("rows");
   const progressBar = document.getElementById("progressBar");
   const progressText = document.getElementById("progressText");
-  const toast = document.getElementById("toast");
   const dateText = document.getElementById("dateText");
-  const dateAboveProgress = document.getElementById("dateAboveProgress");
+  const toast = document.getElementById("toast");
 
   // --- Date + keys ---
   const pad2 = (n) => String(n).padStart(2, "0");
@@ -314,9 +358,7 @@
     }
   };
 
-  const save = () => {
-    try{ localStorage.setItem(key, JSON.stringify(items)); }catch{}
-  };
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(items)); } catch {} };
 
   let saveTimer = null;
   const saveSoon = () => {
@@ -324,9 +366,41 @@
     saveTimer = setTimeout(save, 120);
   };
 
-  // --- Sorting ---
+  // --- Time helpers ---
+  const normalizeTime = (val) => {
+    if (!val) return "";
+    const s = String(val).trim();
+
+    // Accept "9", "930", "9:3", "09:30", "9.30" etc.
+    const digits = s.replace(/[^\d]/g, "");
+    if (digits.length === 1 || digits.length === 2) {
+      const hh = Number(digits);
+      if (Number.isFinite(hh) && hh >= 0 && hh <= 23) return `${pad2(hh)}:00`;
+      return "";
+    }
+    if (digits.length === 3) {
+      const hh = Number(digits.slice(0,1));
+      const mm = Number(digits.slice(1));
+      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
+      return "";
+    }
+    if (digits.length >= 4) {
+      const hh = Number(digits.slice(0,2));
+      const mm = Number(digits.slice(2,4));
+      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
+      return "";
+    }
+
+    const m = /^(\d{1,2}):(\d{1,2})$/.exec(s);
+    if (m) {
+      const hh = Number(m[1]);
+      const mm = Number(m[2]);
+      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
+    }
+    return "";
+  };
+
   const timeToMinutes = (t) => {
-    // expects "HH:MM" (24h). Return Infinity if empty/invalid so empties float to bottom.
     if (!t || typeof t !== "string") return Infinity;
     const m = /^(\d{2}):(\d{2})$/.exec(t.trim());
     if (!m) return Infinity;
@@ -337,7 +411,7 @@
   };
 
   const sortByTime = () => {
-    // Stable sort: keep relative order for equal times via original index
+    // stable sort
     items = items
       .map((it, idx) => ({...it, _idx: idx}))
       .sort((a,b) => {
@@ -347,6 +421,15 @@
         return a._idx - b._idx;
       })
       .map(({_idx, ...rest}) => rest);
+  };
+
+  const nextQuarterTime = () => {
+    const d = new Date();
+    const m = d.getMinutes();
+    const q = Math.ceil((m + 1) / 15) * 15; // next quarter (or same if exactly on boundary +1)
+    d.setMinutes(q, 0, 0);
+    // if q became 60, Date will roll hour automatically
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
   };
 
   // --- UI helpers ---
@@ -381,12 +464,23 @@
       row.className = "row" + (it.done ? " done" : "");
       row.dataset.id = it.id;
 
+      // Time block (input + "Uhr")
+      const timeWrap = document.createElement("div");
+      timeWrap.className = "timeWrap";
+
       const time = document.createElement("input");
       time.className = "timeInput";
       time.type = "text";
       time.inputMode = "numeric";
       time.placeholder = "hh:mm";
       time.value = it.time || "";
+
+      const suffix = document.createElement("span");
+      suffix.className = "timeSuffix";
+      suffix.textContent = "Uhr";
+
+      timeWrap.appendChild(time);
+      timeWrap.appendChild(suffix);
 
       const title = document.createElement("input");
       title.className = "titleInput";
@@ -399,9 +493,25 @@
       trash.title = "Zeile löschen";
       trash.textContent = "🗑";
 
-      // interactions
+      // Toggle done on row click (but NOT when clicking inputs or trash)
+      row.addEventListener("click", (e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.closest(".trashBtn")) return;
+        if (target.closest("input")) return;
+
+        it.done = !it.done;
+        row.classList.toggle("done", it.done);
+        saveSoon();
+        updateProgress();
+      });
+
+      // Keep inputs usable without toggling done
+      time.addEventListener("click", (e) => e.stopPropagation());
+      title.addEventListener("click", (e) => e.stopPropagation());
+      trash.addEventListener("click", (e) => e.stopPropagation());
+
       time.addEventListener("input", () => {
-        // allow free typing; normalize on blur
         it.time = time.value;
         saveSoon();
       });
@@ -413,7 +523,6 @@
         sortByTime();
         saveSoon();
         render();
-        updateProgress();
       });
 
       title.addEventListener("input", () => {
@@ -421,80 +530,33 @@
         saveSoon();
       });
 
-      // toggle done: click row background? keep simple: double click on title toggles
-      title.addEventListener("dblclick", () => {
-        it.done = !it.done;
-        row.classList.toggle("done", it.done);
-        saveSoon();
-        updateProgress();
-      });
-
       trash.addEventListener("click", () => {
         items = items.filter(x => x.id !== it.id);
         saveSoon();
         render();
-        updateProgress();
       });
 
-      row.appendChild(time);
+      row.appendChild(timeWrap);
       row.appendChild(title);
       row.appendChild(trash);
-
       rowsEl.appendChild(row);
     }
 
     updateProgress();
   };
 
-  // --- Time format hh:mm ---
-  const normalizeTime = (val) => {
-    if (!val) return "";
-    const s = String(val).trim();
-
-    // Accept "9", "930", "9:3", "09:30", "9.30" etc.
-    const digits = s.replace(/[^\d]/g, "");
-    if (digits.length === 1 || digits.length === 2) {
-      // "9" or "09" -> 09:00
-      const hh = Number(digits);
-      if (Number.isFinite(hh) && hh >= 0 && hh <= 23) return `${pad2(hh)}:00`;
-      return "";
-    }
-    if (digits.length === 3) {
-      // "930" -> 09:30
-      const hh = Number(digits.slice(0,1));
-      const mm = Number(digits.slice(1));
-      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
-      return "";
-    }
-    if (digits.length >= 4) {
-      const hh = Number(digits.slice(0,2));
-      const mm = Number(digits.slice(2,4));
-      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
-      return "";
-    }
-    // Fallback for already "HH:MM"
-    const m = /^(\d{1,2}):(\d{1,2})$/.exec(s);
-    if (m) {
-      const hh = Number(m[1]);
-      const mm = Number(m[2]);
-      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
-    }
-    return "";
-  };
-
   // --- Actions ---
   const addRow = () => {
-    items.push({ id: crypto.randomUUID(), time: "", title: "", done: false });
-    // sort AFTER add (empties will go to bottom)
+    const t = nextQuarterTime();
+    items.push({ id: crypto.randomUUID(), time: t, title: "", done: false });
     sortByTime();
     saveSoon();
     render();
 
-    // focus new (last empty) title
-    const all = Array.from(rowsEl.querySelectorAll(".row"));
-    const idx = all.length - 1;
-    const titleInput = all[idx]?.querySelector(".titleInput");
-    titleInput?.focus();
+    // focus the title of the newly added row with that time (best-effort)
+    // (pick last matching id in DOM)
+    const lastRow = rowsEl.querySelector(`.row[data-id="${items.find(x=>x.time===t && x.title==="" && !x.done)?.id || ""}"]`);
+    lastRow?.querySelector(".titleInput")?.focus();
   };
 
   const resetToday = () => {
@@ -505,7 +567,7 @@
     render();
   };
 
-  // --- Day rollover reset ---
+  // --- Day rollover reset (00:00) ---
   const ensureTodayKey = () => {
     const newKey = storageKeyForToday();
     if (newKey !== key) {
@@ -523,12 +585,12 @@
     const ms = next.getTime() - now.getTime();
 
     setTimeout(() => {
-      ensureTodayKey(); // swaps key, clears UI
-      scheduleMidnightReset(); // schedule next
+      ensureTodayKey();
+      scheduleMidnightReset();
     }, ms + 50);
   };
 
-  // keyboard: Enter in title adds new row
+  // Keyboard: Enter in title -> add row
   rowsEl.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
     const el = e.target;
@@ -540,20 +602,15 @@
   });
 
   // --- Init ---
-  const d = formatDateDE();
-  dateText.textContent = d;
-  dateAboveProgress.textContent = d;
-
+  dateText.textContent = formatDateDE();
   items = load();
   sortByTime();
   render();
   scheduleMidnightReset();
+  setInterval(ensureTodayKey, 60 * 1000);
 
   document.getElementById("addBtn").addEventListener("click", addRow);
   document.getElementById("resetBtn").addEventListener("click", resetToday);
-
-  // also handle tab-left-open all day
-  setInterval(ensureTodayKey, 60 * 1000);
 
 })();
 </script>
