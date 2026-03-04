@@ -1,582 +1,360 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0b2b1a" />
-  <title>Tagesplan</title>
-  <style>
-    :root{
-      --bg:#0b2b1a;
-      --card:#0f3a23;
-      --card2:#114529;
-      --text:#e9fff0;
-      --muted:rgba(233,255,240,.75);
-      --line:rgba(233,255,240,.18);
-      --accent:#55d17c;
-      --danger:#ff6b6b;
-      --shadow: 0 10px 30px rgba(0,0,0,.25);
-      --radius: 18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(85,209,124,.25), transparent 60%),
-                  radial-gradient(900px 500px at 100% 10%, rgba(85,209,124,.12), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      padding:18px;
-    }
-    .app{
-      width:min(980px, 100%);
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tagesplan</title>
 
-    /* Header */
-    .header{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      padding:16px 16px 14px;
-      box-shadow: var(--shadow);
-    }
-    .titleRow{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:12px;
-    }
-    h1{
-      font-size: 22px;
-      margin:0;
-      letter-spacing:.2px;
-    }
-    .date{
-      font-size:14px;
-      color:var(--muted);
-      white-space:nowrap;
-      user-select:none;
-    }
-    .progressRow{
-      margin-top:10px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .progressWrap{
-      flex:1;
-      background: rgba(0,0,0,.25);
-      border:1px solid var(--line);
-      border-radius: 999px;
-      height:14px;
-      overflow:hidden;
-    }
-    .progressBar{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, rgba(85,209,124,.75), rgba(85,209,124,1));
-      transition: width .18s ease;
-    }
-    .progressText{
-      font-size:13px;
-      color:var(--muted);
-      min-width:92px;
-      text-align:right;
-      user-select:none;
-    }
+<style>
 
-    /* Controls */
-    .controls{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    button{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      border-radius: 14px;
-      padding:10px 12px;
-      font-size:14px;
-      cursor:pointer;
-      transition: transform .05s ease, background .15s ease, border-color .15s ease;
-      user-select:none;
-    }
-    button:hover{ background: rgba(255,255,255,.09); border-color: rgba(233,255,240,.28); }
-    button:active{ transform: translateY(1px); }
-    .btnPrimary{
-      background: rgba(85,209,124,.18);
-      border-color: rgba(85,209,124,.35);
-    }
-    .btnDanger{
-      background: rgba(255,107,107,.14);
-      border-color: rgba(255,107,107,.28);
-    }
+:root{
+--bg:#0b1320;
+--card:#111c2e;
+--card2:#16243c;
+--text:#eaf2ff;
+--muted:rgba(234,242,255,.75);
+--line:rgba(234,242,255,.15);
+--accent:#4da3ff;
+--accentSoft:rgba(77,163,255,.2);
+--shadow:0 10px 30px rgba(0,0,0,.35);
+--radius:18px;
+}
 
-    /* Table/Card */
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      padding:12px;
-      box-shadow: var(--shadow);
-    }
+*{box-sizing:border-box}
 
-    .rows{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
+body{
+margin:0;
+font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+background:
+radial-gradient(1000px 600px at 10% -10%,rgba(77,163,255,.25),transparent),
+radial-gradient(900px 500px at 100% 0%,rgba(77,163,255,.15),transparent),
+var(--bg);
+color:var(--text);
+display:flex;
+justify-content:center;
+padding:20px;
+min-height:100vh;
+}
 
-    .row{
-      display:grid;
-      grid-template-columns: 34px 110px 1fr 66px 40px;
-      gap:10px;
-      align-items:center;
-      background: rgba(0,0,0,.18);
-      border:1px solid rgba(233,255,240,.14);
-      border-radius: 16px;
-      padding:10px 10px;
-      min-height:56px;
-    }
-    .row.done{
-      background: rgba(85,209,124,.16);
-      border-color: rgba(85,209,124,.28);
-    }
-    .row.dragOver{
-      outline: 2px dashed rgba(85,209,124,.75);
-      outline-offset: 3px;
-    }
+.app{
+width:min(900px,100%);
+display:flex;
+flex-direction:column;
+gap:16px;
+}
 
-    .dragHandle{
-      width:34px;
-      height:34px;
-      display:grid;
-      place-items:center;
-      border-radius: 12px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(233,255,240,.14);
-      cursor: grab;
-      user-select:none;
-      font-size:18px;
-      line-height:1;
-      opacity:.9;
-    }
-    .dragHandle:active{ cursor: grabbing; }
+/* Header */
 
-    input[type="time"], input[type="text"]{
-      width:100%;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(233,255,240,.18);
-      border-radius: 12px;
-      padding:10px 10px;
-      color:var(--text);
-      outline:none;
-      font-size:14px;
-    }
-    input[type="text"]::placeholder{ color: rgba(233,255,240,.55); }
-    input[type="time"]{
-      padding:9px 10px;
-    }
+.header{
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+border:1px solid var(--line);
+border-radius:var(--radius);
+padding:16px;
+box-shadow:var(--shadow);
+}
 
-    /* Big checkbox */
-    .checkWrap{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
-    input[type="checkbox"]{
-      width:30px;
-      height:30px;
-      accent-color: var(--accent);
-      cursor:pointer;
-    }
+.titleRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
 
-    .delBtn{
-      width:40px;
-      height:40px;
-      border-radius: 14px;
-      display:grid;
-      place-items:center;
-      background: rgba(255,107,107,.12);
-      border:1px solid rgba(255,107,107,.24);
-      cursor:pointer;
-      user-select:none;
-    }
-    .delBtn:hover{ background: rgba(255,107,107,.18); border-color: rgba(255,107,107,.35); }
-    .delBtn:active{ transform: translateY(1px); }
+h1{
+margin:0;
+font-size:22px;
+}
 
-    .hint{
-      margin:10px 2px 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
+.date{
+font-size:14px;
+color:var(--muted);
+}
 
-    /* Toast */
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,.72);
-      border: 1px solid rgba(233,255,240,.22);
-      color: var(--text);
-      padding: 12px 14px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      max-width: min(680px, calc(100% - 24px));
-    }
-    .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(-2px);
-    }
-    .toastIcon{
-      width:28px;
-      height:28px;
-      border-radius: 12px;
-      background: rgba(85,209,124,.2);
-      border: 1px solid rgba(85,209,124,.35);
-      display:grid;
-      place-items:center;
-      font-size: 16px;
-      flex: 0 0 auto;
-    }
-    .toastText{
-      font-size: 14px;
-      color: rgba(233,255,240,.92);
-    }
+.progressWrap{
+background:rgba(0,0,0,.25);
+border:1px solid var(--line);
+height:14px;
+border-radius:999px;
+overflow:hidden;
+}
 
-    /* Responsive */
-    @media (max-width: 720px){
-      .row{
-        grid-template-columns: 34px 98px 1fr 60px 40px;
-      }
-    }
-    @media (max-width: 520px){
-      h1{ font-size: 20px; }
-      .row{
-        grid-template-columns: 34px 1fr 66px 40px;
-        grid-template-areas:
-          "drag task check del"
-          "drag time check del";
-      }
-      .dragHandle{ grid-area: drag; }
-      .taskInput{ grid-area: task; }
-      .timeInput{ grid-area: time; }
-      .checkWrap{ grid-area: check; }
-      .delBtn{ grid-area: del; }
-    }
-  </style>
+.progressBar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#4da3ff,#7cc4ff);
+transition:width .2s;
+}
+
+/* Buttons */
+
+.controls{
+display:flex;
+gap:10px;
+}
+
+button{
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+color:var(--text);
+padding:10px 14px;
+border-radius:14px;
+cursor:pointer;
+font-size:14px;
+}
+
+button:hover{
+background:rgba(255,255,255,.08);
+}
+
+.btnPrimary{
+background:var(--accentSoft);
+border-color:rgba(77,163,255,.35);
+}
+
+/* Rows */
+
+.card{
+border:1px solid var(--line);
+border-radius:var(--radius);
+padding:12px;
+background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+}
+
+.rows{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.row{
+display:grid;
+grid-template-columns:30px 110px 1fr 60px 40px;
+gap:10px;
+align-items:center;
+padding:10px;
+background:rgba(0,0,0,.2);
+border:1px solid var(--line);
+border-radius:14px;
+}
+
+.row.done{
+background:rgba(77,163,255,.15);
+}
+
+.drag{
+cursor:grab;
+text-align:center;
+font-size:18px;
+}
+
+input[type="text"],
+input[type="time"]{
+width:100%;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+color:var(--text);
+border-radius:10px;
+padding:8px;
+}
+
+.check{
+display:flex;
+justify-content:center;
+}
+
+input[type="checkbox"]{
+width:28px;
+height:28px;
+accent-color:#4da3ff;
+cursor:pointer;
+}
+
+.del{
+cursor:pointer;
+text-align:center;
+font-size:18px;
+}
+
+.toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#0f1c30;
+border:1px solid var(--line);
+padding:12px 18px;
+border-radius:14px;
+opacity:0;
+transition:.2s;
+}
+
+.toast.show{
+opacity:1;
+}
+
+</style>
 </head>
 
 <body>
-  <div class="app">
-    <div class="header">
-      <div class="titleRow">
-        <h1>Tagesplan</h1>
-        <div class="date" id="dateText"></div>
-      </div>
-      <div class="progressRow">
-        <div class="progressWrap" aria-label="Fortschritt">
-          <div class="progressBar" id="progressBar"></div>
-        </div>
-        <div class="progressText" id="progressText">0 / 0</div>
-      </div>
-    </div>
 
-    <div class="controls">
-      <button class="btnPrimary" id="addRowBtn">+ Zeile hinzufügen</button>
-      <button class="btnDanger" id="clearBtn" title="Alles löschen">Heute löschen</button>
-    </div>
+<div class="app">
 
-    <div class="card">
-      <div class="rows" id="rows"></div>
-      <div class="hint">Tipp: Ziehen &amp; Ablegen am Griff (≡), große Haken zum schnellen Abhaken.</div>
-    </div>
-  </div>
+<div class="header">
+<div class="titleRow">
+<h1>Tagesplan</h1>
+<div class="date" id="date"></div>
+</div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite">
-    <div class="toastIcon">✓</div>
-    <div class="toastText" id="toastText">Du hast es geschafft.</div>
-  </div>
+<div class="progressWrap">
+<div class="progressBar" id="progress"></div>
+</div>
+</div>
+
+<div class="controls">
+<button class="btnPrimary" onclick="addRow()">+ Zeile</button>
+<button onclick="clearPlan()">Reset</button>
+</div>
+
+<div class="card">
+<div class="rows" id="rows"></div>
+</div>
+
+</div>
+
+<div class="toast" id="toast">🎉 Du hast es geschafft.</div>
 
 <script>
-(() => {
-  // ----- Helpers -----
-  const $ = (sel) => document.querySelector(sel);
-  const rowsEl = $("#rows");
-  const progressBar = $("#progressBar");
-  const progressText = $("#progressText");
-  const dateText = $("#dateText");
-  const toast = $("#toast");
-  const toastText = $("#toastText");
 
-  const pad2 = (n) => String(n).padStart(2, "0");
-  const todayKey = () => {
-    const d = new Date();
-    // local date key YYYY-MM-DD
-    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-  };
-  const storageKey = () => `dayplan-${todayKey()}`;
+const rowsEl = document.getElementById("rows")
+const progress = document.getElementById("progress")
+const toast = document.getElementById("toast")
 
-  const formatDateDE = () => {
-    const d = new Date();
-    return d.toLocaleDateString("de-DE", { weekday:"short", year:"numeric", month:"2-digit", day:"2-digit" });
-  };
+const key = "dayplan"
 
-  // ----- State -----
-  /** @type {{id:string,time:string,task:string,done:boolean}[]} */
-  let items = [];
-  let dragSrcId = null;
-  let completedToastShown = false;
+let items = JSON.parse(localStorage.getItem(key) || "[]")
 
-  // ----- Storage -----
-  const load = () => {
-    try {
-      const raw = localStorage.getItem(storageKey());
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return [];
-      return parsed
-        .filter(x => x && typeof x === "object")
-        .map(x => ({
-          id: String(x.id || crypto.randomUUID()),
-          time: typeof x.time === "string" ? x.time : "",
-          task: typeof x.task === "string" ? x.task : "",
-          done: Boolean(x.done),
-        }));
-    } catch {
-      return [];
-    }
-  };
+function save(){
+localStorage.setItem(key,JSON.stringify(items))
+}
 
-  const save = () => {
-    try {
-      localStorage.setItem(storageKey(), JSON.stringify(items));
-    } catch {
-      // ignore quota errors for now
-    }
-  };
+function render(){
 
-  // Simple debounce to avoid saving on every keystroke too aggressively
-  let saveTimer = null;
-  const saveSoon = () => {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(save, 120);
-  };
+rowsEl.innerHTML=""
 
-  // ----- UI -----
-  const showToast = (msg) => {
-    toastText.textContent = msg;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2200);
-  };
+items.forEach((item,i)=>{
 
-  const updateProgress = () => {
-    const total = items.length;
-    const done = items.filter(x => x.done).length;
+const row=document.createElement("div")
+row.className="row"+(item.done?" done":"")
 
-    progressText.textContent = `${done} / ${total}`;
-    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-    progressBar.style.width = `${pct}%`;
+row.draggable=true
 
-    // Motivation only when fully checked AND there is at least 1 item
-    if (total > 0 && done === total) {
-      if (!completedToastShown) {
-        completedToastShown = true;
-        showToast("🎉 Du hast es geschafft.");
-      }
-    } else {
-      completedToastShown = false;
-    }
-  };
+row.innerHTML=`
+<div class="drag">≡</div>
+<input type="time" value="${item.time||""}">
+<input type="text" value="${item.task||""}" placeholder="Tätigkeit">
+<div class="check"><input type="checkbox" ${item.done?"checked":""}></div>
+<div class="del">✕</div>
+`
 
-  const render = () => {
-    rowsEl.innerHTML = "";
+const time=row.children[1]
+const task=row.children[2]
+const check=row.querySelector("input[type=checkbox]")
+const del=row.children[4]
 
-    for (const it of items) {
-      const row = document.createElement("div");
-      row.className = "row" + (it.done ? " done" : "");
-      row.draggable = true;
-      row.dataset.id = it.id;
+time.oninput=()=>{item.time=time.value;save()}
+task.oninput=()=>{item.task=task.value;save()}
 
-      // Drag handle
-      const drag = document.createElement("div");
-      drag.className = "dragHandle";
-      drag.title = "Ziehen zum Sortieren";
-      drag.textContent = "≡";
+check.onchange=()=>{
+item.done=check.checked
+save()
+render()
+updateProgress()
+}
 
-      // Time
-      const time = document.createElement("input");
-      time.className = "timeInput";
-      time.type = "time";
-      time.value = it.time || "";
-      time.placeholder = "Uhrzeit";
+del.onclick=()=>{
+items.splice(i,1)
+save()
+render()
+updateProgress()
+}
 
-      // Task
-      const task = document.createElement("input");
-      task.className = "taskInput";
-      task.type = "text";
-      task.value = it.task || "";
-      task.placeholder = "Tätigkeit";
+row.ondragstart=e=>{
+e.dataTransfer.setData("index",i)
+}
 
-      // Checkbox
-      const checkWrap = document.createElement("div");
-      checkWrap.className = "checkWrap";
-      const check = document.createElement("input");
-      check.type = "checkbox";
-      check.checked = !!it.done;
-      checkWrap.appendChild(check);
+row.ondragover=e=>{
+e.preventDefault()
+}
 
-      // Delete
-      const del = document.createElement("div");
-      del.className = "delBtn";
-      del.title = "Zeile löschen";
-      del.textContent = "✕";
+row.ondrop=e=>{
+let from=e.dataTransfer.getData("index")
+let to=i
+items.splice(to,0,items.splice(from,1)[0])
+save()
+render()
+}
 
-      // Append
-      row.appendChild(drag);
-      row.appendChild(time);
-      row.appendChild(task);
-      row.appendChild(checkWrap);
-      row.appendChild(del);
+rowsEl.appendChild(row)
 
-      // Events: edits
-      time.addEventListener("input", () => {
-        it.time = time.value;
-        saveSoon();
-      });
-      task.addEventListener("input", () => {
-        it.task = task.value;
-        saveSoon();
-      });
-      check.addEventListener("change", () => {
-        it.done = check.checked;
-        row.classList.toggle("done", it.done);
-        saveSoon();
-        updateProgress();
-      });
-      del.addEventListener("click", () => {
-        items = items.filter(x => x.id !== it.id);
-        saveSoon();
-        render();
-        updateProgress();
-      });
+})
 
-      // Drag & Drop (HTML5)
-      row.addEventListener("dragstart", (e) => {
-        dragSrcId = it.id;
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", it.id);
-        // Slightly nicer ghost image behavior:
-        try { e.dataTransfer.setDragImage(row, 20, 20); } catch {}
-      });
+updateProgress()
 
-      row.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-        row.classList.add("dragOver");
-      });
+}
 
-      row.addEventListener("dragleave", () => row.classList.remove("dragOver"));
+function addRow(){
+items.push({time:"",task:"",done:false})
+save()
+render()
+}
 
-      row.addEventListener("drop", (e) => {
-        e.preventDefault();
-        row.classList.remove("dragOver");
-        const srcId = e.dataTransfer.getData("text/plain") || dragSrcId;
-        const dstId = row.dataset.id;
-        if (!srcId || !dstId || srcId === dstId) return;
+function clearPlan(){
+items=[]
+save()
+render()
+}
 
-        const srcIndex = items.findIndex(x => x.id === srcId);
-        const dstIndex = items.findIndex(x => x.id === dstId);
-        if (srcIndex < 0 || dstIndex < 0) return;
+function updateProgress(){
 
-        const [moved] = items.splice(srcIndex, 1);
-        items.splice(dstIndex, 0, moved);
+let total=items.length
+let done=items.filter(i=>i.done).length
 
-        saveSoon();
-        render();
-        updateProgress();
-      });
+let pct=total?done/total*100:0
+progress.style.width=pct+"%"
 
-      row.addEventListener("dragend", () => {
-        row.classList.remove("dragOver");
-      });
+if(total>0 && done===total){
+toast.classList.add("show")
+setTimeout(()=>toast.classList.remove("show"),2000)
+}
 
-      rowsEl.appendChild(row);
-    }
-  };
+}
 
-  const addRow = (prefillTime = "", prefillTask = "") => {
-    items.push({
-      id: crypto.randomUUID(),
-      time: prefillTime,
-      task: prefillTask,
-      done: false
-    });
-    saveSoon();
-    render();
-    updateProgress();
+function setDate(){
+let d=new Date()
+document.getElementById("date").innerText=d.toLocaleDateString("de-DE",{
+weekday:"short",
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+})
+}
 
-    // Focus last task input for quick entry
-    const lastRow = rowsEl.lastElementChild;
-    const lastTask = lastRow?.querySelector('input[type="text"]');
-    lastTask?.focus();
-  };
+setDate()
 
-  const clearToday = () => {
-    if (!confirm("Wirklich den heutigen Tagesplan löschen?")) return;
-    items = [];
-    completedToastShown = false;
-    localStorage.removeItem(storageKey());
-    render();
-    updateProgress();
-  };
+/* Reset um Mitternacht */
 
-  // ----- Init -----
-  dateText.textContent = formatDateDE();
-  items = load();
-  render();
-  updateProgress();
+setInterval(()=>{
+let now=new Date()
+if(now.getHours()===0 && now.getMinutes()===0){
+localStorage.removeItem(key)
+items=[]
+render()
+}
+},60000)
 
-  $("#addRowBtn").addEventListener("click", () => addRow());
-  $("#clearBtn").addEventListener("click", clearToday);
+render()
 
-  // Convenience: Enter in task field adds a new row when you're on the last row
-  rowsEl.addEventListener("keydown", (e) => {
-    const isEnter = e.key === "Enter";
-    if (!isEnter) return;
-    const target = e.target;
-    if (!(target instanceof HTMLElement)) return;
-
-    // Only when typing in task field
-    if (target.matches('input[type="text"].taskInput')) {
-      e.preventDefault();
-      const row = target.closest(".row");
-      if (row && row === rowsEl.lastElementChild) addRow();
-      else {
-        // focus next row task input if exists
-        const all = Array.from(rowsEl.querySelectorAll('.row'));
-        const idx = all.indexOf(row);
-        const next = all[idx+1];
-        next?.querySelector('input[type="text"].taskInput')?.focus();
-      }
-    }
-  });
-
-})();
 </script>
+
 </body>
 </html>
