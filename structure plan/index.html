@@ -1,592 +1,508 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0c1424" />
 
-  <!-- iOS: Standalone (URL-Leiste weg), wenn zum Home-Screen hinzugefügt -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Tagesplan" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 
-  <title>Tagesplan</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tagesplan">
 
-  <style>
-    :root{
-      --bg:#0c1424;
-      --card:#121d33;
-      --card2:#0f182a;
-      --line:rgba(255,255,255,.10);
-      --text:#e8f0ff;
-      --muted:rgba(232,240,255,.72);
+<title>Tagesplan</title>
 
-      --accent:#3f8cff;
-      --accentSoft:rgba(63,140,255,.22);
+<style>
 
-      /* DONE = grün */
-      --done:#39d98a;
-      --doneSoft:rgba(57,217,138,.16);
-      --doneLine:rgba(57,217,138,.26);
+:root{
+--bg:#0c1424;
+--card:#121d33;
+--card2:#0f182a;
+--line:rgba(255,255,255,.10);
+--text:#e8f0ff;
+--muted:rgba(232,240,255,.72);
 
-      --dangerSoft:rgba(255,107,107,.14);
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --radius:16px;
-    }
+--accent:#3f8cff;
+--accentSoft:rgba(63,140,255,.22);
 
-    *{ box-sizing:border-box; }
+--done:#39d98a;
+--doneSoft:rgba(57,217,138,.18);
+--doneLine:rgba(57,217,138,.25);
 
-    html, body{ height:100%; }
+--dangerSoft:rgba(255,107,107,.15);
 
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(1000px 600px at 20% -10%, rgba(63,140,255,.25), transparent 55%),
-        radial-gradient(900px 500px at 100% 0%, rgba(63,140,255,.15), transparent 55%),
-        var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      padding:20px;
-      padding-bottom: calc(20px + env(safe-area-inset-bottom));
-    }
+--radius:18px;
+--shadow:0 10px 30px rgba(0,0,0,.35);
+}
 
-    .app{
-      width:min(920px, 100%);
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
+*{box-sizing:border-box}
 
-    /* Header */
-    .header{
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:16px;
-      box-shadow:var(--shadow);
-    }
+body{
 
-    .titleRow{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
-    }
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;
 
-    h1{
-      margin:0;
-      font-size:22px;
-      letter-spacing:.2px;
-    }
+background:
+radial-gradient(900px 500px at 20% -10%,rgba(63,140,255,.25),transparent),
+radial-gradient(900px 500px at 100% 0%,rgba(63,140,255,.15),transparent),
+var(--bg);
 
-    .date{
-      font-size:14px;
-      color:var(--muted);
-      white-space:nowrap;
-      user-select:none;
-    }
+color:var(--text);
 
-    .progressTopRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:6px;
-    }
+display:flex;
+justify-content:center;
+padding:20px;
 
-    .progressLabel{
-      font-size:12px;
-      color:var(--muted);
-      user-select:none;
-    }
+}
 
-    .progressWrap{
-      background:#0b1220;
-      border:1px solid var(--line);
-      border-radius:999px;
-      overflow:hidden;
-      height:12px;
-    }
+.app{
 
-    .progressBar{
-      height:100%;
-      width:0%;
-      background:linear-gradient(90deg, #3f8cff, #66a9ff);
-      transition:width .2s ease;
-    }
+width:min(920px,100%);
+display:flex;
+flex-direction:column;
+gap:14px;
 
-    /* Controls: + links, Reset rechts */
-    .controls{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
+}
 
-    button{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      color:var(--text);
-      border-radius:14px;
-      padding:10px 14px;
-      font-size:14px;
-      cursor:pointer;
-      transition: background .15s ease, transform .05s ease, border-color .15s ease;
-      user-select:none;
-      min-width: 120px;
-    }
-    button:hover{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.16); }
-    button:active{ transform:translateY(1px); }
+.header{
 
-    .btnPrimary{
-      background:var(--accentSoft);
-      border-color:rgba(63,140,255,.35);
-    }
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+border:1px solid var(--line);
+border-radius:var(--radius);
+padding:16px;
+box-shadow:var(--shadow);
 
-    .btnGhost{
-      background:transparent;
-      border-color:rgba(255,255,255,.12);
-      color:var(--muted);
-      min-width: 120px;
-    }
-    .btnGhost:hover{
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-    }
+}
 
-    /* Card + rows */
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:12px;
-      box-shadow:var(--shadow);
-    }
+.titleRow{
 
-    .rows{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:8px;
 
-    /* Row layout: time pill, title, trash */
-    .row{
-      display:grid;
-      grid-template-columns: 86px 1fr 40px;
-      gap:10px;
-      align-items:center;
-      padding:12px 12px;
-      border-radius:16px;
-      background:var(--card2);
-      border:1px solid var(--line);
-      min-height:56px;
-      cursor:pointer;
-      transition: background .12s ease, border-color .12s ease, transform .05s ease;
-    }
-    .row:active{ transform:translateY(1px); }
+}
 
-    .row.done{
-      background:var(--doneSoft);
-      border-color:var(--doneLine);
-    }
+h1{
+margin:0;
+font-size:22px;
+}
 
-    /* TIME PILL (kleiner, zentriert) */
-    .timeInput{
-      width:100%;
-      text-align:center;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      color:var(--text);
-      outline:none;
-      font-size:13px;              /* kleiner */
-      padding:8px 8px;             /* kleiner */
-      font-variant-numeric: tabular-nums;
-      cursor:text;
-    }
+.date{
+font-size:14px;
+color:var(--muted);
+}
 
-    /* Title */
-    .titleInput{
-      width:100%;
-      background:transparent;
-      border:1px solid transparent;
-      border-radius:12px;
-      color:var(--text);
-      outline:none;
-      font-size:16px;              /* etwas größer/edler */
-      padding:8px 6px;
-      cursor:text;
-    }
-    .titleInput::placeholder{
-      color: rgba(232,240,255,.55);
-    }
+.progressLabel{
 
-    /* Trash kleiner */
-    .trashBtn{
-      width:36px;
-      height:36px;
-      border-radius:12px;
-      display:grid;
-      place-items:center;
-      cursor:pointer;
-      user-select:none;
-      border:1px solid rgba(255,255,255,.10);
-      background:var(--dangerSoft);
-      transition: background .15s ease, border-color .15s ease, transform .05s ease;
-      font-size:16px;
-      line-height:1;
-    }
-    .trashBtn:hover{
-      background:rgba(255,107,107,.18);
-      border-color:rgba(255,107,107,.28);
-    }
-    .trashBtn:active{ transform:translateY(1px); }
+font-size:12px;
+color:var(--muted);
+margin-bottom:6px;
 
-    /* Toast */
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom: calc(18px + env(safe-area-inset-bottom));
-      transform:translateX(-50%);
-      background:#101b2f;
-      border:1px solid var(--line);
-      padding:12px 16px;
-      border-radius:14px;
-      box-shadow:var(--shadow);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
-      max-width:min(720px, calc(100% - 24px));
-      color:var(--text);
-    }
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(-2px);
-    }
+}
 
-    @media (max-width:520px){
-      h1{ font-size:20px; }
-      button{ min-width: 0; width: 48%; }
-      .row{ grid-template-columns: 84px 1fr 40px; }
-    }
-  </style>
+.progressWrap{
+
+height:10px;
+background:#0a111f;
+border-radius:999px;
+overflow:hidden;
+
+}
+
+.progressBar{
+
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#3f8cff,#66a9ff);
+transition:width .2s;
+
+}
+
+.controls{
+
+display:flex;
+justify-content:space-between;
+
+}
+
+button{
+
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+color:var(--text);
+
+border-radius:14px;
+padding:10px 14px;
+
+font-size:14px;
+cursor:pointer;
+
+}
+
+.btnPrimary{
+
+background:var(--accentSoft);
+border-color:rgba(63,140,255,.35);
+
+}
+
+.btnGhost{
+
+background:transparent;
+color:var(--muted);
+
+}
+
+.card{
+
+background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+border:1px solid var(--line);
+border-radius:var(--radius);
+padding:12px;
+
+box-shadow:var(--shadow);
+
+}
+
+.rows{
+
+display:flex;
+flex-direction:column;
+gap:10px;
+
+}
+
+.row{
+
+display:grid;
+grid-template-columns:60px 1fr 36px;
+gap:10px;
+
+align-items:center;
+
+padding:12px;
+
+background:var(--card2);
+border:1px solid var(--line);
+border-radius:16px;
+
+cursor:pointer;
+
+}
+
+.row.done{
+
+background:var(--doneSoft);
+border-color:var(--doneLine);
+
+}
+
+.timeInput{
+
+width:60px;
+text-align:center;
+
+font-size:13px;
+font-weight:500;
+
+padding:6px 4px;
+
+background:rgba(255,255,255,.04);
+border:1px solid rgba(255,255,255,.12);
+
+border-radius:12px;
+
+color:var(--text);
+
+}
+
+.titleInput{
+
+font-size:16px;
+font-weight:500;
+
+border:none;
+background:transparent;
+
+color:var(--text);
+
+outline:none;
+
+}
+
+.titleInput::placeholder{
+
+color:rgba(232,240,255,.55);
+
+}
+
+.trash{
+
+width:34px;
+height:34px;
+
+display:grid;
+place-items:center;
+
+border-radius:10px;
+
+background:var(--dangerSoft);
+border:1px solid rgba(255,255,255,.12);
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+.toast{
+
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+
+background:#101b2f;
+border:1px solid var(--line);
+
+padding:12px 16px;
+border-radius:14px;
+
+opacity:0;
+
+transition:.2s;
+
+}
+
+.toast.show{
+
+opacity:1;
+
+}
+
+</style>
+
 </head>
 
 <body>
-  <div class="app">
-    <div class="header">
-      <div class="titleRow">
-        <h1>Tagesplan</h1>
-        <div class="date" id="dateText"></div>
-      </div>
 
-      <div class="progressTopRow">
-        <div class="progressLabel" id="progressText">0 / 0 erledigt</div>
-        <div class="progressLabel"></div>
-      </div>
+<div class="app">
 
-      <div class="progressWrap" aria-label="Fortschritt">
-        <div class="progressBar" id="progressBar"></div>
-      </div>
-    </div>
+<div class="header">
 
-    <div class="controls">
-      <button class="btnPrimary" id="addBtn">+ Zeile</button>
-      <button class="btnGhost" id="resetBtn" title="Plan für heute löschen">Reset</button>
-    </div>
+<div class="titleRow">
 
-    <div class="card">
-      <div class="rows" id="rows"></div>
-    </div>
-  </div>
+<h1>Tagesplan</h1>
 
-  <div class="toast" id="toast">🎉 Du hast es geschafft.</div>
+<div class="date" id="date"></div>
+
+</div>
+
+<div class="progressLabel" id="progressText">0 / 0 erledigt</div>
+
+<div class="progressWrap">
+<div class="progressBar" id="progressBar"></div>
+</div>
+
+</div>
+
+<div class="controls">
+
+<button class="btnPrimary" onclick="addRow()">+ Zeile</button>
+<button class="btnGhost" onclick="resetDay()">Reset</button>
+
+</div>
+
+<div class="card">
+<div class="rows" id="rows"></div>
+</div>
+
+</div>
+
+<div class="toast" id="toast">🎉 Du hast alles erledigt</div>
 
 <script>
-(() => {
-  const rowsEl = document.getElementById("rows");
-  const progressBar = document.getElementById("progressBar");
-  const progressText = document.getElementById("progressText");
-  const dateText = document.getElementById("dateText");
-  const toast = document.getElementById("toast");
 
-  const pad2 = (n) => String(n).padStart(2, "0");
+const rows=document.getElementById("rows")
+const progressBar=document.getElementById("progressBar")
+const progressText=document.getElementById("progressText")
+const toast=document.getElementById("toast")
 
-  const localDateKey = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-  };
+function todayKey(){
 
-  const storageKeyForToday = () => `dayplan-${localDateKey()}`;
+let d=new Date()
+return "plan-"+d.toISOString().slice(0,10)
 
-  const formatDateDE = () => {
-    const d = new Date();
-    return d.toLocaleDateString("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
-  };
+}
 
-  let key = storageKeyForToday();
-  /** @type {{id:string,time:string,title:string,done:boolean}[]} */
-  let items = [];
-  let completedToastShown = false;
+let key=todayKey()
 
-  const load = () => {
-    try{
-      const raw = localStorage.getItem(key);
-      if(!raw) return [];
-      const arr = JSON.parse(raw);
-      if(!Array.isArray(arr)) return [];
-      return arr.map(x => ({
-        id: String(x.id || crypto.randomUUID()),
-        time: typeof x.time === "string" ? x.time : "",
-        title: typeof x.title === "string" ? x.title : "",
-        done: Boolean(x.done),
-      }));
-    }catch{
-      return [];
-    }
-  };
+let items=JSON.parse(localStorage.getItem(key)||"[]")
 
-  const save = () => { try { localStorage.setItem(key, JSON.stringify(items)); } catch {} };
+function save(){
 
-  let saveTimer = null;
-  const saveSoon = () => {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(save, 120);
-  };
+localStorage.setItem(key,JSON.stringify(items))
 
-  const normalizeTime = (val) => {
-    if (!val) return "";
-    const s = String(val).trim();
-    const digits = s.replace(/[^\d]/g, "");
+}
 
-    if (digits.length === 1 || digits.length === 2) {
-      const hh = Number(digits);
-      if (Number.isFinite(hh) && hh >= 0 && hh <= 23) return `${pad2(hh)}:00`;
-      return "";
-    }
-    if (digits.length === 3) {
-      const hh = Number(digits.slice(0,1));
-      const mm = Number(digits.slice(1));
-      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
-      return "";
-    }
-    if (digits.length >= 4) {
-      const hh = Number(digits.slice(0,2));
-      const mm = Number(digits.slice(2,4));
-      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
-      return "";
-    }
+function nextQuarter(){
 
-    const m = /^(\d{1,2}):(\d{1,2})$/.exec(s);
-    if (m) {
-      const hh = Number(m[1]);
-      const mm = Number(m[2]);
-      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
-    }
-    return "";
-  };
+let d=new Date()
 
-  const timeToMinutes = (t) => {
-    if (!t || typeof t !== "string") return Infinity;
-    const m = /^(\d{2}):(\d{2})$/.exec(t.trim());
-    if (!m) return Infinity;
-    const hh = Number(m[1]);
-    const mm = Number(m[2]);
-    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return Infinity;
-    return hh * 60 + mm;
-  };
+let m=d.getMinutes()
+let next=Math.ceil((m+1)/15)*15
 
-  const sortByTime = () => {
-    items = items
-      .map((it, idx) => ({...it, _idx: idx}))
-      .sort((a,b) => {
-        const da = timeToMinutes(a.time);
-        const db = timeToMinutes(b.time);
-        if (da !== db) return da - db;
-        return a._idx - b._idx;
-      })
-      .map(({_idx, ...rest}) => rest);
-  };
+d.setMinutes(next,0,0)
 
-  const nextQuarterTime = () => {
-    const d = new Date();
-    const m = d.getMinutes();
-    const q = Math.ceil((m + 1) / 15) * 15;
-    d.setMinutes(q, 0, 0);
-    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-  };
+return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")
 
-  const showToast = (msg) => {
-    toast.textContent = msg;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2200);
-  };
+}
 
-  const updateProgress = () => {
-    const total = items.length;
-    const done = items.filter(x => x.done).length;
-    progressText.textContent = `${done} / ${total} erledigt`;
-    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-    progressBar.style.width = `${pct}%`;
+function render(){
 
-    if (total > 0 && done === total) {
-      if (!completedToastShown) {
-        completedToastShown = true;
-        showToast("🎉 Du hast es geschafft.");
-      }
-    } else {
-      completedToastShown = false;
-    }
-  };
+rows.innerHTML=""
 
-  const render = () => {
-    rowsEl.innerHTML = "";
+items.forEach((item,i)=>{
 
-    for (const it of items) {
-      const row = document.createElement("div");
-      row.className = "row" + (it.done ? " done" : "");
-      row.dataset.id = it.id;
+let row=document.createElement("div")
+row.className="row"+(item.done?" done":"")
 
-      const time = document.createElement("input");
-      time.className = "timeInput";
-      time.type = "text";
-      time.inputMode = "numeric";
-      time.placeholder = "hh:mm";
-      time.value = it.time || "";
+let time=document.createElement("input")
+time.className="timeInput"
+time.value=item.time
 
-      const title = document.createElement("input");
-      title.className = "titleInput";
-      title.type = "text";
-      title.placeholder = "Titel / Tätigkeit";
-      title.value = it.title || "";
+let title=document.createElement("input")
+title.className="titleInput"
+title.value=item.title
+title.placeholder="Titel / Tätigkeit"
 
-      const trash = document.createElement("div");
-      trash.className = "trashBtn";
-      trash.title = "Zeile löschen";
-      trash.textContent = "🗑";
+let trash=document.createElement("div")
+trash.className="trash"
+trash.innerHTML="🗑"
 
-      // Toggle done on row tap (NOT when tapping inputs or trash)
-      row.addEventListener("click", (e) => {
-        const target = e.target;
-        if (!(target instanceof HTMLElement)) return;
-        if (target.closest(".trashBtn")) return;
-        if (target.closest("input")) return;
+time.onclick=e=>{
 
-        it.done = !it.done;
-        row.classList.toggle("done", it.done);
-        saveSoon();
-        updateProgress();
-      });
+e.stopPropagation()
+time.select()
 
-      // Prevent toggling when editing
-      time.addEventListener("click", (e) => e.stopPropagation());
-      title.addEventListener("click", (e) => e.stopPropagation());
-      trash.addEventListener("click", (e) => e.stopPropagation());
+}
 
-      time.addEventListener("input", () => {
-        it.time = time.value;
-        saveSoon();
-      });
+title.onclick=e=>e.stopPropagation()
 
-      time.addEventListener("blur", () => {
-        const normalized = normalizeTime(time.value);
-        it.time = normalized;
-        time.value = normalized;
-        sortByTime();
-        saveSoon();
-        render();
-      });
+trash.onclick=e=>{
 
-      title.addEventListener("input", () => {
-        it.title = title.value;
-        saveSoon();
-      });
+e.stopPropagation()
+items.splice(i,1)
+save()
+render()
 
-      trash.addEventListener("click", () => {
-        items = items.filter(x => x.id !== it.id);
-        saveSoon();
-        render();
-      });
+}
 
-      row.appendChild(time);
-      row.appendChild(title);
-      row.appendChild(trash);
-      rowsEl.appendChild(row);
-    }
+row.onclick=()=>{
 
-    updateProgress();
-  };
+item.done=!item.done
+save()
+render()
 
-  const addRow = () => {
-    const t = nextQuarterTime();
-    const id = crypto.randomUUID();
-    items.push({ id, time: t, title: "", done: false });
-    sortByTime();
-    saveSoon();
-    render();
+}
 
-    // focus title of inserted row
-    const el = rowsEl.querySelector(`.row[data-id="${id}"] .titleInput`);
-    el?.focus();
-  };
+time.onchange=()=>{
 
-  const resetToday = () => {
-    if (!confirm("Wirklich den heutigen Tagesplan löschen?")) return;
-    items = [];
-    completedToastShown = false;
-    try { localStorage.removeItem(key); } catch {}
-    render();
-  };
+item.time=time.value
+sortItems()
+save()
+render()
 
-  // Day rollover (00:00)
-  const ensureTodayKey = () => {
-    const newKey = storageKeyForToday();
-    if (newKey !== key) {
-      key = newKey;
-      items = [];
-      completedToastShown = false;
-      render();
-    }
-  };
+}
 
-  const scheduleMidnightReset = () => {
-    const now = new Date();
-    const next = new Date(now);
-    next.setHours(24,0,0,0);
-    const ms = next.getTime() - now.getTime();
-    setTimeout(() => {
-      ensureTodayKey();
-      scheduleMidnightReset();
-    }, ms + 50);
-  };
+title.oninput=()=>{
 
-  // Enter in title -> add row
-  rowsEl.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
-    const el = e.target;
-    if (!(el instanceof HTMLElement)) return;
-    if (el.classList.contains("titleInput")) {
-      e.preventDefault();
-      addRow();
-    }
-  });
+item.title=title.value
+save()
 
-  // Init
-  dateText.textContent = formatDateDE();
-  items = load();
-  sortByTime();
-  render();
+}
 
-  scheduleMidnightReset();
-  setInterval(ensureTodayKey, 60 * 1000);
+row.append(time,title,trash)
 
-  document.getElementById("addBtn").addEventListener("click", addRow);
-  document.getElementById("resetBtn").addEventListener("click", resetToday);
-})();
+rows.append(row)
+
+})
+
+updateProgress()
+
+}
+
+function sortItems(){
+
+items.sort((a,b)=>{
+
+if(!a.time)return 1
+if(!b.time)return -1
+
+return a.time.localeCompare(b.time)
+
+})
+
+}
+
+function addRow(){
+
+items.push({
+
+time:nextQuarter(),
+title:"",
+done:false
+
+})
+
+sortItems()
+save()
+render()
+
+}
+
+function updateProgress(){
+
+let total=items.length
+let done=items.filter(x=>x.done).length
+
+progressText.innerText=`${done} / ${total} erledigt`
+
+progressBar.style.width=(total?done/total*100:0)+"%"
+
+if(total>0 && done===total){
+
+toast.classList.add("show")
+setTimeout(()=>toast.classList.remove("show"),2000)
+
+}
+
+}
+
+function resetDay(){
+
+if(confirm("Heutigen Plan löschen?")){
+
+items=[]
+save()
+render()
+
+}
+
+}
+
+function setDate(){
+
+document.getElementById("date").innerText=
+new Date().toLocaleDateString("de-DE",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"})
+
+}
+
+setDate()
+
+render()
+
 </script>
+
 </body>
 </html>
