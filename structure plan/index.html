@@ -2,8 +2,14 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#0c1424" />
+
+  <!-- iOS: Standalone (URL-Leiste weg), wenn zum Home-Screen hinzugefügt -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Tagesplan" />
+
   <title>Tagesplan</title>
 
   <style>
@@ -18,19 +24,19 @@
       --accent:#3f8cff;
       --accentSoft:rgba(63,140,255,.22);
 
-      /* DONE = grün (wie gewünscht) */
+      /* DONE = grün */
       --done:#39d98a;
-      --doneSoft:rgba(57,217,138,.18);
-      --doneLine:rgba(57,217,138,.28);
+      --doneSoft:rgba(57,217,138,.16);
+      --doneLine:rgba(57,217,138,.26);
 
-      --danger:#ff6b6b;
       --dangerSoft:rgba(255,107,107,.14);
-
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:16px;
     }
 
     *{ box-sizing:border-box; }
+
+    html, body{ height:100%; }
 
     body{
       margin:0;
@@ -44,6 +50,7 @@
       display:flex;
       justify-content:center;
       padding:20px;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom));
     }
 
     .app{
@@ -112,11 +119,12 @@
       transition:width .2s ease;
     }
 
-    /* Controls */
+    /* Controls: + links, Reset rechts */
     .controls{
       display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap:10px;
-      flex-wrap:wrap;
     }
 
     button{
@@ -129,6 +137,7 @@
       cursor:pointer;
       transition: background .15s ease, transform .05s ease, border-color .15s ease;
       user-select:none;
+      min-width: 120px;
     }
     button:hover{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.16); }
     button:active{ transform:translateY(1px); }
@@ -142,6 +151,7 @@
       background:transparent;
       border-color:rgba(255,255,255,.12);
       color:var(--muted);
+      min-width: 120px;
     }
     .btnGhost:hover{
       background:rgba(255,255,255,.06);
@@ -163,10 +173,10 @@
       gap:10px;
     }
 
-    /* Row layout: time small, title big, trash */
+    /* Row layout: time pill, title, trash */
     .row{
       display:grid;
-      grid-template-columns: 96px 1fr 44px;
+      grid-template-columns: 86px 1fr 40px;
       gap:10px;
       align-items:center;
       padding:12px 12px;
@@ -184,34 +194,22 @@
       border-color:var(--doneLine);
     }
 
-    /* “Input, aber clean”: keine harten Kanten, wirkt wie Text */
-    .timeWrap{
-      display:flex;
-      align-items:center;
-      gap:6px;
-      min-width:0;
-    }
-
+    /* TIME PILL (kleiner, zentriert) */
     .timeInput{
       width:100%;
+      text-align:center;
       background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.10);
-      border-radius:12px;
+      border-radius:14px;
       color:var(--text);
       outline:none;
-      font-size:14px;
-      padding:10px 10px;
+      font-size:13px;              /* kleiner */
+      padding:8px 8px;             /* kleiner */
       font-variant-numeric: tabular-nums;
       cursor:text;
     }
 
-    .timeSuffix{
-      font-size:12px;
-      color:var(--muted);
-      user-select:none;
-      white-space:nowrap;
-    }
-
+    /* Title */
     .titleInput{
       width:100%;
       background:transparent;
@@ -219,23 +217,19 @@
       border-radius:12px;
       color:var(--text);
       outline:none;
-      font-size:15px;
-      padding:10px 10px;
+      font-size:16px;              /* etwas größer/edler */
+      padding:8px 6px;
       cursor:text;
     }
     .titleInput::placeholder{
       color: rgba(232,240,255,.55);
     }
 
-    .row.done .titleInput{
-      color: rgba(232,240,255,.95);
-    }
-
-    /* Trash */
+    /* Trash kleiner */
     .trashBtn{
-      width:44px;
-      height:44px;
-      border-radius:14px;
+      width:36px;
+      height:36px;
+      border-radius:12px;
       display:grid;
       place-items:center;
       cursor:pointer;
@@ -243,7 +237,7 @@
       border:1px solid rgba(255,255,255,.10);
       background:var(--dangerSoft);
       transition: background .15s ease, border-color .15s ease, transform .05s ease;
-      font-size:18px;
+      font-size:16px;
       line-height:1;
     }
     .trashBtn:hover{
@@ -256,7 +250,7 @@
     .toast{
       position:fixed;
       left:50%;
-      bottom:18px;
+      bottom: calc(18px + env(safe-area-inset-bottom));
       transform:translateX(-50%);
       background:#101b2f;
       border:1px solid var(--line);
@@ -275,8 +269,9 @@
     }
 
     @media (max-width:520px){
-      .row{ grid-template-columns: 92px 1fr 44px; }
       h1{ font-size:20px; }
+      button{ min-width: 0; width: 48%; }
+      .row{ grid-template-columns: 84px 1fr 40px; }
     }
   </style>
 </head>
@@ -291,7 +286,7 @@
 
       <div class="progressTopRow">
         <div class="progressLabel" id="progressText">0 / 0 erledigt</div>
-        <div class="progressLabel" id="hintText">Tippen auf Zeile = erledigt</div>
+        <div class="progressLabel"></div>
       </div>
 
       <div class="progressWrap" aria-label="Fortschritt">
@@ -319,7 +314,6 @@
   const dateText = document.getElementById("dateText");
   const toast = document.getElementById("toast");
 
-  // --- Date + keys ---
   const pad2 = (n) => String(n).padStart(2, "0");
 
   const localDateKey = () => {
@@ -334,13 +328,11 @@
     return d.toLocaleDateString("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
   };
 
-  // --- State ---
   let key = storageKeyForToday();
   /** @type {{id:string,time:string,title:string,done:boolean}[]} */
   let items = [];
   let completedToastShown = false;
 
-  // --- Storage ---
   const load = () => {
     try{
       const raw = localStorage.getItem(key);
@@ -366,13 +358,11 @@
     saveTimer = setTimeout(save, 120);
   };
 
-  // --- Time helpers ---
   const normalizeTime = (val) => {
     if (!val) return "";
     const s = String(val).trim();
-
-    // Accept "9", "930", "9:3", "09:30", "9.30" etc.
     const digits = s.replace(/[^\d]/g, "");
+
     if (digits.length === 1 || digits.length === 2) {
       const hh = Number(digits);
       if (Number.isFinite(hh) && hh >= 0 && hh <= 23) return `${pad2(hh)}:00`;
@@ -411,7 +401,6 @@
   };
 
   const sortByTime = () => {
-    // stable sort
     items = items
       .map((it, idx) => ({...it, _idx: idx}))
       .sort((a,b) => {
@@ -426,13 +415,11 @@
   const nextQuarterTime = () => {
     const d = new Date();
     const m = d.getMinutes();
-    const q = Math.ceil((m + 1) / 15) * 15; // next quarter (or same if exactly on boundary +1)
+    const q = Math.ceil((m + 1) / 15) * 15;
     d.setMinutes(q, 0, 0);
-    // if q became 60, Date will roll hour automatically
     return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
   };
 
-  // --- UI helpers ---
   const showToast = (msg) => {
     toast.textContent = msg;
     toast.classList.add("show");
@@ -464,23 +451,12 @@
       row.className = "row" + (it.done ? " done" : "");
       row.dataset.id = it.id;
 
-      // Time block (input + "Uhr")
-      const timeWrap = document.createElement("div");
-      timeWrap.className = "timeWrap";
-
       const time = document.createElement("input");
       time.className = "timeInput";
       time.type = "text";
       time.inputMode = "numeric";
       time.placeholder = "hh:mm";
       time.value = it.time || "";
-
-      const suffix = document.createElement("span");
-      suffix.className = "timeSuffix";
-      suffix.textContent = "Uhr";
-
-      timeWrap.appendChild(time);
-      timeWrap.appendChild(suffix);
 
       const title = document.createElement("input");
       title.className = "titleInput";
@@ -493,7 +469,7 @@
       trash.title = "Zeile löschen";
       trash.textContent = "🗑";
 
-      // Toggle done on row click (but NOT when clicking inputs or trash)
+      // Toggle done on row tap (NOT when tapping inputs or trash)
       row.addEventListener("click", (e) => {
         const target = e.target;
         if (!(target instanceof HTMLElement)) return;
@@ -506,7 +482,7 @@
         updateProgress();
       });
 
-      // Keep inputs usable without toggling done
+      // Prevent toggling when editing
       time.addEventListener("click", (e) => e.stopPropagation());
       title.addEventListener("click", (e) => e.stopPropagation());
       trash.addEventListener("click", (e) => e.stopPropagation());
@@ -536,7 +512,7 @@
         render();
       });
 
-      row.appendChild(timeWrap);
+      row.appendChild(time);
       row.appendChild(title);
       row.appendChild(trash);
       rowsEl.appendChild(row);
@@ -545,18 +521,17 @@
     updateProgress();
   };
 
-  // --- Actions ---
   const addRow = () => {
     const t = nextQuarterTime();
-    items.push({ id: crypto.randomUUID(), time: t, title: "", done: false });
+    const id = crypto.randomUUID();
+    items.push({ id, time: t, title: "", done: false });
     sortByTime();
     saveSoon();
     render();
 
-    // focus the title of the newly added row with that time (best-effort)
-    // (pick last matching id in DOM)
-    const lastRow = rowsEl.querySelector(`.row[data-id="${items.find(x=>x.time===t && x.title==="" && !x.done)?.id || ""}"]`);
-    lastRow?.querySelector(".titleInput")?.focus();
+    // focus title of inserted row
+    const el = rowsEl.querySelector(`.row[data-id="${id}"] .titleInput`);
+    el?.focus();
   };
 
   const resetToday = () => {
@@ -567,7 +542,7 @@
     render();
   };
 
-  // --- Day rollover reset (00:00) ---
+  // Day rollover (00:00)
   const ensureTodayKey = () => {
     const newKey = storageKeyForToday();
     if (newKey !== key) {
@@ -581,16 +556,15 @@
   const scheduleMidnightReset = () => {
     const now = new Date();
     const next = new Date(now);
-    next.setHours(24,0,0,0); // next midnight
+    next.setHours(24,0,0,0);
     const ms = next.getTime() - now.getTime();
-
     setTimeout(() => {
       ensureTodayKey();
       scheduleMidnightReset();
     }, ms + 50);
   };
 
-  // Keyboard: Enter in title -> add row
+  // Enter in title -> add row
   rowsEl.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
     const el = e.target;
@@ -601,17 +575,17 @@
     }
   });
 
-  // --- Init ---
+  // Init
   dateText.textContent = formatDateDE();
   items = load();
   sortByTime();
   render();
+
   scheduleMidnightReset();
   setInterval(ensureTodayKey, 60 * 1000);
 
   document.getElementById("addBtn").addEventListener("click", addRow);
   document.getElementById("resetBtn").addEventListener("click", resetToday);
-
 })();
 </script>
 </body>
