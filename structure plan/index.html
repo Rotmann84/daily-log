@@ -1,342 +1,561 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0c1424" />
+  <title>Tagesplan</title>
+  <style>
+    :root{
+      --bg:#0c1424;
+      --card:#121d33;
+      --card2:#0f182a;
+      --line:rgba(255,255,255,.10);
+      --text:#e8f0ff;
+      --muted:rgba(232,240,255,.72);
+      --accent:#3f8cff;
+      --accentSoft:rgba(63,140,255,.22);
+      --danger:#ff6b6b;
+      --dangerSoft:rgba(255,107,107,.14);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    *{ box-sizing:border-box; }
 
-<title>Tagesplan</title>
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1000px 600px at 20% -10%, rgba(63,140,255,.25), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(63,140,255,.15), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:20px;
+    }
 
-<style>
+    .app{
+      width:min(920px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
 
-:root{
---bg:#0c1424;
---card:#121d33;
---line:rgba(255,255,255,.1);
---text:#e8f0ff;
---accent:#3f8cff;
---accentSoft:rgba(63,140,255,.25);
---radius:16px;
-}
+    /* Header */
+    .header{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
 
-body{
-margin:0;
-font-family:system-ui,-apple-system,Segoe UI,Roboto;
-background:radial-gradient(circle at 20% -10%,rgba(63,140,255,.25),transparent),var(--bg);
-color:var(--text);
-display:flex;
-justify-content:center;
-padding:20px;
-}
+    .titleRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
 
-.app{
-width:min(900px,100%);
-display:flex;
-flex-direction:column;
-gap:16px;
-}
+    h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.2px;
+    }
 
-.header{
-background:var(--card);
-padding:16px;
-border-radius:var(--radius);
-border:1px solid var(--line);
-}
+    .date{
+      font-size:14px;
+      color:var(--muted);
+      white-space:nowrap;
+      user-select:none;
+    }
 
-.titleRow{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
-}
+    .progressTopRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:6px;
+    }
 
-h1{
-margin:0;
-font-size:22px;
-}
+    .progressLabel{
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+    }
 
-.date{
-font-size:14px;
-opacity:.8;
-}
+    .progressWrap{
+      background:#0b1220;
+      border:1px solid var(--line);
+      border-radius:999px;
+      overflow:hidden;
+      height:12px;
+    }
 
-.progressBarWrap{
-background:#0b1220;
-border-radius:20px;
-overflow:hidden;
-height:12px;
-}
+    .progressBar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, #3f8cff, #66a9ff);
+      transition:width .2s ease;
+    }
 
-.progressBar{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#3f8cff,#66a9ff);
-}
+    /* Controls */
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
 
-.progressText{
-margin-top:6px;
-font-size:12px;
-opacity:.7;
-}
+    button{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 14px;
+      font-size:14px;
+      cursor:pointer;
+      transition: background .15s ease, transform .05s ease, border-color .15s ease;
+      user-select:none;
+    }
 
-.controls{
-display:flex;
-gap:10px;
-}
+    button:hover{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.16); }
+    button:active{ transform:translateY(1px); }
 
-button{
-background:var(--accentSoft);
-border:1px solid var(--accent);
-color:var(--text);
-padding:8px 14px;
-border-radius:12px;
-cursor:pointer;
-}
+    .btnPrimary{
+      background:var(--accentSoft);
+      border-color:rgba(63,140,255,.35);
+    }
+    .btnDanger{
+      background:rgba(255,255,255,.05);
+      border-color:rgba(255,255,255,.10);
+    }
 
-.card{
-background:var(--card);
-padding:12px;
-border-radius:var(--radius);
-border:1px solid var(--line);
-}
+    /* Card + rows */
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:var(--shadow);
+    }
 
-.rows{
-display:flex;
-flex-direction:column;
-gap:8px;
-}
+    .rows{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
 
-.row{
-display:grid;
-grid-template-columns:30px 110px 1fr 60px 40px;
-gap:10px;
-align-items:center;
-padding:10px;
-border-radius:12px;
-background:#0f182a;
-border:1px solid var(--line);
-}
+    .row{
+      display:grid;
+      grid-template-columns: 120px 1fr 44px;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:14px;
+      background:var(--card2);
+      border:1px solid var(--line);
+      min-height:56px;
+    }
 
-.row.done{
-background:rgba(63,140,255,.15);
-}
+    .row.done{
+      background:rgba(63,140,255,.14);
+      border-color:rgba(63,140,255,.22);
+    }
 
-.drag{
-cursor:grab;
-font-size:18px;
-text-align:center;
-}
+    /* Inputs */
+    .timeInput, .titleInput{
+      width:100%;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+      padding:10px 12px;
+    }
 
-input{
-background:#0c1424;
-border:1px solid var(--line);
-color:var(--text);
-border-radius:8px;
-padding:6px;
-}
+    .timeInput{
+      font-variant-numeric: tabular-nums;
+    }
 
-input[type="checkbox"]{
-width:26px;
-height:26px;
-accent-color:var(--accent);
-cursor:pointer;
-}
+    .titleInput::placeholder{
+      color: rgba(232,240,255,.55);
+    }
 
-.del{
-cursor:pointer;
-text-align:center;
-font-size:18px;
-}
+    /* Trash */
+    .trashBtn{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      user-select:none;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,107,107,.12);
+      transition: background .15s ease, border-color .15s ease, transform .05s ease;
+      font-size:18px;
+      line-height:1;
+    }
+    .trashBtn:hover{
+      background:rgba(255,107,107,.18);
+      border-color:rgba(255,107,107,.28);
+    }
+    .trashBtn:active{ transform:translateY(1px); }
 
-.toast{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-background:#121d33;
-border:1px solid var(--line);
-padding:12px 18px;
-border-radius:12px;
-opacity:0;
-transition:.2s;
-}
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:#101b2f;
+      border:1px solid var(--line);
+      padding:12px 16px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      max-width:min(720px, calc(100% - 24px));
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(-2px);
+    }
 
-.toast.show{
-opacity:1;
-}
-
-</style>
-
+    /* Responsive */
+    @media (max-width:520px){
+      .row{ grid-template-columns: 110px 1fr 44px; }
+      h1{ font-size:20px; }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="app">
+    <div class="header">
+      <div class="titleRow">
+        <h1>Tagesplan</h1>
+        <div class="date" id="dateText"></div>
+      </div>
 
-<div class="app">
+      <div class="progressTopRow">
+        <div class="progressLabel" id="progressText">0 / 0 erledigt</div>
+        <div class="progressLabel" id="dateAboveProgress"></div>
+      </div>
 
-<div class="header">
+      <div class="progressWrap" aria-label="Fortschritt">
+        <div class="progressBar" id="progressBar"></div>
+      </div>
+    </div>
 
-<div class="titleRow">
-<h1>Tagesplan</h1>
-<div class="date" id="date"></div>
-</div>
+    <div class="controls">
+      <button class="btnPrimary" id="addBtn">+ Zeile</button>
+      <button class="btnDanger" id="resetBtn" title="Plan für heute löschen">Reset</button>
+    </div>
 
-<div class="progressBarWrap">
-<div class="progressBar" id="progressBar"></div>
-</div>
+    <div class="card">
+      <div class="rows" id="rows"></div>
+    </div>
+  </div>
 
-<div class="progressText" id="progressText">0 / 0 erledigt</div>
-
-</div>
-
-<div class="controls">
-<button onclick="addRow()">+ Zeile</button>
-<button onclick="clearPlan()">Reset</button>
-</div>
-
-<div class="card">
-<div class="rows" id="rows"></div>
-</div>
-
-</div>
-
-<div class="toast" id="toast">🎉 Du hast alles geschafft.</div>
+  <div class="toast" id="toast">🎉 Du hast es geschafft.</div>
 
 <script>
+(() => {
+  const rowsEl = document.getElementById("rows");
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+  const toast = document.getElementById("toast");
+  const dateText = document.getElementById("dateText");
+  const dateAboveProgress = document.getElementById("dateAboveProgress");
 
-const rows=document.getElementById("rows")
-const progressBar=document.getElementById("progressBar")
-const progressText=document.getElementById("progressText")
-const toast=document.getElementById("toast")
+  // --- Date + keys ---
+  const pad2 = (n) => String(n).padStart(2, "0");
 
-function todayKey(){
-let d=new Date()
-return "plan-"+d.toISOString().split("T")[0]
-}
+  const localDateKey = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  };
 
-let key=todayKey()
+  const storageKeyForToday = () => `dayplan-${localDateKey()}`;
 
-let items=JSON.parse(localStorage.getItem(key)||"[]")
+  const formatDateDE = () => {
+    const d = new Date();
+    return d.toLocaleDateString("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
+  };
 
-function save(){
-localStorage.setItem(key,JSON.stringify(items))
-}
+  // --- State ---
+  let key = storageKeyForToday();
+  /** @type {{id:string,time:string,title:string,done:boolean}[]} */
+  let items = [];
+  let completedToastShown = false;
 
-function render(){
+  // --- Storage ---
+  const load = () => {
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      if(!Array.isArray(arr)) return [];
+      return arr.map(x => ({
+        id: String(x.id || crypto.randomUUID()),
+        time: typeof x.time === "string" ? x.time : "",
+        title: typeof x.title === "string" ? x.title : "",
+        done: Boolean(x.done),
+      }));
+    }catch{
+      return [];
+    }
+  };
 
-rows.innerHTML=""
+  const save = () => {
+    try{ localStorage.setItem(key, JSON.stringify(items)); }catch{}
+  };
 
-items.forEach((item,i)=>{
+  let saveTimer = null;
+  const saveSoon = () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 120);
+  };
 
-let row=document.createElement("div")
-row.className="row"+(item.done?" done":"")
+  // --- Sorting ---
+  const timeToMinutes = (t) => {
+    // expects "HH:MM" (24h). Return Infinity if empty/invalid so empties float to bottom.
+    if (!t || typeof t !== "string") return Infinity;
+    const m = /^(\d{2}):(\d{2})$/.exec(t.trim());
+    if (!m) return Infinity;
+    const hh = Number(m[1]);
+    const mm = Number(m[2]);
+    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return Infinity;
+    return hh * 60 + mm;
+  };
 
-row.draggable=true
+  const sortByTime = () => {
+    // Stable sort: keep relative order for equal times via original index
+    items = items
+      .map((it, idx) => ({...it, _idx: idx}))
+      .sort((a,b) => {
+        const da = timeToMinutes(a.time);
+        const db = timeToMinutes(b.time);
+        if (da !== db) return da - db;
+        return a._idx - b._idx;
+      })
+      .map(({_idx, ...rest}) => rest);
+  };
 
-row.innerHTML=`
-<div class="drag">≡</div>
-<input type="time" value="${item.time}">
-<input type="text" value="${item.task}" placeholder="Tätigkeit">
-<input type="checkbox" ${item.done?"checked":""}>
-<div class="del">✕</div>
-`
+  // --- UI helpers ---
+  const showToast = (msg) => {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2200);
+  };
 
-let time=row.children[1]
-let task=row.children[2]
-let check=row.children[3]
-let del=row.children[4]
+  const updateProgress = () => {
+    const total = items.length;
+    const done = items.filter(x => x.done).length;
+    progressText.textContent = `${done} / ${total} erledigt`;
+    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+    progressBar.style.width = `${pct}%`;
 
-time.oninput=()=>{item.time=time.value;save()}
-task.oninput=()=>{item.task=task.value;save()}
+    if (total > 0 && done === total) {
+      if (!completedToastShown) {
+        completedToastShown = true;
+        showToast("🎉 Du hast es geschafft.");
+      }
+    } else {
+      completedToastShown = false;
+    }
+  };
 
-check.onchange=()=>{
-item.done=check.checked
-save()
-render()
-updateProgress()
-}
+  const render = () => {
+    rowsEl.innerHTML = "";
 
-del.onclick=()=>{
-items.splice(i,1)
-save()
-render()
-}
+    for (const it of items) {
+      const row = document.createElement("div");
+      row.className = "row" + (it.done ? " done" : "");
+      row.dataset.id = it.id;
 
-row.ondragstart=e=>{
-e.dataTransfer.setData("index",i)
-}
+      const time = document.createElement("input");
+      time.className = "timeInput";
+      time.type = "text";
+      time.inputMode = "numeric";
+      time.placeholder = "hh:mm";
+      time.value = it.time || "";
 
-row.ondragover=e=>e.preventDefault()
+      const title = document.createElement("input");
+      title.className = "titleInput";
+      title.type = "text";
+      title.placeholder = "Titel / Tätigkeit";
+      title.value = it.title || "";
 
-row.ondrop=e=>{
-let from=e.dataTransfer.getData("index")
-let to=i
-items.splice(to,0,items.splice(from,1)[0])
-save()
-render()
-}
+      const trash = document.createElement("div");
+      trash.className = "trashBtn";
+      trash.title = "Zeile löschen";
+      trash.textContent = "🗑";
 
-rows.appendChild(row)
+      // interactions
+      time.addEventListener("input", () => {
+        // allow free typing; normalize on blur
+        it.time = time.value;
+        saveSoon();
+      });
 
-})
+      time.addEventListener("blur", () => {
+        const normalized = normalizeTime(time.value);
+        it.time = normalized;
+        time.value = normalized;
+        sortByTime();
+        saveSoon();
+        render();
+        updateProgress();
+      });
 
-updateProgress()
+      title.addEventListener("input", () => {
+        it.title = title.value;
+        saveSoon();
+      });
 
-}
+      // toggle done: click row background? keep simple: double click on title toggles
+      title.addEventListener("dblclick", () => {
+        it.done = !it.done;
+        row.classList.toggle("done", it.done);
+        saveSoon();
+        updateProgress();
+      });
 
-function addRow(){
-items.push({time:"",task:"",done:false})
-save()
-render()
-}
+      trash.addEventListener("click", () => {
+        items = items.filter(x => x.id !== it.id);
+        saveSoon();
+        render();
+        updateProgress();
+      });
 
-function clearPlan(){
-items=[]
-save()
-render()
-}
+      row.appendChild(time);
+      row.appendChild(title);
+      row.appendChild(trash);
 
-function updateProgress(){
+      rowsEl.appendChild(row);
+    }
 
-let total=items.length
-let done=items.filter(i=>i.done).length
+    updateProgress();
+  };
 
-progressBar.style.width=(total?done/total*100:0)+"%"
+  // --- Time format hh:mm ---
+  const normalizeTime = (val) => {
+    if (!val) return "";
+    const s = String(val).trim();
 
-progressText.innerText=`${done} / ${total} erledigt`
+    // Accept "9", "930", "9:3", "09:30", "9.30" etc.
+    const digits = s.replace(/[^\d]/g, "");
+    if (digits.length === 1 || digits.length === 2) {
+      // "9" or "09" -> 09:00
+      const hh = Number(digits);
+      if (Number.isFinite(hh) && hh >= 0 && hh <= 23) return `${pad2(hh)}:00`;
+      return "";
+    }
+    if (digits.length === 3) {
+      // "930" -> 09:30
+      const hh = Number(digits.slice(0,1));
+      const mm = Number(digits.slice(1));
+      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
+      return "";
+    }
+    if (digits.length >= 4) {
+      const hh = Number(digits.slice(0,2));
+      const mm = Number(digits.slice(2,4));
+      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
+      return "";
+    }
+    // Fallback for already "HH:MM"
+    const m = /^(\d{1,2}):(\d{1,2})$/.exec(s);
+    if (m) {
+      const hh = Number(m[1]);
+      const mm = Number(m[2]);
+      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) return `${pad2(hh)}:${pad2(mm)}`;
+    }
+    return "";
+  };
 
-if(total>0 && done===total){
-toast.classList.add("show")
-setTimeout(()=>toast.classList.remove("show"),2000)
-}
+  // --- Actions ---
+  const addRow = () => {
+    items.push({ id: crypto.randomUUID(), time: "", title: "", done: false });
+    // sort AFTER add (empties will go to bottom)
+    sortByTime();
+    saveSoon();
+    render();
 
-}
+    // focus new (last empty) title
+    const all = Array.from(rowsEl.querySelectorAll(".row"));
+    const idx = all.length - 1;
+    const titleInput = all[idx]?.querySelector(".titleInput");
+    titleInput?.focus();
+  };
 
-function setDate(){
-let d=new Date()
-document.getElementById("date").innerText=
-d.toLocaleDateString("de-DE",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"})
-}
+  const resetToday = () => {
+    if (!confirm("Wirklich den heutigen Tagesplan löschen?")) return;
+    items = [];
+    completedToastShown = false;
+    try { localStorage.removeItem(key); } catch {}
+    render();
+  };
 
-setDate()
+  // --- Day rollover reset ---
+  const ensureTodayKey = () => {
+    const newKey = storageKeyForToday();
+    if (newKey !== key) {
+      key = newKey;
+      items = [];
+      completedToastShown = false;
+      render();
+    }
+  };
 
-/* Tageswechsel automatisch erkennen */
+  const scheduleMidnightReset = () => {
+    const now = new Date();
+    const next = new Date(now);
+    next.setHours(24,0,0,0); // next midnight
+    const ms = next.getTime() - now.getTime();
 
-setInterval(()=>{
+    setTimeout(() => {
+      ensureTodayKey(); // swaps key, clears UI
+      scheduleMidnightReset(); // schedule next
+    }, ms + 50);
+  };
 
-let newKey=todayKey()
+  // keyboard: Enter in title adds new row
+  rowsEl.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const el = e.target;
+    if (!(el instanceof HTMLElement)) return;
+    if (el.classList.contains("titleInput")) {
+      e.preventDefault();
+      addRow();
+    }
+  });
 
-if(newKey!==key){
+  // --- Init ---
+  const d = formatDateDE();
+  dateText.textContent = d;
+  dateAboveProgress.textContent = d;
 
-key=newKey
-items=[]
-render()
+  items = load();
+  sortByTime();
+  render();
+  scheduleMidnightReset();
 
-}
+  document.getElementById("addBtn").addEventListener("click", addRow);
+  document.getElementById("resetBtn").addEventListener("click", resetToday);
 
-},60000)
+  // also handle tab-left-open all day
+  setInterval(ensureTodayKey, 60 * 1000);
 
-render()
-
+})();
 </script>
-
 </body>
 </html>
