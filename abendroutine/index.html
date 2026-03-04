@@ -9,14 +9,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Abendroutine" />
-
-  <!-- Android/Chromium: add-to-home-screen hint (optional) -->
   <meta name="mobile-web-app-capable" content="yes" />
-
-  <!-- Theme (mostly harmless without manifest) -->
   <meta name="theme-color" content="#0f2a1f" />
 
-  <!-- Optional: If you add this file in the same folder, iOS uses it as app icon -->
+  <!-- optional icon file in same folder -->
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 
   <style>
@@ -39,6 +35,16 @@
 
       --shadow:0 14px 34px rgba(0,0,0,0.35);
       --radius:18px;
+
+      /* Calendar marker colors */
+      --mk-full:#D6C289;   /* Gold */
+      --mk-full-b:#b9a26a;
+
+      --mk-light:#3ED1C4;  /* Turquoise */
+      --mk-light-b:#2fb3a7;
+
+      --mk-bike:#F29C38;   /* Orange */
+      --mk-bike-b:#d88426;
     }
 
     *{ box-sizing:border-box; }
@@ -51,14 +57,14 @@
     body{
       margin:0;
       min-height:100%;
-      background: transparent; /* background comes from ::before */
+      background: transparent;
       color:var(--fg);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior: none;
     }
 
-    /* Fixed background layer -> prevents iOS bottom "green strip" artifacts */
+    /* fixed background layer to avoid iOS bottom strip artifacts */
     body::before{
       content:"";
       position: fixed;
@@ -138,8 +144,8 @@
       padding: 14px;
 
       position: relative;
-      overflow: hidden;                  /* fallback */
-      overflow: clip;                    /* modern */
+      overflow: hidden;
+      overflow: clip;
       clip-path: inset(0 round var(--radius));
       contain: paint;
       isolation: isolate;
@@ -331,28 +337,30 @@
       justify-content:flex-start;
       gap:6px;
       min-height: 44px;
+      cursor:pointer;
     }
-    .dayCell.out{ opacity: 0.35; }
+    .dayCell:active{ transform: scale(.995); }
+    .dayCell.out{ opacity: 0.35; cursor:default; }
     .dayTop{ display:flex; justify-content:space-between; gap:6px; align-items:flex-start; }
     .dayNum{ font-weight: 950; font-size: 12px; }
 
-    .badges{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
-    .badge{
-      font-size:10px;
-      font-weight: 950;
-      letter-spacing:.2px;
-      padding: 4px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.05);
-      color: var(--muted);
-      white-space: nowrap;
-      user-select:none;
+    /* Markers */
+    .markers{
+      display:flex;
+      gap:3px;
+      justify-content:flex-end;
+      align-items:center;
+      flex-wrap:wrap;
     }
-    /* ICON mode (no text label styling needed, still keeps nice pill) */
-    .badge.full{ border-color: rgba(214,194,137,0.35); color: rgba(214,194,137,0.92); background: rgba(185,162,106,0.10); }
-    .badge.light{ border-color: rgba(214,194,137,0.25); color: rgba(214,194,137,0.90); background: rgba(185,162,106,0.08); }
-    .badge.bike{ border-color: rgba(54,194,106,0.25); color: rgba(210,248,226,0.98); background: rgba(54,194,106,0.10); cursor:pointer; }
+    .mk{
+      width:8px;
+      height:8px;
+      border-radius:3px; /* small square */
+      border:1px solid rgba(255,255,255,0.20);
+    }
+    .mk.full{ background: var(--mk-full); border-color: var(--mk-full-b); }
+    .mk.light{ background: var(--mk-light); border-color: var(--mk-light-b); }
+    .mk.bike{ background: var(--mk-bike); border-color: var(--mk-bike-b); }
 
     /* Dialogs */
     dialog{
@@ -431,7 +439,9 @@
       .squareBtn{ width: min(250px, 92vw); border-radius: 20px; }
       .iconBox{ width:56px; height:56px; border-radius: 16px; }
       .trash{ width:36px; height:36px; }
-      .badge{ padding: 3px 6px; }
+      .mk{ width:7px; height:7px; }
+      .markers{ gap:2px; }
+      .dayCell{ padding:7px; }
     }
   </style>
 </head>
@@ -579,10 +589,21 @@
     </div>
   </dialog>
 
+  <!-- Modal: Day Details (tap a day cell) -->
+  <dialog id="dayDlg">
+    <div class="modal">
+      <h2 id="dayDlgTitle">Tag</h2>
+      <div id="dayDlgList" class="list" style="margin-top:10px;"></div>
+      <div class="actionsRow">
+        <button class="btn primary" id="dayDlgClose" type="button">Schließen</button>
+      </div>
+    </div>
+  </dialog>
+
   <script>
     "use strict";
 
-    const KEY = "abendroutine_singlefile_v1";
+    const KEY = "abendroutine_singlefile_markers_v1";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -603,6 +624,10 @@
       const fmt = new Intl.DateTimeFormat("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
       return fmt.format(new Date());
     };
+
+    const fmtDay = (d) => new Intl.DateTimeFormat("de-DE", {
+      weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
+    }).format(d);
 
     const load = () => {
       const raw = localStorage.getItem(KEY);
@@ -789,11 +814,68 @@
       saveState();
     };
 
+    // Day dialog (tap a calendar cell)
+    const dayDlg = $("dayDlg");
+    let dayDlgKey = null;
+    let dayDlgDateObj = null;
+
+    const openDayDialog = (dateKey, dateObj) => {
+      dayDlgKey = dateKey;
+      dayDlgDateObj = dateObj;
+
+      $("dayDlgTitle").textContent = fmtDay(dateObj);
+      const log = ensureLog(dateKey);
+
+      const items = [];
+      if (log.mode === "full") items.push({ type:"mode", value:"full", label:"Full-Set" });
+      if (log.mode === "light") items.push({ type:"mode", value:"light", label:"Light-Set" });
+      if (log.bike) items.push({ type:"bike", value:"true", label:"Biking" });
+
+      const list = $("dayDlgList");
+      if (items.length === 0) {
+        list.innerHTML = `<div class="empty">Keine Einträge.</div>`;
+      } else {
+        list.innerHTML = items.map(it => `
+          <div class="item" data-del="${it.type}" data-val="${it.value}">
+            <div class="left"><div class="name">${escapeHtml(it.label)}</div></div>
+            <div class="right"><button class="trash" type="button" title="Löschen">🗑️</button></div>
+          </div>
+        `).join("");
+      }
+
+      dayDlg.showModal();
+    };
+
+    $("dayDlgClose").addEventListener("click", () => dayDlg.close());
+
+    $("dayDlgList").addEventListener("click", (ev) => {
+      const trashBtn = ev.target.closest("button.trash");
+      if (!trashBtn) return;
+      const row = ev.target.closest("[data-del]");
+      if (!row) return;
+
+      if (!confirm("Wirklich löschen?")) return;
+
+      const what = row.dataset.del;
+      const val = row.dataset.val;
+
+      const log = ensureLog(dayDlgKey);
+      if (what === "bike") log.bike = false;
+      if (what === "mode") {
+        if (log.mode === val) log.mode = null;
+      }
+
+      saveState();
+      renderCalendar();
+      // refresh dialog content
+      openDayDialog(dayDlgKey, dayDlgDateObj);
+    });
+
     const renderCalendar = () => {
       $("calTitle").textContent = monthTitle(calCursor);
 
       const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
-      const startDay = (first.getDay() + 6) % 7;  // Mo=0
+      const startDay = (first.getDay() + 6) % 7;  // Monday=0
       const totalCells = 42;
       const startDate = new Date(first);
       startDate.setDate(first.getDate() - startDay);
@@ -824,43 +906,36 @@
         dn.className = "dayNum";
         dn.textContent = String(d.getDate());
 
-        const badges = document.createElement("div");
-        badges.className = "badges";
+        const markers = document.createElement("div");
+        markers.className = "markers";
 
-        // ICONS (not labels)
-        if (hasFull){
-          const b = document.createElement("span");
-          b.className = "badge full";
-          b.textContent = "🏋️";
-          badges.appendChild(b);
+        if (hasFull) {
+          const m = document.createElement("span");
+          m.className = "mk full";
+          markers.appendChild(m);
         }
-        if (hasLight){
-          const b = document.createElement("span");
-          b.className = "badge light";
-          b.textContent = "✨";
-          badges.appendChild(b);
+        if (hasLight) {
+          const m = document.createElement("span");
+          m.className = "mk light";
+          markers.appendChild(m);
         }
-        if (hasBike){
-          const b = document.createElement("span");
-          b.className = "badge bike";
-          b.textContent = "🚴";
-          // tap bike badge to remove
-          b.addEventListener("click", (ev) => {
-            ev.stopPropagation();
-            const lr = ensureLog(key);
-            lr.bike = false;
-            saveState();
-            renderCalendar();
-          });
-          badges.appendChild(b);
+        if (hasBike) {
+          const m = document.createElement("span");
+          m.className = "mk bike";
+          markers.appendChild(m);
         }
 
         top.appendChild(dn);
-        top.appendChild(badges);
+        top.appendChild(markers);
         cell.appendChild(top);
+
+        if (inMonth) {
+          cell.addEventListener("click", () => openDayDialog(key, d));
+        }
 
         frag.appendChild(cell);
       }
+
       grid.appendChild(frag);
     };
 
@@ -1004,7 +1079,7 @@
 
       const note = $("note").value.trim() || null;
 
-      addExercise({
+      state.exercises.push({
         id: crypto.randomUUID(),
         name,
         goalType,
@@ -1016,6 +1091,9 @@
         completedToday: false
       });
 
+      saveState();
+      updateTodayModeIfEligible();
+      renderWorkout();
       dlg.close();
     });
 
