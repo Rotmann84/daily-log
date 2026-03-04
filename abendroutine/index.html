@@ -12,7 +12,6 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#0f2a1f" />
 
-  <!-- optional icon file in same folder -->
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 
   <style>
@@ -64,7 +63,6 @@
       overscroll-behavior: none;
     }
 
-    /* fixed background layer to avoid iOS bottom strip artifacts */
     body::before{
       content:"";
       position: fixed;
@@ -135,7 +133,6 @@
     }
     .datePill{ color: var(--muted); }
 
-    /* iOS-safe clipping for rounded panels */
     .panel{
       background: var(--panel);
       border: 1px solid var(--border);
@@ -155,19 +152,25 @@
     .page.active{ display:block; animation: fade .12s ease; }
     @keyframes fade{ from{opacity:.3; transform: translateY(2px);} to{opacity:1; transform: translateY(0);} }
 
-    /* HOME */
-    .homeStack{
-      display:flex;
-      flex-direction:column;
+    /* HOME: compact 2-column layout, no scrolling needed */
+    .homeGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap:12px;
-      align-items:center;
-      justify-content:center;
       padding: 6px 0 8px;
+      align-items:center;
+      justify-items:center;
     }
-    .squareBtn{
-      width: min(280px, 92vw);
+    .homeGrid .squareBtn:last-child{
+      grid-column: 1 / -1;   /* Bike centered on its own row */
+      width: min(240px, 84vw);
       aspect-ratio: 1 / 1;
-      border-radius: 22px;
+    }
+
+    .squareBtn{
+      width: min(170px, 40vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 20px;
       border: 1px solid rgba(185,162,106,0.32);
       background:
         radial-gradient(700px 300px at 50% 0%, rgba(185,162,106,0.15), transparent 60%),
@@ -184,22 +187,22 @@
     .squareBtn:active{ transform: scale(.99); }
 
     .iconBox{
-      width:62px; height:62px;
-      border-radius:18px;
+      width:56px; height:56px;
+      border-radius:16px;
       display:grid;
       place-items:center;
       background: rgba(185,162,106,0.12);
       border: 1px solid rgba(185,162,106,0.25);
       box-shadow: 0 10px 22px rgba(0,0,0,0.28);
       color: var(--accent2);
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 900;
     }
     .sqLabel{
       font-weight: 950;
       letter-spacing:.3px;
       color: var(--fg);
-      font-size: 16px;
+      font-size: 15px;
       margin:0;
     }
 
@@ -344,7 +347,6 @@
     .dayTop{ display:flex; justify-content:space-between; gap:6px; align-items:flex-start; }
     .dayNum{ font-weight: 950; font-size: 12px; }
 
-    /* Markers */
     .markers{
       display:flex;
       gap:3px;
@@ -355,7 +357,7 @@
     .mk{
       width:8px;
       height:8px;
-      border-radius:3px; /* small square */
+      border-radius:3px;
       border:1px solid rgba(255,255,255,0.20);
     }
     .mk.full{ background: var(--mk-full); border-color: var(--mk-full-b); }
@@ -436,12 +438,13 @@
     .statsGrid .v{ text-align:right; }
 
     @media (max-width: 380px){
-      .squareBtn{ width: min(250px, 92vw); border-radius: 20px; }
-      .iconBox{ width:56px; height:56px; border-radius: 16px; }
+      .squareBtn{ width: min(155px, 42vw); border-radius: 18px; }
+      .iconBox{ width:52px; height:52px; border-radius: 15px; font-size: 26px; }
       .trash{ width:36px; height:36px; }
       .mk{ width:7px; height:7px; }
       .markers{ gap:2px; }
       .dayCell{ padding:7px; }
+      .homeGrid .squareBtn:last-child{ width: min(220px, 84vw); }
     }
   </style>
 </head>
@@ -461,15 +464,17 @@
     <!-- HOME -->
     <section class="page active" id="homePage">
       <div class="panel">
-        <div class="homeStack">
+        <div class="homeGrid">
           <button class="squareBtn" id="fullBtn" type="button">
             <div class="iconBox">🏋️</div>
             <p class="sqLabel">Full-Set</p>
           </button>
+
           <button class="squareBtn" id="lightBtn" type="button">
             <div class="iconBox">✨</div>
             <p class="sqLabel">Light-Set</p>
           </button>
+
           <button class="squareBtn" id="bikeBtn" type="button">
             <div class="iconBox">🚴</div>
             <p class="sqLabel">Biking</p>
@@ -589,7 +594,7 @@
     </div>
   </dialog>
 
-  <!-- Modal: Day Details (tap a day cell) -->
+  <!-- Modal: Day Details -->
   <dialog id="dayDlg">
     <div class="modal">
       <h2 id="dayDlgTitle">Tag</h2>
@@ -603,7 +608,7 @@
   <script>
     "use strict";
 
-    const KEY = "abendroutine_singlefile_markers_v1";
+    const KEY = "abendroutine_singlefile_markers_v2";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -714,7 +719,6 @@
 
     const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : "";
 
-    // Full/Light entry only if exercises exist AND at least one completed today
     const updateTodayModeIfEligible = () => {
       const log = ensureTodayLog();
       const anyExercises = state.exercises.length > 0;
@@ -747,13 +751,6 @@
 
       updateTodayModeIfEligible();
       saveState();
-      renderWorkout();
-    };
-
-    const addExercise = (exercise) => {
-      state.exercises.push(exercise);
-      saveState();
-      updateTodayModeIfEligible();
       renderWorkout();
     };
 
@@ -814,7 +811,7 @@
       saveState();
     };
 
-    // Day dialog (tap a calendar cell)
+    // Day dialog
     const dayDlg = $("dayDlg");
     let dayDlgKey = null;
     let dayDlgDateObj = null;
@@ -867,7 +864,6 @@
 
       saveState();
       renderCalendar();
-      // refresh dialog content
       openDayDialog(dayDlgKey, dayDlgDateObj);
     });
 
@@ -875,7 +871,7 @@
       $("calTitle").textContent = monthTitle(calCursor);
 
       const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
-      const startDay = (first.getDay() + 6) % 7;  // Monday=0
+      const startDay = (first.getDay() + 6) % 7;
       const totalCells = 42;
       const startDate = new Date(first);
       startDate.setDate(first.getDate() - startDay);
@@ -909,29 +905,15 @@
         const markers = document.createElement("div");
         markers.className = "markers";
 
-        if (hasFull) {
-          const m = document.createElement("span");
-          m.className = "mk full";
-          markers.appendChild(m);
-        }
-        if (hasLight) {
-          const m = document.createElement("span");
-          m.className = "mk light";
-          markers.appendChild(m);
-        }
-        if (hasBike) {
-          const m = document.createElement("span");
-          m.className = "mk bike";
-          markers.appendChild(m);
-        }
+        if (hasFull) { const m = document.createElement("span"); m.className = "mk full"; markers.appendChild(m); }
+        if (hasLight){ const m = document.createElement("span"); m.className = "mk light"; markers.appendChild(m); }
+        if (hasBike) { const m = document.createElement("span"); m.className = "mk bike"; markers.appendChild(m); }
 
         top.appendChild(dn);
         top.appendChild(markers);
         cell.appendChild(top);
 
-        if (inMonth) {
-          cell.addEventListener("click", () => openDayDialog(key, d));
-        }
+        if (inMonth) cell.addEventListener("click", () => openDayDialog(key, d));
 
         frag.appendChild(cell);
       }
