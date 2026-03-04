@@ -35,11 +35,12 @@
       --radius:18px;
 
       /* markers */
-      --mk-full:#D6C289;   --mk-full-b:#b9a26a;
-      --mk-light:#3ED1C4;  --mk-light-b:#2fb3a7;
-      --mk-bike:#F29C38;   --mk-bike-b:#d88426;
+      --mk-full:#D6C289;   --mk-full-b:#b9a26a; /* Gold */
+      --mk-light:#3ED1C4;  --mk-light-b:#2fb3a7; /* Türkis */
+      --mk-bike:#F29C38;   --mk-bike-b:#d88426; /* Orange */
+      --mk-restart:#B58CFF; --mk-restart-b:#8F6BFF; /* Violett */
 
-      /* new home frame color (hellgrün, edel) */
+      /* home frame */
       --homeFrame: rgba(54,194,106,0.16);
       --homeFrameB: rgba(54,194,106,0.28);
       --homeFrameHi: rgba(54,194,106,0.22);
@@ -146,8 +147,7 @@
     .page.active{ display:block; animation: fade .12s ease; }
     @keyframes fade{ from{opacity:.3; transform: translateY(2px);} to{opacity:1; transform: translateY(0);} }
 
-    /* ---------- HOME (new) ---------- */
-    /* One clean row container, no giant green frames */
+    /* ---------- HOME ---------- */
     .homeRow{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -156,7 +156,6 @@
       align-items:stretch;
     }
 
-    /* "wide lightgreen frame" per action button */
     .homeAction{
       border-radius: 18px;
       border: 1px solid var(--homeFrameB);
@@ -195,11 +194,17 @@
       white-space: nowrap;
     }
 
-    /* On mobile: stack them */
+    /* “Wiedereinstieg” unter Biking, mittig, mit Abstand */
+    .homeAction.restart{
+      grid-column: 2;
+      margin-top: 8px;
+    }
+
     @media (max-width: 520px){
       .homeRow{ grid-template-columns: 1fr; }
       .homeAction{ justify-content:flex-start; padding: 14px 14px; }
       .homeText{ font-size: 16px; }
+      .homeAction.restart{ grid-column: auto; margin-top: 0; }
     }
 
     /* ---------- WORKOUT ---------- */
@@ -347,6 +352,7 @@
     .mk.full{ background: var(--mk-full); border-color: var(--mk-full-b); }
     .mk.light{ background: var(--mk-light); border-color: var(--mk-light-b); }
     .mk.bike{ background: var(--mk-bike); border-color: var(--mk-bike-b); }
+    .mk.restart{ background: var(--mk-restart); border-color: var(--mk-restart-b); }
 
     /* ---------- DIALOGS ---------- */
     dialog{
@@ -452,6 +458,11 @@
           <button class="homeAction" id="bikeBtn" type="button">
             <div class="homeIcon">🚴</div>
             <div class="homeText">Biking</div>
+          </button>
+
+          <button class="homeAction restart" id="restartBtn" type="button">
+            <div class="homeIcon">🧩</div>
+            <div class="homeText">Wiedereinstieg</div>
           </button>
         </div>
       </div>
@@ -582,7 +593,8 @@
   <script>
     "use strict";
 
-    const KEY = "abendroutine_singlefile_markers_v3";
+    // NEW KEY (breaking change): exercises getrennt nach Modus
+    const KEY = "abendroutine_singlefile_modes_v1";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -608,41 +620,45 @@
       weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
     }).format(d);
 
+    // ---- State model (new) ----
+    // state.exercisesByMode = { full:[], light:[], restart:[] }
+    // state.logs = [{ dateKey, strength:null|'full'|'light'|'restart', bike:false, completed:{full:[],light:[],restart:[]} }]
     const load = () => {
       const raw = localStorage.getItem(KEY);
-      if (!raw) return { exercises: [], logs: [], lastSeen: todayKey() };
-      try { return JSON.parse(raw); } catch { return { exercises: [], logs: [], lastSeen: todayKey() }; }
+      if (!raw) return { exercisesByMode:{ full:[], light:[], restart:[] }, logs: [] };
+      try { return JSON.parse(raw); } catch { return { exercisesByMode:{ full:[], light:[], restart:[] }, logs: [] }; }
     };
     let state = load();
     const saveState = () => localStorage.setItem(KEY, JSON.stringify(state));
 
+    const ensureExercises = () => {
+      if (!state.exercisesByMode) state.exercisesByMode = { full:[], light:[], restart:[] };
+      if (!Array.isArray(state.exercisesByMode.full)) state.exercisesByMode.full = [];
+      if (!Array.isArray(state.exercisesByMode.light)) state.exercisesByMode.light = [];
+      if (!Array.isArray(state.exercisesByMode.restart)) state.exercisesByMode.restart = [];
+    };
+    ensureExercises();
+
     const ensureLog = (dateKey) => {
       let log = state.logs.find(l => l.dateKey === dateKey);
       if (!log) {
-        log = { dateKey, mode: null, completedIds: [], bike: false };
+        log = { dateKey, strength: null, bike: false, completed: { full:[], light:[], restart:[] } };
         state.logs.unshift(log);
-      } else {
-        if (!("mode" in log)) log.mode = null;
-        if (!Array.isArray(log.completedIds)) log.completedIds = [];
-        if (!("bike" in log)) log.bike = false;
+      }
+      if (!("strength" in log)) log.strength = null;
+      if (!("bike" in log)) log.bike = false;
+      if (!log.completed || typeof log.completed !== "object") log.completed = { full:[], light:[], restart:[] };
+      for (const k of ["full","light","restart"]) {
+        if (!Array.isArray(log.completed[k])) log.completed[k] = [];
       }
       return log;
     };
     const ensureTodayLog = () => ensureLog(todayKey());
 
-    const rolloverIfNeeded = () => {
-      const t = todayKey();
-      if (state.lastSeen !== t) {
-        state.exercises = state.exercises.map(e => ({ ...e, completedToday: false }));
-        state.lastSeen = t;
-        saveState();
-      }
-    };
-    rolloverIfNeeded();
-
+    // ---- UI routing ----
     const pages = { home: $("homePage"), workout: $("workoutPage"), calendar: $("calendarPage") };
     let currentPage = "home";
-    let currentMode = null;
+    let currentMode = null; // 'full'|'light'|'restart' (strength modes)
     let calCursor = new Date(); calCursor.setDate(1);
 
     const setHeader = (page) => {
@@ -663,6 +679,49 @@
       .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
       .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 
+    const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : m === "restart" ? "Wiedereinstieg" : "";
+    const modeAccentText = (m) => {
+      if (m === "full") return "rgba(214,194,137,0.92)";
+      if (m === "light") return "rgba(62,209,196,0.90)";
+      if (m === "restart") return "rgba(181,140,255,0.92)";
+      return "rgba(214,194,137,0.92)";
+    };
+
+    const listForMode = (mode) => {
+      ensureExercises();
+      return state.exercisesByMode[mode] || [];
+    };
+
+    const setListForMode = (mode, arr) => {
+      ensureExercises();
+      state.exercisesByMode[mode] = arr;
+    };
+
+    const doneSetForTodayMode = (mode) => {
+      const log = ensureTodayLog();
+      return new Set(log.completed[mode] || []);
+    };
+
+    // strength entry only if: exercises exist for that mode AND at least one completed today for that mode
+    const updateStrengthForTodayMode = (mode) => {
+      const log = ensureTodayLog();
+      const ex = listForMode(mode);
+      const done = (log.completed[mode] || []);
+      const eligible = ex.length > 0 && done.length > 0;
+      if (eligible) log.strength = mode;
+      else if (log.strength === mode) log.strength = null; // only clear if it was this mode
+      saveState();
+    };
+
+    const startWorkout = (mode) => {
+      currentMode = mode;
+      $("workoutTitle").textContent = `${modeLabel(mode)}-Set`;
+      $("modeText").textContent = `${modeLabel(mode)}-Set`;
+      $("modeText").style.color = modeAccentText(mode);
+      updateStrengthForTodayMode(mode);
+      go("workout");
+    };
+
     const formatMeta = (e) => {
       if (e.goalType === "reps") {
         const parts = [];
@@ -682,58 +741,49 @@
       return e.note || "";
     };
 
-    const dayStatus = (log) => {
-      const total = state.exercises.length;
-      const done = (log?.completedIds?.length ?? 0);
+    const dayStatusForMode = (mode) => {
+      const log = ensureTodayLog();
+      const total = listForMode(mode).length;
+      const done = (log.completed[mode] || []).length;
       if (total === 0) return { kind:"none", text:"0/0" };
       if (done === 0) return { kind:"none", text:`${done}/${total}` };
       if (done >= total) return { kind:"ok", text:`${done}/${total}` };
       return { kind:"warn", text:`${done}/${total}` };
     };
 
-    const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : "";
-
-    const updateTodayModeIfEligible = () => {
-      const log = ensureTodayLog();
-      const anyExercises = state.exercises.length > 0;
-      const anyCompleted = state.exercises.some(e => e.completedToday);
-      if (anyExercises && anyCompleted && (currentMode === "full" || currentMode === "light")) log.mode = currentMode;
-      else log.mode = null;
-      saveState();
-    };
-
-    const startWorkout = (mode) => {
-      currentMode = mode;
-      $("workoutTitle").textContent = `${modeLabel(mode)}-Set`;
-      $("modeText").textContent = `${modeLabel(mode)}-Set`;
-      updateTodayModeIfEligible();
-      go("workout");
-    };
-
     const toggleExercise = (id) => {
-      let toggledTo = false;
-      state.exercises = state.exercises.map(e => {
-        if (e.id !== id) return e;
-        toggledTo = !e.completedToday;
-        return { ...e, completedToday: toggledTo };
-      });
-
+      const mode = currentMode;
       const log = ensureTodayLog();
-      const set = new Set(log.completedIds);
-      if (toggledTo) set.add(id); else set.delete(id);
-      log.completedIds = Array.from(set);
+      const set = new Set(log.completed[mode] || []);
+      if (set.has(id)) set.delete(id); else set.add(id);
+      log.completed[mode] = Array.from(set);
 
-      updateTodayModeIfEligible();
+      updateStrengthForTodayMode(mode);
       saveState();
       renderWorkout();
     };
 
     const deleteExercise = (id) => {
       if (!confirm("Übung wirklich löschen?")) return;
-      state.exercises = state.exercises.filter(e => e.id !== id);
-      for (const l of state.logs) l.completedIds = (l.completedIds || []).filter(x => x !== id);
+      const mode = currentMode;
+
+      setListForMode(mode, listForMode(mode).filter(e => e.id !== id));
+
+      // remove from all days for that mode
+      for (const l of state.logs) {
+        if (l.completed && Array.isArray(l.completed[mode])) {
+          l.completed[mode] = l.completed[mode].filter(x => x !== id);
+        }
+        // if this deletion makes a day no longer eligible, clear strength only if it matched that mode and would become invalid:
+        if (l.strength === mode) {
+          const ex = listForMode(mode);
+          const done = (l.completed?.[mode] || []);
+          const eligible = ex.length > 0 && done.length > 0;
+          if (!eligible) l.strength = null;
+        }
+      }
+
       saveState();
-      updateTodayModeIfEligible();
       renderWorkout();
     };
 
@@ -746,16 +796,21 @@
     });
 
     const renderWorkout = () => {
+      const mode = currentMode;
       const log = ensureTodayLog();
       const list = $("exerciseList");
       const empty = $("exerciseEmpty");
 
-      empty.style.display = state.exercises.length ? "none" : "block";
+      const ex = listForMode(mode);
+      const done = new Set(log.completed[mode] || []);
+
+      empty.style.display = ex.length ? "none" : "block";
 
       let html = "";
-      for (const e of state.exercises) {
+      for (const e of ex) {
+        const isDone = done.has(e.id);
         html += `
-          <div class="item ${e.completedToday ? "done" : ""}" data-ex-id="${escapeHtml(e.id)}">
+          <div class="item ${isDone ? "done" : ""}" data-ex-id="${escapeHtml(e.id)}">
             <div class="left">
               <div class="name">${escapeHtml(e.name)}</div>
               <div class="meta">${escapeHtml(formatMeta(e))}</div>
@@ -769,14 +824,14 @@
       }
       list.innerHTML = html;
 
-      const done = state.exercises.reduce((a,e) => a + (e.completedToday ? 1 : 0), 0);
-      $("progressPill").textContent = `${done}/${state.exercises.length}`;
+      const doneCount = (log.completed[mode] || []).length;
+      $("progressPill").textContent = `${doneCount}/${ex.length}`;
 
-      const st = dayStatus(log);
+      const st = dayStatusForMode(mode);
       $("todayText").textContent = st.text;
       $("todayDot").className = "dot " + st.kind;
 
-      $("finishBtn").style.display = (state.exercises.length > 0 && done > 0) ? "inline-flex" : "none";
+      $("finishBtn").style.display = (ex.length > 0 && doneCount > 0) ? "inline-flex" : "none";
     };
 
     const markBikingToday = () => {
@@ -785,7 +840,7 @@
       saveState();
     };
 
-    // Day dialog
+    // ---- Day dialog ----
     const dayDlg = $("dayDlg");
     let dayDlgKey = null;
     let dayDlgDateObj = null;
@@ -798,8 +853,9 @@
       const log = ensureLog(dateKey);
 
       const items = [];
-      if (log.mode === "full") items.push({ type:"mode", value:"full", label:"Full-Set" });
-      if (log.mode === "light") items.push({ type:"mode", value:"light", label:"Light-Set" });
+      if (log.strength === "full") items.push({ type:"strength", value:"full", label:"Full-Set" });
+      if (log.strength === "light") items.push({ type:"strength", value:"light", label:"Light-Set" });
+      if (log.strength === "restart") items.push({ type:"strength", value:"restart", label:"Wiedereinstieg" });
       if (log.bike) items.push({ type:"bike", value:"true", label:"Biking" });
 
       const list = $("dayDlgList");
@@ -831,14 +887,19 @@
       const val = row.dataset.val;
 
       const log = ensureLog(dayDlgKey);
+
       if (what === "bike") log.bike = false;
-      if (what === "mode") { if (log.mode === val) log.mode = null; }
+      if (what === "strength") {
+        if (log.strength === val) log.strength = null;
+        // optional: also clear completed for that day for that mode? -> NEIN, nur Badge entfernen (wie du’s willst)
+      }
 
       saveState();
       renderCalendar();
       openDayDialog(dayDlgKey, dayDlgDateObj);
     });
 
+    // ---- Calendar ----
     const renderCalendar = () => {
       $("calTitle").textContent = monthTitle(calCursor);
 
@@ -860,8 +921,9 @@
         const key = ymd(d);
         const log = state.logs.find(l => l.dateKey === key);
 
-        const hasFull = log?.mode === "full";
-        const hasLight = log?.mode === "light";
+        const hasFull = log?.strength === "full";
+        const hasLight = log?.strength === "light";
+        const hasRestart = log?.strength === "restart";
         const hasBike = !!log?.bike;
 
         const cell = document.createElement("div");
@@ -878,6 +940,7 @@
         markers.className = "markers";
         if (hasFull) { const m=document.createElement("span"); m.className="mk full"; markers.appendChild(m); }
         if (hasLight){ const m=document.createElement("span"); m.className="mk light"; markers.appendChild(m); }
+        if (hasRestart){ const m=document.createElement("span"); m.className="mk restart"; markers.appendChild(m); }
         if (hasBike) { const m=document.createElement("span"); m.className="mk bike"; markers.appendChild(m); }
 
         top.appendChild(dn);
@@ -885,13 +948,12 @@
         cell.appendChild(top);
 
         if (inMonth) cell.addEventListener("click", () => openDayDialog(key, d));
-
         frag.appendChild(cell);
       }
       grid.appendChild(frag);
     };
 
-    // Stats
+    // ---- Stats ----
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
     const daysInMonth = (year, monthIndex0) => new Date(year, monthIndex0 + 1, 0).getDate();
@@ -918,12 +980,14 @@
       else denomDays = 0;
 
       const monthLogs = state.logs.filter(l => parseYearMonth(l.dateKey) === ym);
-      const monthActive = monthLogs.filter(l => (l.mode === "full" || l.mode === "light" || !!l.bike)).length;
-      const monthFull = monthLogs.filter(l => l.mode === "full").length;
-      const monthLight = monthLogs.filter(l => l.mode === "light").length;
+
+      const monthActive = monthLogs.filter(l => (l.strength === "full" || l.strength === "light" || l.strength === "restart" || !!l.bike)).length;
+      const monthFull = monthLogs.filter(l => l.strength === "full").length;
+      const monthLight = monthLogs.filter(l => l.strength === "light").length;
+      const monthRestart = monthLogs.filter(l => l.strength === "restart").length;
       const monthBike = monthLogs.filter(l => !!l.bike).length;
 
-      return { label: monthTitle(calCursor), denomDays, monthActive, monthFull, monthLight, monthBike };
+      return { label: monthTitle(calCursor), denomDays, monthActive, monthFull, monthLight, monthRestart, monthBike };
     };
 
     const computeYearStats = () => {
@@ -932,12 +996,13 @@
       const denomDays = dayOfYear(today);
       const yearLogs = state.logs.filter(l => parseYear(l.dateKey) === String(currentYear));
 
-      const yearActive = yearLogs.filter(l => (l.mode === "full" || l.mode === "light" || !!l.bike)).length;
-      const yearFull = yearLogs.filter(l => l.mode === "full").length;
-      const yearLight = yearLogs.filter(l => l.mode === "light").length;
+      const yearActive = yearLogs.filter(l => (l.strength === "full" || l.strength === "light" || l.strength === "restart" || !!l.bike)).length;
+      const yearFull = yearLogs.filter(l => l.strength === "full").length;
+      const yearLight = yearLogs.filter(l => l.strength === "light").length;
+      const yearRestart = yearLogs.filter(l => l.strength === "restart").length;
       const yearBike = yearLogs.filter(l => !!l.bike).length;
 
-      return { currentYear, denomDays, yearActive, yearFull, yearLight, yearBike };
+      return { currentYear, denomDays, yearActive, yearFull, yearLight, yearRestart, yearBike };
     };
 
     const renderStatsGrid = (gridEl, rows) => {
@@ -958,6 +1023,7 @@
         ["Aktive Tage", `${m.monthActive} (${pct(m.monthActive, m.denomDays)})`],
         ["Full", `${m.monthFull} (${pct(m.monthFull, m.denomDays)})`],
         ["Light", `${m.monthLight} (${pct(m.monthLight, m.denomDays)})`],
+        ["Wiedereinstieg", `${m.monthRestart} (${pct(m.monthRestart, m.denomDays)})`],
         ["Bike", `${m.monthBike} (${pct(m.monthBike, m.denomDays)})`],
       ]);
 
@@ -966,13 +1032,14 @@
         ["Aktive Tage", `${y.yearActive} (${pct(y.yearActive, y.denomDays)})`],
         ["Full", `${y.yearFull} (${pct(y.yearFull, y.denomDays)})`],
         ["Light", `${y.yearLight} (${pct(y.yearLight, y.denomDays)})`],
+        ["Wiedereinstieg", `${y.yearRestart} (${pct(y.yearRestart, y.denomDays)})`],
         ["Bike", `${y.yearBike} (${pct(y.yearBike, y.denomDays)})`],
       ]);
 
       $("statsDlg").showModal();
     };
 
-    // Exercise dialog
+    // ---- Exercise dialog ----
     const dlg = $("dlg");
     const applyGoalTypeUI = () => {
       const t = $("goalType").value;
@@ -992,9 +1059,10 @@
       dlg.showModal();
     };
 
-    // Wire
+    // ---- Wire buttons ----
     $("fullBtn").addEventListener("click", () => startWorkout("full"));
     $("lightBtn").addEventListener("click", () => startWorkout("light"));
+    $("restartBtn").addEventListener("click", () => startWorkout("restart"));
     $("bikeBtn").addEventListener("click", () => { markBikingToday(); go("calendar"); });
 
     $("calendarBtn").addEventListener("click", () => go("calendar"));
@@ -1008,6 +1076,7 @@
     $("goalType").addEventListener("change", applyGoalTypeUI);
 
     $("save").addEventListener("click", () => {
+      const mode = currentMode;
       const name = $("name").value.trim();
       if (!name) return alert("Bitte Name eingeben.");
 
@@ -1025,7 +1094,8 @@
       }
       const note = $("note").value.trim() || null;
 
-      state.exercises.push({
+      const ex = listForMode(mode).slice();
+      ex.push({
         id: crypto.randomUUID(),
         name,
         goalType,
@@ -1033,37 +1103,29 @@
         reps,
         seconds,
         weightKg,
-        note,
-        completedToday: false
+        note
       });
+      setListForMode(mode, ex);
 
       saveState();
-      updateTodayModeIfEligible();
+      updateStrengthForTodayMode(mode);
       renderWorkout();
       dlg.close();
     });
 
     $("finishBtn").addEventListener("click", () => go("calendar"));
+
     $("prevMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1); renderCalendar(); });
     $("nextMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1); renderCalendar(); });
 
-    setInterval(() => {
-      const before = state.lastSeen;
-      rolloverIfNeeded();
-      if (state.lastSeen !== before) {
-        updateTodayModeIfEligible();
-        if (currentPage === "workout") renderWorkout();
-        if (currentPage === "calendar") renderCalendar();
-        $("datePill").textContent = niceDate();
-      }
-    }, 60 * 1000);
-
-    // Init
+    // ---- Init ----
     $("datePill").textContent = niceDate();
     ensureTodayLog();
-    updateTodayModeIfEligible();
     saveState();
     go("home");
+
+    // keep header date fresh
+    setInterval(() => { $("datePill").textContent = niceDate(); }, 60 * 1000);
   </script>
 </body>
 </html>
