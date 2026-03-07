@@ -25,7 +25,7 @@ body{
 .wrap{max-width:520px; margin:0 auto; padding:18px 16px 28px;}
 
 .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px;}
-h1{font-size:22px; margin:0;} /* Titel unverändert */
+h1{font-size:22px; margin:0;}
 
 .headerActions{display:flex; align-items:center; gap:8px;}
 .iconBtn{
@@ -75,7 +75,7 @@ button:active{transform:scale(0.99);}
   border:1px solid var(--line);
   background:rgba(0,0,0,0.12);
   display:flex; align-items:center; justify-content:space-between; gap:10px;
-  cursor:default; /* nur Anzeige */
+  cursor:default;
 }
 .todayBar .left{display:flex; flex-direction:column; gap:3px;}
 .todayBar .date{font-weight:800;}
@@ -138,6 +138,46 @@ details .inner{margin-top:10px;}
   border:1px solid rgba(255,255,255,0.12);
 }
 .toast.show{opacity:1;}
+
+/* 10-day row */
+.tenDayWrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:22px;
+}
+.tenDayCell{
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+  user-select:none;
+}
+.tenDayCell.no{
+  background:rgba(31,75,43,0.25);
+  color:#cfe9d8;
+}
+.tenDayCell.yes{
+  background:rgba(90,31,31,0.25);
+  color:#f0cfcf;
+}
+.tenDayCell.open{
+  background:rgba(75,59,31,0.25);
+  color:#d9d9d9;
+}
+.tenDayLegend{
+  margin-top:8px;
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+}
 
 /* Modals */
 .modalOverlay{
@@ -203,7 +243,6 @@ textarea{
     <h1>Alkohol-Tracker</h1>
 
     <div class="headerActions">
-      <!-- Import -->
       <button class="iconBtn" id="btnImportIcon" type="button" title="Import (CSV)" aria-label="Import (CSV)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -213,7 +252,6 @@ textarea{
         </svg>
       </button>
 
-      <!-- Export (luftig) -->
       <button class="iconBtn" id="btnExportIcon" type="button" title="Export (CSV)" aria-label="Export (CSV)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -224,7 +262,6 @@ textarea{
         </svg>
       </button>
 
-      <!-- Delete -->
       <button class="iconBtn" id="btnDeleteIcon" type="button" title="Daten löschen" aria-label="Daten löschen">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -238,14 +275,12 @@ textarea{
     </div>
   </div>
 
-  <!-- MAIN -->
   <div class="card">
     <div class="btns">
       <button class="b-ok" id="btnNo" type="button">Kein Alkohol</button>
       <button class="b-danger" id="btnYes" type="button">Alkohol</button>
     </div>
 
-    <!-- Heutiger Status: nur Anzeige -->
     <div class="todayBar" id="todayBar" aria-label="Heutiger Status">
       <div class="left">
         <div class="date" id="todayDate">—</div>
@@ -255,7 +290,6 @@ textarea{
     </div>
   </div>
 
-  <!-- SERIEN -->
   <div class="card" id="cardStreaks" style="display:none;">
     <div class="row">
       <div class="stat">
@@ -272,7 +306,12 @@ textarea{
     </div>
   </div>
 
-  <!-- STATISTIK -->
+  <!-- 10-day row -->
+  <div class="card" id="cardTenDays" style="display:none;">
+    <div class="tenDayWrap" id="tenDayWrap"></div>
+    <div class="tenDayLegend">letzte 10 Tage · links ältester · rechts heute</div>
+  </div>
+
   <div class="card" id="cardStats">
     <details id="statsOnlyOverall" open>
       <summary>Gesamtstatistik</summary>
@@ -287,7 +326,6 @@ textarea{
     <div id="statsDynamic" style="display:none;"></div>
   </div>
 
-  <!-- HISTORIE -->
   <div class="card" id="cardHistory" style="display:none;">
     <details>
       <summary>Letzte 21 Tage (tippen zum Ändern)</summary>
@@ -298,7 +336,7 @@ textarea{
 
 </div>
 
-<!-- QUICK STATUS MENU (nur für 21-Tage / Bearbeiten) -->
+<!-- QUICK STATUS MENU -->
 <div class="modalOverlay" id="modalQuick" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="quickTitle">
     <div class="modalTitle" id="quickTitle">Status ändern</div>
@@ -316,7 +354,7 @@ textarea{
   </div>
 </div>
 
-<!-- REASON MODAL (Alkohol: Speichern bestätigen) -->
+<!-- REASON MODAL -->
 <div class="modalOverlay" id="modalReason" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reasonTitle">
     <div class="modalTitle" id="reasonTitle">Alkohol – Anlass (optional)</div>
@@ -346,13 +384,11 @@ textarea{
 <input id="fileInput" type="file" accept=".csv,text/csv" style="display:none" />
 
 <script>
-/* =========================
-   Settings
-========================= */
 const APP = Object.freeze({
-  STORAGE_KEY: "alcohol-tracker-v5",
-  META_KEY: "alcohol-tracker-v5:meta",
+  STORAGE_KEY: "alcohol-tracker-v6",
+  META_KEY: "alcohol-tracker-v6:meta",
   HISTORY_DAYS: 21,
+  TEN_DAYS: 10,
   MAX_REASON_LEN: 500
 });
 
@@ -394,7 +430,6 @@ function hasAnyData(){
   return Object.keys(entries).length > 0;
 }
 
-/* ===== Stats / streaks ===== */
 function computeStatsInRange(entries, startKey, endKey){
   const start = parseKey(startKey);
   const end = parseKey(endKey);
@@ -518,7 +553,36 @@ function renderDynamicStats(entries, meta){
   }
 }
 
-/* ===== CSV ===== */
+function renderTenDayRow(entries){
+  const host = document.getElementById("tenDayWrap");
+  host.innerHTML = "";
+
+  const today = new Date();
+  for (let i = APP.TEN_DAYS - 1; i >= 0; i--){
+    const dt = addDays(today, -i);
+    const k = keyFromDate(dt);
+
+    const cell = document.createElement("div");
+    cell.className = "tenDayCell";
+
+    if (!hasRecord(entries, k)){
+      cell.classList.add("open");
+      cell.textContent = "?";
+      cell.title = `${k}: Offen`;
+    } else if (entries[k].a === 0){
+      cell.classList.add("no");
+      cell.textContent = "✓";
+      cell.title = `${k}: Kein Alkohol`;
+    } else {
+      cell.classList.add("yes");
+      cell.textContent = "✕";
+      cell.title = `${k}: Alkohol`;
+    }
+
+    host.appendChild(cell);
+  }
+}
+
 function csvCell(s){
   const v = (s ?? "").toString();
   return `"${v.replace(/"/g, '""')}"`;
@@ -609,7 +673,6 @@ function importCSVText(text){
   toast(`Import ok (${importedRows} Zeilen, ${skipped} übersprungen)`);
 }
 
-/* ===== Today UI ===== */
 function updateTodayUI(entries){
   const k = todayKey();
   setText("todayDate", k);
@@ -626,7 +689,6 @@ function updateTodayUI(entries){
   }
 }
 
-/* ===== Modals: Quick (edit) & Reason ===== */
 const quick = {
   overlay: document.getElementById("modalQuick"),
   sub: document.getElementById("quickSub"),
@@ -680,7 +742,6 @@ function setDayOpen(k){
   }
 }
 
-/* Quick menu actions (edit/backfill) */
 document.getElementById("quickNo").addEventListener("click", ()=>{
   if (!quick.k) return;
   setDayNo(quick.k);
@@ -692,7 +753,7 @@ document.getElementById("quickYes").addEventListener("click", ()=>{
   if (!quick.k) return;
   const k = quick.k;
   closeQuick();
-  openReason(k); // Anlass optional, Speichern erforderlich
+  openReason(k);
 });
 document.getElementById("quickOpen").addEventListener("click", ()=>{
   if (!quick.k) return;
@@ -702,7 +763,6 @@ document.getElementById("quickOpen").addEventListener("click", ()=>{
   toast("Offen");
 });
 
-/* Reason save */
 document.getElementById("reasonSave").addEventListener("click", ()=>{
   if (!reasonModal.k) return;
   saveAlcohol(reasonModal.k, reasonModal.input.value);
@@ -711,7 +771,6 @@ document.getElementById("reasonSave").addEventListener("click", ()=>{
   toast("Alkohol");
 });
 
-/* ===== Delete confirm ===== */
 const del = { overlay: document.getElementById("modalDelete") };
 function openDelete(){ openOverlay(del.overlay); }
 function closeDelete(){ closeOverlay(del.overlay); }
@@ -725,16 +784,15 @@ document.getElementById("delConfirm").addEventListener("click", ()=>{
   toast("Daten gelöscht");
 });
 
-/* ===== Visibility ===== */
 function updateVisibility(){
   const any = hasAnyData();
   document.getElementById("cardHistory").style.display = any ? "" : "none";
   document.getElementById("statsOnlyOverall").style.display = any ? "none" : "";
   document.getElementById("statsDynamic").style.display = any ? "" : "none";
   document.getElementById("cardStreaks").style.display = any ? "" : "none";
+  document.getElementById("cardTenDays").style.display = any ? "" : "none";
 }
 
-/* ===== Render ===== */
 function render(){
   const entries = loadEntries();
   updateTodayUI(entries);
@@ -743,6 +801,7 @@ function render(){
   const keys = Object.keys(entries).sort();
   if (keys.length === 0){
     document.getElementById("statsDynamic").innerHTML = "";
+    document.getElementById("tenDayWrap").innerHTML = "";
     return;
   }
 
@@ -758,6 +817,7 @@ function render(){
   setText("streakBest", best.bestLen);
   setText("streakBestRange", best.bestLen > 0 ? `Zeitraum: ${best.bestStart} – ${best.bestEnd}` : "Zeitraum: —");
 
+  renderTenDayRow(entries);
   renderDynamicStats(entries, { trackStart, trackEnd });
 
   const hist = document.getElementById("history");
@@ -786,15 +846,11 @@ function render(){
 
     div.appendChild(left);
     div.appendChild(right);
-
-    // Quick-Menü NUR hier (rückwirkend/bearbeiten)
     div.addEventListener("click", () => openQuick(k));
-
     hist.appendChild(div);
   }
 }
 
-/* ===== Wire up: Main buttons set directly ===== */
 document.getElementById("btnNo").addEventListener("click", ()=>{
   const k = todayKey();
   setDayNo(k);
@@ -803,11 +859,9 @@ document.getElementById("btnNo").addEventListener("click", ()=>{
 });
 
 document.getElementById("btnYes").addEventListener("click", ()=>{
-  // Alkohol für HEUTE -> Anlass optional, Speichern nötig
   openReason(todayKey());
 });
 
-/* ===== Header icons ===== */
 const fileInput = document.getElementById("fileInput");
 document.getElementById("btnImportIcon").addEventListener("click", ()=>{
   fileInput.value = "";
@@ -822,7 +876,6 @@ fileInput.addEventListener("change", async ()=>{
 document.getElementById("btnExportIcon").addEventListener("click", exportCSV);
 document.getElementById("btnDeleteIcon").addEventListener("click", openDelete);
 
-/* ESC closes modals */
 document.addEventListener("keydown", (e)=>{
   if (e.key !== "Escape") return;
   if (quick.overlay.style.display === "flex") closeQuick();
