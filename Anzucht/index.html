@@ -8,7 +8,6 @@
   />
   <title>Anzuchtplan</title>
 
-  <!-- PWA / iOS -->
   <meta name="theme-color" content="#6f1d3a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -16,18 +15,20 @@
 
   <style>
     :root {
-      --bg: #f7f1f3;
+      --bg1: #f8f1f4;
+      --bg2: #f2e8ec;
       --card: #fffafc;
       --primary: #6f1d3a;
       --primary-dark: #54152c;
       --primary-soft: #b96b86;
-      --line: #d9c2ca;
+      --line: #dbc3cc;
       --text: #2f1b22;
-      --muted: #7b6670;
+      --muted: #7f6871;
       --danger: #a1283f;
-      --shadow: 0 10px 30px rgba(88, 20, 46, 0.12);
-      --radius: 18px;
-      --radius-sm: 12px;
+      --soft: #f3e5ea;
+      --shadow: 0 12px 30px rgba(88, 20, 46, 0.12);
+      --radius: 22px;
+      --radius-sm: 14px;
     }
 
     * {
@@ -41,9 +42,8 @@
       padding: 0;
       min-height: 100%;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background:
-        linear-gradient(180deg, #f8f2f4 0%, #f4ecef 100%);
       color: var(--text);
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
     }
 
     body {
@@ -64,19 +64,19 @@
       align-items: flex-start;
       gap: 16px;
       margin-bottom: 18px;
-      padding: 4px 2px 0;
+      padding: 2px 2px 0;
     }
 
     .title {
-      font-size: 1.45rem;
-      font-weight: 750;
+      font-size: 1.42rem;
+      font-weight: 760;
       letter-spacing: 0.01em;
       color: var(--primary-dark);
     }
 
     .datebox {
       text-align: right;
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       color: var(--muted);
       line-height: 1.25;
       white-space: nowrap;
@@ -97,23 +97,17 @@
     }
 
     .cell {
-      position: relative;
-      aspect-ratio: 1 / 1;
       border: 1.5px solid var(--line);
       border-radius: 16px;
-      background:
-        linear-gradient(180deg, #fffafc 0%, #f7eef2 100%);
+      background: linear-gradient(180deg, #fffafc 0%, #f7eef2 100%);
+      aspect-ratio: 1 / 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 6px;
-      font-size: 0.72rem;
-      font-weight: 650;
-      color: var(--primary-dark);
       cursor: pointer;
+      position: relative;
       transition: transform 0.08s ease, border-color 0.12s ease, box-shadow 0.12s ease;
-      user-select: none;
+      padding: 4px;
       overflow: hidden;
     }
 
@@ -122,48 +116,40 @@
     }
 
     .cell.empty {
-      color: #b89aa6;
-      font-weight: 500;
-      font-size: 0.7rem;
+      color: #bea6af;
+      font-size: 0.75rem;
+      font-weight: 600;
     }
 
     .cell.filled {
-      border-color: rgba(111, 29, 58, 0.35);
+      border-color: rgba(111, 29, 58, 0.34);
       box-shadow: inset 0 0 0 1px rgba(111, 29, 58, 0.06);
+      background: linear-gradient(180deg, #fff8fb 0%, #f4e8ee 100%);
     }
 
-    .cell-content {
+    .cell-mark {
       display: flex;
-      flex-direction: column;
-      gap: 3px;
       align-items: center;
       justify-content: center;
-      line-height: 1.05;
       width: 100%;
+      height: 100%;
+      font-weight: 800;
+      color: var(--primary-dark);
+      user-select: none;
     }
 
-    .plant-name {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      word-break: break-word;
+    .cell-x {
+      font-size: 1.15rem;
+      line-height: 1;
     }
 
-    .plant-date {
-      font-size: 0.63rem;
-      font-weight: 500;
-      color: var(--muted);
+    .cell-icon {
+      font-size: 1.5rem;
+      line-height: 1;
     }
 
-    .legend {
-      margin-top: 12px;
-      font-size: 0.88rem;
-      color: var(--muted);
-      padding: 0 2px;
-    }
-
-    .modal-backdrop {
+    .modal-backdrop,
+    .picker-backdrop {
       position: fixed;
       inset: 0;
       background: rgba(37, 14, 23, 0.42);
@@ -175,11 +161,13 @@
       backdrop-filter: blur(4px);
     }
 
-    .modal-backdrop.open {
+    .modal-backdrop.open,
+    .picker-backdrop.open {
       display: flex;
     }
 
-    .modal {
+    .modal,
+    .picker-modal {
       width: 100%;
       max-width: 560px;
       background: var(--card);
@@ -200,7 +188,8 @@
       }
     }
 
-    .modal-header {
+    .modal-header,
+    .picker-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -209,9 +198,10 @@
       border-bottom: 1px solid rgba(111, 29, 58, 0.1);
     }
 
-    .modal-title {
-      font-size: 1.08rem;
-      font-weight: 750;
+    .modal-title,
+    .picker-title {
+      font-size: 1.06rem;
+      font-weight: 760;
       color: var(--primary-dark);
     }
 
@@ -235,10 +225,10 @@
 
     .label {
       display: block;
+      margin-bottom: 7px;
       font-size: 0.9rem;
       font-weight: 700;
       color: var(--primary-dark);
-      margin-bottom: 7px;
     }
 
     .value-box,
@@ -249,7 +239,7 @@
       background: #fff;
       color: var(--text);
       min-height: 52px;
-      padding: 14px 14px;
+      padding: 14px;
       font-size: 1rem;
       outline: none;
     }
@@ -282,7 +272,31 @@
       margin-bottom: 14px;
     }
 
-    .modal-footer {
+    .icon-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-preview {
+      min-width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+    }
+
+    .icon-picker-btn {
+      flex: 1;
+    }
+
+    .modal-footer,
+    .picker-footer {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
@@ -310,11 +324,6 @@
       color: white;
     }
 
-    .btn-primary:disabled {
-      opacity: 0.45;
-      cursor: default;
-    }
-
     .btn-secondary {
       background: #efe2e7;
       color: var(--primary-dark);
@@ -331,656 +340,53 @@
       border: 1px solid rgba(111, 29, 58, 0.15);
     }
 
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 560px) {
-      .board {
-        gap: 8px;
-      }
-
-      .cell {
-        border-radius: 13px;
-        font-size: 0.66rem;
-        padding: 4px;
-      }
-
-      .plant-date {
-        font-size: 0.57rem;
-      }
-
-      .title {
-        font-size: 1.28rem;
-      }
-
-      .datebox {
-        font-size: 0.88rem;
-      }
-
-      .modal-footer {
-        justify-content: stretch;
-      }
-
-      .modal-footer .btn {
-        flex: 1 1 calc(50% - 10px);
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <div class="topbar">
-      <div class="title">Anzuchtplan</div>
-      <div class="datebox" id="currentDate"></div>
-    </div>
-
-    <div class="board-wrap">
-      <div class="board" id="board"></div>
-      <div class="legend">7 × 4 Felder · Tippen zum Öffnen</div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-header">
-        <div class="modal-title" id="modalTitle">Feld</div>
-        <button class="close-btn" id="closeModalBtn" aria-label="Schließen">×</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="mode-chip" id="modeChip">Lesemodus</div>
-
-        <div id="readView">
-          <div class="field">
-            <label class="label">Pflanze</label>
-            <div class="value-box" id="readPlant"></div>
-          </div>
-          <div class="field">
-            <label class="label">Einsaatdatum</label>
-            <div class="value-box" id="readDate"></div>
-          </div>
-        </div>
-
-        <div id="editView" class="hidden">
-          <div class="field">
-            <label class="label" for="plantInput">Pflanze</label>
-            <input id="plantInput" type="text" placeholder="z. B. Tomate, Paprika, Chili" />
-          </div>
-          <div class="field">
-            <label class="label" for="sowDateInput">Einsaatdatum</label>
-            <input id="sowDateInput" type="date" />
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-ghost" id="cancelBtn">Schließen</button>
-        <button class="btn btn-danger" id="deleteBtn">Trash</button>
-        <button class="btn btn-secondary" id="editBtn">Bearbeiten</button>
-        <button class="btn btn-primary hidden" id="saveBtn">Speichern</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const COLS = 7;
-    const ROWS = 4;
-    const TOTAL_CELLS = COLS * ROWS;
-    const STORAGE_KEY = "anzuchtplan_v1";
-
-    const boardEl = document.getElementById("board");
-    const currentDateEl = document.getElementById("currentDate");
-    const modalBackdrop = document.getElementById("modalBackdrop");
-    const modalTitle = document.getElementById("modalTitle");
-    const modeChip = document.getElementById("modeChip");
-
-    const readView = document.getElementById("readView");
-    const editView = document.getElementById("editView");
-
-    const readPlant = document.getElementById("readPlant");
-    const readDate = document.getElementById("readDate");
-
-    const plantInput = document.getElementById("plantInput");
-    const sowDateInput = document.getElementById("sowDateInput");
-
-    const closeModalBtn = document.getElementById("closeModalBtn");
-    const cancelBtn = document.getElementById("cancelBtn");
-    const deleteBtn = document.getElementById("deleteBtn");
-    const editBtn = document.getElementById("editBtn");
-    const saveBtn = document.getElementById("saveBtn");
-
-    let cells = loadData();
-    let activeIndex = null;
-    let isEditMode = false;
-
-    function createEmptyCells() {
-      return Array.from({ length: TOTAL_CELLS }, () => ({
-        plant: "",
-        sowDate: ""
-      }));
-    }
-
-    function loadData() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return createEmptyCells();
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed) || parsed.length !== TOTAL_CELLS) {
-          return createEmptyCells();
-        }
-        return parsed.map(item => ({
-          plant: item?.plant || "",
-          sowDate: item?.sowDate || ""
-        }));
-      } catch {
-        return createEmptyCells();
-      }
-    }
-
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cells));
-    }
-
-    function formatToday() {
-      const now = new Date();
-      const formatted = now.toLocaleDateString("de-DE", {
-        weekday: "short",
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      });
-      currentDateEl.textContent = formatted;
-    }
-
-    function formatSowDate(dateStr) {
-      if (!dateStr) return "";
-      const parts = dateStr.split("-");
-      if (parts.length !== 3) return dateStr;
-      return `${parts[2]}.${parts[1]}.${parts[0]}`;
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function renderBoard() {
-      boardEl.innerHTML = "";
-
-      cells.forEach((cell, index) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = `cell ${cell.plant ? "filled" : "empty"}`;
-        btn.setAttribute("aria-label", `Feld ${index + 1}`);
-        btn.dataset.index = index;
-
-        if (cell.plant) {
-          btn.innerHTML = `
-            <div class="cell-content">
-              <div class="plant-name">${escapeHtml(cell.plant)}</div>
-              <div class="plant-date">${escapeHtml(formatSowDate(cell.sowDate))}</div>
-            </div>
-          `;
-        } else {
-          btn.textContent = `Feld ${index + 1}`;
-        }
-
-        btn.addEventListener("click", () => openModal(index));
-        boardEl.appendChild(btn);
-      });
-    }
-
-    function setReadValues(index) {
-      const entry = cells[index];
-      readPlant.innerHTML = entry.plant
-        ? escapeHtml(entry.plant)
-        : `<span class="value-empty">Kein Eintrag</span>`;
-
-      readDate.innerHTML = entry.sowDate
-        ? escapeHtml(formatSowDate(entry.sowDate))
-        : `<span class="value-empty">Kein Datum</span>`;
-    }
-
-    function setEditValues(index) {
-      const entry = cells[index];
-      plantInput.value = entry.plant || "";
-      sowDateInput.value = entry.sowDate || "";
-    }
-
-    function setMode(editMode) {
-      isEditMode = editMode;
-
-      if (editMode) {
-        modeChip.textContent = "Bearbeiten";
-        readView.classList.add("hidden");
-        editView.classList.remove("hidden");
-        editBtn.classList.add("hidden");
-        saveBtn.classList.remove("hidden");
-        requestAnimationFrame(() => plantInput.focus());
-      } else {
-        modeChip.textContent = "Lesemodus";
-        readView.classList.remove("hidden");
-        editView.classList.add("hidden");
-        editBtn.classList.remove("hidden");
-        saveBtn.classList.add("hidden");
-      }
-    }
-
-    function openModal(index) {
-      activeIndex = index;
-      modalTitle.textContent = `Feld ${index + 1}`;
-      setReadValues(index);
-      setEditValues(index);
-      setMode(false);
-      modalBackdrop.classList.add("open");
-    }
-
-    function closeModal() {
-      modalBackdrop.classList.remove("open");
-      activeIndex = null;
-      setMode(false);
-    }
-
-    function saveActiveCell() {
-      if (activeIndex === null) return;
-
-      cells[activeIndex] = {
-        plant: plantInput.value.trim(),
-        sowDate: sowDateInput.value
-      };
-
-      saveData();
-      renderBoard();
-      setReadValues(activeIndex);
-      setMode(false);
-    }
-
-    function deleteActiveCell() {
-      if (activeIndex === null) return;
-
-      cells[activeIndex] = {
-        plant: "",
-        sowDate: ""
-      };
-
-      saveData();
-      renderBoard();
-      setReadValues(activeIndex);
-      setEditValues(activeIndex);
-      setMode(false);
-    }
-
-    editBtn.addEventListener("click", () => {
-      setMode(true);
-    });
-
-    saveBtn.addEventListener("click", () => {
-      saveActiveCell();
-    });
-
-    deleteBtn.addEventListener("click", () => {
-      deleteActiveCell();
-    });
-
-    closeModalBtn.addEventListener("click", closeModal);
-    cancelBtn.addEventListener("click", closeModal);
-
-    modalBackdrop.addEventListener("click", (event) => {
-      if (event.target === modalBackdrop) {
-        closeModal();
-      }
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && modalBackdrop.classList.contains("open")) {
-        closeModal();
-      }
-    });
-
-    formatToday();
-    renderBoard();
-
-    // kleiner Versuch für Standalone-Verhalten / mobile Browser
-    // Die URL-Leiste verschwindet auf iPhone erst sauber,
-    // wenn die Seite zum Home-Bildschirm hinzugefügt wurde.
-  </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
-  />
-  <title>Anzuchtplan</title>
-
-  <!-- PWA / iOS -->
-  <meta name="theme-color" content="#6f1d3a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Anzuchtplan" />
-
-  <style>
-    :root {
-      --bg: #f7f1f3;
-      --card: #fffafc;
-      --primary: #6f1d3a;
-      --primary-dark: #54152c;
-      --primary-soft: #b96b86;
-      --line: #d9c2ca;
-      --text: #2f1b22;
-      --muted: #7b6670;
-      --danger: #a1283f;
-      --shadow: 0 10px 30px rgba(88, 20, 46, 0.12);
-      --radius: 18px;
-      --radius-sm: 12px;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background:
-        linear-gradient(180deg, #f8f2f4 0%, #f4ecef 100%);
-      color: var(--text);
-    }
-
-    body {
-      padding:
-        calc(env(safe-area-inset-top) + 14px)
-        14px
-        calc(env(safe-area-inset-bottom) + 18px);
-    }
-
-    .app {
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 18px;
-      padding: 4px 2px 0;
-    }
-
-    .title {
-      font-size: 1.45rem;
-      font-weight: 750;
-      letter-spacing: 0.01em;
-      color: var(--primary-dark);
-    }
-
-    .datebox {
-      text-align: right;
-      font-size: 0.96rem;
-      color: var(--muted);
-      line-height: 1.25;
-      white-space: nowrap;
-    }
-
-    .board-wrap {
-      background: var(--card);
-      border: 1px solid rgba(111, 29, 58, 0.12);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      padding: 14px;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
-    }
-
-    .cell {
-      position: relative;
-      aspect-ratio: 1 / 1;
-      border: 1.5px solid var(--line);
-      border-radius: 16px;
-      background:
-        linear-gradient(180deg, #fffafc 0%, #f7eef2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 6px;
-      font-size: 0.72rem;
-      font-weight: 650;
-      color: var(--primary-dark);
-      cursor: pointer;
-      transition: transform 0.08s ease, border-color 0.12s ease, box-shadow 0.12s ease;
-      user-select: none;
-      overflow: hidden;
-    }
-
-    .cell:active {
-      transform: scale(0.98);
-    }
-
-    .cell.empty {
-      color: #b89aa6;
-      font-weight: 500;
-      font-size: 0.7rem;
-    }
-
-    .cell.filled {
-      border-color: rgba(111, 29, 58, 0.35);
-      box-shadow: inset 0 0 0 1px rgba(111, 29, 58, 0.06);
-    }
-
-    .cell-content {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      align-items: center;
-      justify-content: center;
-      line-height: 1.05;
-      width: 100%;
-    }
-
-    .plant-name {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      word-break: break-word;
-    }
-
-    .plant-date {
-      font-size: 0.63rem;
-      font-weight: 500;
-      color: var(--muted);
-    }
-
-    .legend {
-      margin-top: 12px;
-      font-size: 0.88rem;
-      color: var(--muted);
-      padding: 0 2px;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(37, 14, 23, 0.42);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 16px 12px calc(env(safe-area-inset-bottom) + 12px);
-      z-index: 1000;
-      backdrop-filter: blur(4px);
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 560px;
-      background: var(--card);
-      border-radius: 24px;
-      box-shadow: 0 22px 60px rgba(39, 10, 21, 0.25);
-      overflow: hidden;
-      animation: slideUp 0.16s ease-out;
-    }
-
-    @keyframes slideUp {
-      from {
-        transform: translateY(18px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 18px 10px;
-      border-bottom: 1px solid rgba(111, 29, 58, 0.1);
-    }
-
-    .modal-title {
-      font-size: 1.08rem;
-      font-weight: 750;
-      color: var(--primary-dark);
-    }
-
-    .close-btn {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-size: 1.5rem;
-      line-height: 1;
-      padding: 2px 6px;
-      cursor: pointer;
-    }
-
-    .modal-body {
+    .picker-body {
       padding: 16px 18px 18px;
     }
 
-    .field {
-      margin-bottom: 16px;
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
     }
 
-    .label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--primary-dark);
-      margin-bottom: 7px;
-    }
-
-    .value-box,
-    input {
-      width: 100%;
-      border-radius: 14px;
+    .icon-option {
       border: 1px solid var(--line);
       background: #fff;
-      color: var(--text);
-      min-height: 52px;
-      padding: 14px 14px;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: var(--primary-soft);
-      box-shadow: 0 0 0 4px rgba(185, 107, 134, 0.12);
-    }
-
-    .value-box {
+      border-radius: 16px;
+      min-height: 84px;
+      padding: 10px 8px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-    }
-
-    .value-empty {
-      color: #a5929b;
-      font-style: italic;
-    }
-
-    .mode-chip {
-      display: inline-flex;
-      align-items: center;
+      justify-content: center;
       gap: 6px;
-      padding: 8px 11px;
-      border-radius: 999px;
-      background: #f4e7ec;
-      color: var(--primary-dark);
-      font-size: 0.86rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      padding: 0 18px 18px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 14px;
-      min-height: 48px;
-      padding: 0 16px;
-      font-size: 0.96rem;
-      font-weight: 700;
       cursor: pointer;
-      transition: transform 0.08s ease, opacity 0.12s ease;
+      transition: transform 0.08s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+      color: var(--text);
+      text-align: center;
     }
 
-    .btn:active {
+    .icon-option:active {
       transform: scale(0.98);
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: white;
+    .icon-option.selected {
+      border-color: rgba(111, 29, 58, 0.5);
+      box-shadow: 0 0 0 4px rgba(111, 29, 58, 0.08);
+      background: #fff8fb;
     }
 
-    .btn-primary:disabled {
-      opacity: 0.45;
-      cursor: default;
+    .icon-symbol {
+      font-size: 1.55rem;
+      line-height: 1;
     }
 
-    .btn-secondary {
-      background: #efe2e7;
+    .icon-label {
+      font-size: 0.74rem;
+      font-weight: 650;
+      line-height: 1.1;
       color: var(--primary-dark);
-    }
-
-    .btn-danger {
-      background: #f7e3e7;
-      color: var(--danger);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid rgba(111, 29, 58, 0.15);
     }
 
     .hidden {
@@ -994,27 +400,30 @@
 
       .cell {
         border-radius: 13px;
-        font-size: 0.66rem;
-        padding: 4px;
-      }
-
-      .plant-date {
-        font-size: 0.57rem;
       }
 
       .title {
-        font-size: 1.28rem;
+        font-size: 1.25rem;
       }
 
       .datebox {
         font-size: 0.88rem;
       }
 
-      .modal-footer {
-        justify-content: stretch;
+      .cell-icon {
+        font-size: 1.3rem;
       }
 
-      .modal-footer .btn {
+      .cell-x {
+        font-size: 1rem;
+      }
+
+      .icon-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .modal-footer .btn,
+      .picker-footer .btn {
         flex: 1 1 calc(50% - 10px);
       }
     }
@@ -1029,7 +438,6 @@
 
     <div class="board-wrap">
       <div class="board" id="board"></div>
-      <div class="legend">7 × 4 Felder · Tippen zum Öffnen</div>
     </div>
   </div>
 
@@ -1052,6 +460,10 @@
             <label class="label">Einsaatdatum</label>
             <div class="value-box" id="readDate"></div>
           </div>
+          <div class="field">
+            <label class="label">Icon</label>
+            <div class="value-box" id="readIcon"></div>
+          </div>
         </div>
 
         <div id="editView" class="hidden">
@@ -1059,9 +471,20 @@
             <label class="label" for="plantInput">Pflanze</label>
             <input id="plantInput" type="text" placeholder="z. B. Tomate, Paprika, Chili" />
           </div>
+
           <div class="field">
             <label class="label" for="sowDateInput">Einsaatdatum</label>
             <input id="sowDateInput" type="date" />
+          </div>
+
+          <div class="field">
+            <label class="label">Gemüseicon</label>
+            <div class="icon-select-wrap">
+              <div class="icon-preview" id="selectedIconPreview">x</div>
+              <button class="btn btn-secondary icon-picker-btn" id="openIconPickerBtn" type="button">
+                Icon auswählen
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1075,15 +498,50 @@
     </div>
   </div>
 
+  <div class="picker-backdrop" id="pickerBackdrop">
+    <div class="picker-modal" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+      <div class="picker-header">
+        <div class="picker-title" id="pickerTitle">Gemüseicon wählen</div>
+        <button class="close-btn" id="closePickerBtn" aria-label="Schließen">×</button>
+      </div>
+
+      <div class="picker-body">
+        <div class="icon-grid" id="iconGrid"></div>
+      </div>
+
+      <div class="picker-footer">
+        <button class="btn btn-ghost" id="cancelPickerBtn">Zurück</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const COLS = 7;
     const ROWS = 4;
     const TOTAL_CELLS = COLS * ROWS;
-    const STORAGE_KEY = "anzuchtplan_v1";
+    const STORAGE_KEY = "anzuchtplan_v2";
+
+    const ICONS = [
+      { value: "", label: "Kein Icon", symbol: "x" },
+      { value: "🍅", label: "Tomate", symbol: "🍅" },
+      { value: "🫑", label: "Paprika", symbol: "🫑" },
+      { value: "🌶️", label: "Chili", symbol: "🌶️" },
+      { value: "🥒", label: "Gurke", symbol: "🥒" },
+      { value: "🥬", label: "Salat", symbol: "🥬" },
+      { value: "🌽", label: "Mais", symbol: "🌽" },
+      { value: "🍆", label: "Aubergine", symbol: "🍆" },
+      { value: "🎃", label: "Kürbis", symbol: "🎃" },
+      { value: "🌿", label: "Kräuter", symbol: "🌿" },
+      { value: "🌱", label: "Keimling", symbol: "🌱" },
+      { value: "🧄", label: "Knoblauch", symbol: "🧄" }
+    ];
 
     const boardEl = document.getElementById("board");
     const currentDateEl = document.getElementById("currentDate");
+
     const modalBackdrop = document.getElementById("modalBackdrop");
+    const pickerBackdrop = document.getElementById("pickerBackdrop");
+
     const modalTitle = document.getElementById("modalTitle");
     const modeChip = document.getElementById("modeChip");
 
@@ -1092,9 +550,11 @@
 
     const readPlant = document.getElementById("readPlant");
     const readDate = document.getElementById("readDate");
+    const readIcon = document.getElementById("readIcon");
 
     const plantInput = document.getElementById("plantInput");
     const sowDateInput = document.getElementById("sowDateInput");
+    const selectedIconPreview = document.getElementById("selectedIconPreview");
 
     const closeModalBtn = document.getElementById("closeModalBtn");
     const cancelBtn = document.getElementById("cancelBtn");
@@ -1102,14 +562,21 @@
     const editBtn = document.getElementById("editBtn");
     const saveBtn = document.getElementById("saveBtn");
 
+    const openIconPickerBtn = document.getElementById("openIconPickerBtn");
+    const closePickerBtn = document.getElementById("closePickerBtn");
+    const cancelPickerBtn = document.getElementById("cancelPickerBtn");
+    const iconGrid = document.getElementById("iconGrid");
+
     let cells = loadData();
     let activeIndex = null;
     let isEditMode = false;
+    let tempSelectedIcon = "";
 
     function createEmptyCells() {
       return Array.from({ length: TOTAL_CELLS }, () => ({
         plant: "",
-        sowDate: ""
+        sowDate: "",
+        icon: ""
       }));
     }
 
@@ -1123,7 +590,8 @@
         }
         return parsed.map(item => ({
           plant: item?.plant || "",
-          sowDate: item?.sowDate || ""
+          sowDate: item?.sowDate || "",
+          icon: item?.icon || ""
         }));
       } catch {
         return createEmptyCells();
@@ -1136,13 +604,12 @@
 
     function formatToday() {
       const now = new Date();
-      const formatted = now.toLocaleDateString("de-DE", {
+      currentDateEl.textContent = now.toLocaleDateString("de-DE", {
         weekday: "short",
         day: "2-digit",
         month: "2-digit",
         year: "numeric"
       });
-      currentDateEl.textContent = formatted;
     }
 
     function formatSowDate(dateStr) {
@@ -1161,25 +628,32 @@
         .replaceAll("'", "&#039;");
     }
 
+    function getDisplayMark(entry) {
+      if (!entry.plant && !entry.sowDate && !entry.icon) return null;
+      return entry.icon || "x";
+    }
+
     function renderBoard() {
       boardEl.innerHTML = "";
 
-      cells.forEach((cell, index) => {
+      cells.forEach((entry, index) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = `cell ${cell.plant ? "filled" : "empty"}`;
-        btn.setAttribute("aria-label", `Feld ${index + 1}`);
+        btn.className = "cell";
         btn.dataset.index = index;
+        btn.setAttribute("aria-label", `Feld ${index + 1}`);
 
-        if (cell.plant) {
+        const mark = getDisplayMark(entry);
+
+        if (mark) {
+          btn.classList.add("filled");
+          const isX = mark === "x";
           btn.innerHTML = `
-            <div class="cell-content">
-              <div class="plant-name">${escapeHtml(cell.plant)}</div>
-              <div class="plant-date">${escapeHtml(formatSowDate(cell.sowDate))}</div>
-            </div>
+            <div class="cell-mark ${isX ? "cell-x" : "cell-icon"}">${escapeHtml(mark)}</div>
           `;
         } else {
-          btn.textContent = `Feld ${index + 1}`;
+          btn.classList.add("empty");
+          btn.innerHTML = `<div class="cell-mark">${index + 1}</div>`;
         }
 
         btn.addEventListener("click", () => openModal(index));
@@ -1189,6 +663,7 @@
 
     function setReadValues(index) {
       const entry = cells[index];
+
       readPlant.innerHTML = entry.plant
         ? escapeHtml(entry.plant)
         : `<span class="value-empty">Kein Eintrag</span>`;
@@ -1196,12 +671,22 @@
       readDate.innerHTML = entry.sowDate
         ? escapeHtml(formatSowDate(entry.sowDate))
         : `<span class="value-empty">Kein Datum</span>`;
+
+      readIcon.innerHTML = entry.icon
+        ? escapeHtml(entry.icon)
+        : `<span class="value-empty">Kein Icon gewählt</span>`;
     }
 
     function setEditValues(index) {
       const entry = cells[index];
       plantInput.value = entry.plant || "";
       sowDateInput.value = entry.sowDate || "";
+      tempSelectedIcon = entry.icon || "";
+      updateSelectedIconPreview();
+    }
+
+    function updateSelectedIconPreview() {
+      selectedIconPreview.textContent = tempSelectedIcon || "x";
     }
 
     function setMode(editMode) {
@@ -1234,6 +719,7 @@
 
     function closeModal() {
       modalBackdrop.classList.remove("open");
+      closePicker();
       activeIndex = null;
       setMode(false);
     }
@@ -1243,7 +729,8 @@
 
       cells[activeIndex] = {
         plant: plantInput.value.trim(),
-        sowDate: sowDateInput.value
+        sowDate: sowDateInput.value,
+        icon: tempSelectedIcon
       };
 
       saveData();
@@ -1257,7 +744,8 @@
 
       cells[activeIndex] = {
         plant: "",
-        sowDate: ""
+        sowDate: "",
+        icon: ""
       };
 
       saveData();
@@ -1267,39 +755,75 @@
       setMode(false);
     }
 
-    editBtn.addEventListener("click", () => {
-      setMode(true);
-    });
+    function renderIconPicker() {
+      iconGrid.innerHTML = "";
 
-    saveBtn.addEventListener("click", () => {
-      saveActiveCell();
-    });
+      ICONS.forEach(item => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "icon-option";
+        if (item.value === tempSelectedIcon) {
+          option.classList.add("selected");
+        }
 
-    deleteBtn.addEventListener("click", () => {
-      deleteActiveCell();
-    });
+        option.innerHTML = `
+          <div class="icon-symbol">${escapeHtml(item.symbol)}</div>
+          <div class="icon-label">${escapeHtml(item.label)}</div>
+        `;
+
+        option.addEventListener("click", () => {
+          tempSelectedIcon = item.value;
+          updateSelectedIconPreview();
+          renderIconPicker();
+          closePicker();
+        });
+
+        iconGrid.appendChild(option);
+      });
+    }
+
+    function openPicker() {
+      renderIconPicker();
+      pickerBackdrop.classList.add("open");
+    }
+
+    function closePicker() {
+      pickerBackdrop.classList.remove("open");
+    }
+
+    editBtn.addEventListener("click", () => setMode(true));
+    saveBtn.addEventListener("click", saveActiveCell);
+    deleteBtn.addEventListener("click", deleteActiveCell);
 
     closeModalBtn.addEventListener("click", closeModal);
     cancelBtn.addEventListener("click", closeModal);
 
-    modalBackdrop.addEventListener("click", (event) => {
-      if (event.target === modalBackdrop) {
-        closeModal();
-      }
+    openIconPickerBtn.addEventListener("click", openPicker);
+    closePickerBtn.addEventListener("click", closePicker);
+    cancelPickerBtn.addEventListener("click", closePicker);
+
+    modalBackdrop.addEventListener("click", event => {
+      if (event.target === modalBackdrop) closeModal();
     });
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && modalBackdrop.classList.contains("open")) {
-        closeModal();
+    pickerBackdrop.addEventListener("click", event => {
+      if (event.target === pickerBackdrop) closePicker();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        if (pickerBackdrop.classList.contains("open")) {
+          closePicker();
+          return;
+        }
+        if (modalBackdrop.classList.contains("open")) {
+          closeModal();
+        }
       }
     });
 
     formatToday();
     renderBoard();
-
-    // kleiner Versuch für Standalone-Verhalten / mobile Browser
-    // Die URL-Leiste verschwindet auf iPhone erst sauber,
-    // wenn die Seite zum Home-Bildschirm hinzugefügt wurde.
   </script>
 </body>
 </html>
