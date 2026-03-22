@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Abendroutine</title>
+  <title>Fitness</title>
 
-  <!-- iOS Standalone -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Abendroutine" />
+  <meta name="apple-mobile-web-app-title" content="Fitness" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#0f2a1f" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
@@ -34,13 +33,21 @@
       --shadow:0 14px 34px rgba(0,0,0,0.35);
       --radius:18px;
 
-      /* markers */
-      --mk-full:#D6C289;   --mk-full-b:#b9a26a; /* Gold */
-      --mk-light:#3ED1C4;  --mk-light-b:#2fb3a7; /* Türkis */
-      --mk-bike:#F29C38;   --mk-bike-b:#d88426; /* Orange */
-      --mk-restart:#B58CFF; --mk-restart-b:#8F6BFF; /* Violett */
+      --mk-evening-full:#D6C289;
+      --mk-evening-full-b:#b9a26a;
 
-      /* home frame */
+      --mk-evening-light:#3ED1C4;
+      --mk-evening-light-b:#2fb3a7;
+
+      --mk-gym-v1:#B58CFF;
+      --mk-gym-v1-b:#8F6BFF;
+
+      --mk-gym-v2:#FF7FB0;
+      --mk-gym-v2-b:#d96290;
+
+      --mk-bike:#F29C38;
+      --mk-bike-b:#d88426;
+
       --homeFrame: rgba(54,194,106,0.16);
       --homeFrameB: rgba(54,194,106,0.28);
       --homeFrameHi: rgba(54,194,106,0.22);
@@ -87,6 +94,7 @@
       justify-content:space-between;
       gap:12px;
     }
+
     h1{
       margin:0;
       font-size:20px;
@@ -101,6 +109,7 @@
       flex-wrap:wrap;
       justify-content:flex-end;
     }
+
     .pill, .datePill{
       padding:9px 12px;
       border-radius:999px;
@@ -115,6 +124,7 @@
       -webkit-backdrop-filter: blur(8px);
       user-select:none;
     }
+
     .pill{
       cursor:pointer;
       color:var(--fg);
@@ -126,6 +136,11 @@
       color: var(--accent2);
       background: rgba(185,162,106,0.12);
     }
+    .pill.active{
+      border-color: rgba(255,255,255,0.24);
+      background: rgba(255,255,255,0.12);
+    }
+
     .datePill{ color: var(--muted); }
 
     .panel{
@@ -147,7 +162,6 @@
     .page.active{ display:block; animation: fade .12s ease; }
     @keyframes fade{ from{opacity:.3; transform: translateY(2px);} to{opacity:1; transform: translateY(0);} }
 
-    /* ---------- HOME ---------- */
     .homeRow{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -186,6 +200,7 @@
       box-shadow: 0 10px 22px rgba(0,0,0,0.25);
       font-size: 22px;
     }
+
     .homeText{
       font-weight: 950;
       letter-spacing:.2px;
@@ -194,20 +209,55 @@
       white-space: nowrap;
     }
 
-    /* “Wiedereinstieg” unter Biking, mittig, mit Abstand */
-    .homeAction.restart{
-      grid-column: 2;
-      margin-top: 8px;
+    .sectionMeta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
     }
 
-    @media (max-width: 520px){
-      .homeRow{ grid-template-columns: 1fr; }
-      .homeAction{ justify-content:flex-start; padding: 14px 14px; }
-      .homeText{ font-size: 16px; }
-      .homeAction.restart{ grid-column: auto; margin-top: 0; }
+    .weightCard{
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
     }
 
-    /* ---------- WORKOUT ---------- */
+    .weightTop{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .weightValue{
+      font-size:20px;
+      font-weight:950;
+      line-height:1;
+    }
+
+    .weightRow{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .weightInput{
+      width:120px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.06);
+      color:var(--fg);
+      font-size:14px;
+      font-weight:800;
+    }
+
     .bar{
       display:flex;
       align-items:flex-start;
@@ -215,18 +265,25 @@
       gap:10px;
       margin-bottom:12px;
     }
+
     .barLeft{ display:flex; flex-direction:column; gap:4px; }
     .barTitle{ margin:0; font-size:16px; font-weight:950; letter-spacing:.2px; }
     .barMeta{
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
       font-size:12px; color: var(--muted); font-weight:850;
     }
-    .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; box-shadow: 0 0 0 3px rgba(0,0,0,0.15); }
+
+    .dot{
+      width:9px; height:9px; border-radius:50%;
+      display:inline-block;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.15);
+    }
     .dot.ok{ background: var(--ok); }
     .dot.warn{ background: var(--warn); }
     .dot.none{ background: var(--none); }
 
     .list{ display:flex; flex-direction:column; gap:10px; }
+
     .item{
       border:1px solid var(--border);
       border-radius: 18px;
@@ -241,11 +298,18 @@
       transition: transform .04s ease;
     }
     .item:active{ transform: scale(.995); }
+
     .left{ display:flex; flex-direction:column; gap:4px; min-width:0; }
     .name{ font-weight: 950; letter-spacing:.2px; }
     .meta{ font-size: 13px; color: var(--muted); font-weight: 820; }
 
-    .right{ display:flex; align-items:center; gap:10px; flex: 0 0 auto; }
+    .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex: 0 0 auto;
+    }
+
     .check{
       width:26px; height:26px;
       border-radius:999px;
@@ -256,6 +320,7 @@
       color: transparent;
       box-shadow: 0 10px 20px rgba(0,0,0,0.25);
     }
+
     .done{
       background: rgba(54,194,106,0.12);
       border-color: rgba(54,194,106,0.35);
@@ -282,9 +347,13 @@
     }
     .trash:active{ transform: scale(.99); }
 
-    .empty{ text-align:center; color: var(--muted); font-weight:850; padding: 14px 10px; }
+    .empty{
+      text-align:center;
+      color: var(--muted);
+      font-weight:850;
+      padding: 14px 10px;
+    }
 
-    /* ---------- CALENDAR ---------- */
     .calHeader{
       display:flex;
       align-items:center;
@@ -293,6 +362,7 @@
       margin-bottom: 12px;
     }
     .calTitle{ font-weight:950; font-size:16px; letter-spacing:.2px; }
+
     .navBtn{
       width:40px; height:40px;
       border-radius:14px;
@@ -303,6 +373,7 @@
       font-size:18px;
       font-weight:950;
     }
+
     .calGrid{
       width:100%;
       max-width:100%;
@@ -310,6 +381,7 @@
       grid-template-columns: repeat(7, minmax(0, 1fr));
       gap:8px;
     }
+
     .dow{
       text-align:center;
       font-size:11px;
@@ -344,17 +416,18 @@
       align-items:center;
       flex-wrap:wrap;
     }
+
     .mk{
       width:8px; height:8px;
       border-radius:3px;
       border:1px solid rgba(255,255,255,0.20);
     }
-    .mk.full{ background: var(--mk-full); border-color: var(--mk-full-b); }
-    .mk.light{ background: var(--mk-light); border-color: var(--mk-light-b); }
+    .mk.evening-full{ background: var(--mk-evening-full); border-color: var(--mk-evening-full-b); }
+    .mk.evening-light{ background: var(--mk-evening-light); border-color: var(--mk-evening-light-b); }
+    .mk.gym-v1{ background: var(--mk-gym-v1); border-color: var(--mk-gym-v1-b); }
+    .mk.gym-v2{ background: var(--mk-gym-v2); border-color: var(--mk-gym-v2-b); }
     .mk.bike{ background: var(--mk-bike); border-color: var(--mk-bike-b); }
-    .mk.restart{ background: var(--mk-restart); border-color: var(--mk-restart-b); }
 
-    /* ---------- DIALOGS ---------- */
     dialog{
       border:none;
       border-radius: 20px;
@@ -362,11 +435,13 @@
       width:min(640px, 96vw);
       background: transparent;
     }
+
     dialog::backdrop{
       background: rgba(0,0,0,0.55);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
+
     .modal{
       background: linear-gradient(180deg, rgba(19,47,35,0.98), rgba(15,42,31,0.98));
       border: 1px solid rgba(185,162,106,0.30);
@@ -374,6 +449,7 @@
       padding: 16px;
       box-shadow: var(--shadow);
     }
+
     .modal h2{
       margin:0 0 10px;
       font-size:18px;
@@ -383,8 +459,15 @@
       text-shadow: 0 1px 0 rgba(0,0,0,0.35);
     }
 
-    label{ display:block; font-size:12px; color:var(--muted); margin:10px 0 6px; font-weight:900; }
-    input, select, textarea{
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:10px 0 6px;
+      font-weight:900;
+    }
+
+    input{
       width:100%;
       padding:10px 12px;
       border-radius:14px;
@@ -395,9 +478,16 @@
       outline:none;
       font-weight:800;
     }
-    textarea{ min-height:72px; resize:vertical; }
+
     .row{ display:flex; gap:10px; }
-    .actionsRow{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; }
+
+    .actionsRow{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:14px;
+    }
+
     .btn{
       padding:10px 14px;
       border-radius:14px;
@@ -407,6 +497,7 @@
       background: rgba(255,255,255,0.06);
       color: var(--fg);
     }
+
     .btn.primary{
       background: rgba(185,162,106,0.18);
       border-color: rgba(185,162,106,0.45);
@@ -426,64 +517,78 @@
     }
     .statsGrid .k{ color: var(--muted); font-weight:900; }
     .statsGrid .v{ text-align:right; }
+
+    @media (max-width: 520px){
+      .homeRow{ grid-template-columns: 1fr; }
+      .homeAction{ justify-content:flex-start; padding: 14px 14px; }
+      .homeText{ font-size: 16px; }
+    }
   </style>
 </head>
 
 <body>
   <div class="app">
     <header>
-      <h1>Abendroutine</h1>
+      <h1 id="headerTitle">Fitness</h1>
       <div class="actions">
         <span class="datePill" id="datePill">—</span>
+
+        <button class="pill" id="subModeA" type="button" style="display:none;"></button>
+        <button class="pill" id="subModeB" type="button" style="display:none;"></button>
+
         <button class="pill" id="statsBtn" type="button" style="display:none;">Statistik</button>
         <button class="pill" id="backBtn" type="button" style="display:none;">Zurück</button>
         <button class="pill gold" id="calendarBtn" type="button">Kalender</button>
       </div>
     </header>
 
-    <!-- HOME -->
     <section class="page active" id="homePage">
       <div class="panel">
         <div class="homeRow">
-          <button class="homeAction" id="fullBtn" type="button">
-            <div class="homeIcon">🏋️</div>
-            <div class="homeText">Full-Set</div>
+          <button class="homeAction" id="eveningMenuBtn" type="button">
+            <div class="homeIcon">🌙</div>
+            <div class="homeText">Abendroutine</div>
           </button>
 
-          <button class="homeAction" id="lightBtn" type="button">
-            <div class="homeIcon">✨</div>
-            <div class="homeText">Light-Set</div>
+          <button class="homeAction" id="gymMenuBtn" type="button">
+            <div class="homeIcon">🏛️</div>
+            <div class="homeText">Fitnesscenter</div>
           </button>
 
           <button class="homeAction" id="bikeBtn" type="button">
             <div class="homeIcon">🚴</div>
             <div class="homeText">Biking</div>
           </button>
-
-          <button class="homeAction restart" id="restartBtn" type="button">
-            <div class="homeIcon">🧩</div>
-            <div class="homeText">Wiedereinstieg</div>
-          </button>
         </div>
       </div>
     </section>
 
-    <!-- WORKOUT -->
     <section class="page" id="workoutPage">
       <div class="panel">
+        <div class="sectionMeta" id="gymWeightSection" style="display:none;">
+          <div class="weightCard">
+            <div class="weightTop">Startgewicht</div>
+            <div class="weightValue" id="startWeightValue">—</div>
+            <div class="weightRow">
+              <input class="weightInput" id="startWeightInput" type="number" step="0.1" placeholder="z. B. 87.5" />
+              <button class="pill gold" id="saveWeightBtn" type="button">Speichern</button>
+            </div>
+          </div>
+        </div>
+
         <div class="bar">
           <div class="barLeft">
             <p class="barTitle" id="workoutTitle">Set</p>
             <div class="barMeta">
               <span class="dot" id="todayDot"></span>
               <span id="todayText">—</span>
-              <span id="modeText" style="color:rgba(214,194,137,0.92); font-weight:950;"></span>
+              <span id="modeText" style="font-weight:950;"></span>
             </div>
           </div>
+
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
             <span class="pill" id="progressPill">0/0</span>
             <button class="pill gold" id="addExerciseBtn" type="button">+ Übung</button>
-            <button class="pill gold" id="finishBtn" type="button">Fertig → Kalender</button>
           </div>
         </div>
 
@@ -492,7 +597,6 @@
       </div>
     </section>
 
-    <!-- CALENDAR -->
     <section class="page" id="calendarPage">
       <div class="panel">
         <div class="calHeader">
@@ -511,54 +615,61 @@
     </section>
   </div>
 
-  <!-- Modal: Neue Übung -->
-  <dialog id="dlg">
+  <!-- Abendroutine Dialog -->
+  <dialog id="eveningDlg">
     <div class="modal">
       <h2>Neue Übung</h2>
 
       <label>Name</label>
-      <input id="name" placeholder="z. B. Kettlebell Swings" />
-
-      <label>Zieltyp</label>
-      <select id="goalType">
-        <option value="reps">Wiederholungen</option>
-        <option value="time">Zeit</option>
-        <option value="done">Erledigt</option>
-      </select>
+      <input id="eveningName" placeholder="z. B. Kettlebell Swings" />
 
       <div class="row">
         <div style="flex:1;">
-          <label>Sets (optional)</label>
-          <input id="sets" type="number" min="1" max="30" value="1" />
+          <label>Sets</label>
+          <input id="eveningSets" type="number" min="1" max="30" value="1" />
         </div>
-        <div style="flex:1;" id="repsWrap">
-          <label>Wiederholungen</label>
-          <input id="reps" type="number" min="1" max="1000" value="10" />
-        </div>
-        <div style="flex:1; display:none;" id="secWrap">
-          <label>Sekunden</label>
-          <input id="seconds" type="number" min="5" max="7200" step="5" value="60" />
-        </div>
-      </div>
-
-      <div class="row" id="weightWrap">
         <div style="flex:1;">
-          <label>Gewicht kg (optional)</label>
-          <input id="weight" inputmode="decimal" placeholder="z. B. 16" />
+          <label>Wiederholungen</label>
+          <input id="eveningReps" type="number" min="1" max="1000" value="10" />
         </div>
       </div>
-
-      <label>Notiz (optional)</label>
-      <textarea id="note"></textarea>
 
       <div class="actionsRow">
-        <button class="btn" id="cancel" type="button">Abbrechen</button>
-        <button class="btn primary" id="save" type="button">Speichern</button>
+        <button class="btn" id="eveningCancel" type="button">Abbrechen</button>
+        <button class="btn primary" id="eveningSave" type="button">Speichern</button>
       </div>
     </div>
   </dialog>
 
-  <!-- Modal: Statistik -->
+  <!-- Fitnesscenter Dialog -->
+  <dialog id="gymDlg">
+    <div class="modal">
+      <h2>Neue Übung</h2>
+
+      <label>Name</label>
+      <input id="gymName" placeholder="z. B. Brustpresse" />
+
+      <label>Gerätenummer</label>
+      <input id="gymMachine" placeholder="z. B. 12" />
+
+      <div class="row">
+        <div style="flex:1;">
+          <label>Sätze</label>
+          <input id="gymSets" type="number" min="1" max="30" value="3" />
+        </div>
+        <div style="flex:1;">
+          <label>Wiederholungen</label>
+          <input id="gymReps" type="number" min="1" max="1000" value="10" />
+        </div>
+      </div>
+
+      <div class="actionsRow">
+        <button class="btn" id="gymCancel" type="button">Abbrechen</button>
+        <button class="btn primary" id="gymSave" type="button">Speichern</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="statsDlg">
     <div class="modal">
       <h2>Statistik</h2>
@@ -579,7 +690,6 @@
     </div>
   </dialog>
 
-  <!-- Modal: Day Details -->
   <dialog id="dayDlg">
     <div class="modal">
       <h2 id="dayDlgTitle">Tag</h2>
@@ -593,8 +703,7 @@
   <script>
     "use strict";
 
-    // NEW KEY (breaking change): exercises getrennt nach Modus
-    const KEY = "abendroutine_singlefile_modes_v1";
+    const KEY = "fitness_app_v1";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -605,12 +714,6 @@
     };
     const ymd = (d) => todayKey(d);
 
-    const monthTitle = (d) => {
-      const fmt = new Intl.DateTimeFormat("de-DE", { month:"long", year:"numeric" });
-      const t = fmt.format(d);
-      return t.charAt(0).toUpperCase() + t.slice(1);
-    };
-
     const niceDate = () => {
       const fmt = new Intl.DateTimeFormat("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
       return fmt.format(new Date());
@@ -620,286 +723,411 @@
       weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
     }).format(d);
 
-    // ---- State model (new) ----
-    // state.exercisesByMode = { full:[], light:[], restart:[] }
-    // state.logs = [{ dateKey, strength:null|'full'|'light'|'restart', bike:false, completed:{full:[],light:[],restart:[]} }]
-    const load = () => {
-      const raw = localStorage.getItem(KEY);
-      if (!raw) return { exercisesByMode:{ full:[], light:[], restart:[] }, logs: [] };
-      try { return JSON.parse(raw); } catch { return { exercisesByMode:{ full:[], light:[], restart:[] }, logs: [] }; }
-    };
-    let state = load();
-    const saveState = () => localStorage.setItem(KEY, JSON.stringify(state));
-
-    const ensureExercises = () => {
-      if (!state.exercisesByMode) state.exercisesByMode = { full:[], light:[], restart:[] };
-      if (!Array.isArray(state.exercisesByMode.full)) state.exercisesByMode.full = [];
-      if (!Array.isArray(state.exercisesByMode.light)) state.exercisesByMode.light = [];
-      if (!Array.isArray(state.exercisesByMode.restart)) state.exercisesByMode.restart = [];
-    };
-    ensureExercises();
-
-    const ensureLog = (dateKey) => {
-      let log = state.logs.find(l => l.dateKey === dateKey);
-      if (!log) {
-        log = { dateKey, strength: null, bike: false, completed: { full:[], light:[], restart:[] } };
-        state.logs.unshift(log);
-      }
-      if (!("strength" in log)) log.strength = null;
-      if (!("bike" in log)) log.bike = false;
-      if (!log.completed || typeof log.completed !== "object") log.completed = { full:[], light:[], restart:[] };
-      for (const k of ["full","light","restart"]) {
-        if (!Array.isArray(log.completed[k])) log.completed[k] = [];
-      }
-      return log;
-    };
-    const ensureTodayLog = () => ensureLog(todayKey());
-
-    // ---- UI routing ----
-    const pages = { home: $("homePage"), workout: $("workoutPage"), calendar: $("calendarPage") };
-    let currentPage = "home";
-    let currentMode = null; // 'full'|'light'|'restart' (strength modes)
-    let calCursor = new Date(); calCursor.setDate(1);
-
-    const setHeader = (page) => {
-      $("backBtn").style.display = (page === "home") ? "none" : "inline-flex";
-      $("statsBtn").style.display = (page === "calendar") ? "inline-flex" : "none";
-      $("calendarBtn").style.display = (page === "calendar") ? "none" : "inline-flex";
-    };
-
-    const go = (page) => {
-      currentPage = page;
-      for (const k in pages) pages[k].classList.toggle("active", k === page);
-      setHeader(page);
-      if (page === "workout") renderWorkout();
-      if (page === "calendar") renderCalendar();
+    const monthTitle = (d) => {
+      const fmt = new Intl.DateTimeFormat("de-DE", { month:"long", year:"numeric" });
+      const t = fmt.format(d);
+      return t.charAt(0).toUpperCase() + t.slice(1);
     };
 
     const escapeHtml = (s) => String(s)
       .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
       .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 
-    const modeLabel = (m) => m === "light" ? "Light" : m === "full" ? "Full" : m === "restart" ? "Wiedereinstieg" : "";
-    const modeAccentText = (m) => {
-      if (m === "full") return "rgba(214,194,137,0.92)";
-      if (m === "light") return "rgba(62,209,196,0.90)";
-      if (m === "restart") return "rgba(181,140,255,0.92)";
-      return "rgba(214,194,137,0.92)";
+    const load = () => {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) {
+        return {
+          evening: { full: [], light: [] },
+          gym: { v1: [], v2: [], startWeight: "" },
+          logs: []
+        };
+      }
+      try { return JSON.parse(raw); }
+      catch {
+        return {
+          evening: { full: [], light: [] },
+          gym: { v1: [], v2: [], startWeight: "" },
+          logs: []
+        };
+      }
     };
 
-    const listForMode = (mode) => {
-      ensureExercises();
-      return state.exercisesByMode[mode] || [];
+    let state = load();
+
+    const saveState = () => localStorage.setItem(KEY, JSON.stringify(state));
+
+    const normalizeState = () => {
+      if (!state.evening) state.evening = { full: [], light: [] };
+      if (!Array.isArray(state.evening.full)) state.evening.full = [];
+      if (!Array.isArray(state.evening.light)) state.evening.light = [];
+
+      if (!state.gym) state.gym = { v1: [], v2: [], startWeight: "" };
+      if (!Array.isArray(state.gym.v1)) state.gym.v1 = [];
+      if (!Array.isArray(state.gym.v2)) state.gym.v2 = [];
+      if (typeof state.gym.startWeight !== "string") state.gym.startWeight = state.gym.startWeight == null ? "" : String(state.gym.startWeight);
+
+      if (!Array.isArray(state.logs)) state.logs = [];
+    };
+    normalizeState();
+
+    // logs:
+    // {
+    //   dateKey,
+    //   bike:boolean,
+    //   evening:null|'full'|'light',
+    //   gym:null|'v1'|'v2',
+    //   completed:{
+    //     evening:{ full:[], light:[] },
+    //     gym:{ v1:[], v2:[] }
+    //   }
+    // }
+    const ensureLog = (dateKey) => {
+      let log = state.logs.find(l => l.dateKey === dateKey);
+      if (!log) {
+        log = {
+          dateKey,
+          bike: false,
+          evening: null,
+          gym: null,
+          completed: {
+            evening: { full: [], light: [] },
+            gym: { v1: [], v2: [] }
+          }
+        };
+        state.logs.unshift(log);
+      }
+
+      if (!("bike" in log)) log.bike = false;
+      if (!("evening" in log)) log.evening = null;
+      if (!("gym" in log)) log.gym = null;
+      if (!log.completed) {
+        log.completed = {
+          evening: { full: [], light: [] },
+          gym: { v1: [], v2: [] }
+        };
+      }
+      if (!log.completed.evening) log.completed.evening = { full: [], light: [] };
+      if (!log.completed.gym) log.completed.gym = { v1: [], v2: [] };
+
+      if (!Array.isArray(log.completed.evening.full)) log.completed.evening.full = [];
+      if (!Array.isArray(log.completed.evening.light)) log.completed.evening.light = [];
+      if (!Array.isArray(log.completed.gym.v1)) log.completed.gym.v1 = [];
+      if (!Array.isArray(log.completed.gym.v2)) log.completed.gym.v2 = [];
+
+      return log;
     };
 
-    const setListForMode = (mode, arr) => {
-      ensureExercises();
-      state.exercisesByMode[mode] = arr;
+    const ensureTodayLog = () => ensureLog(todayKey());
+
+    let currentPage = "home";
+    let currentSection = null; // 'evening'|'gym'
+    let currentVariant = null; // evening: full|light; gym: v1|v2
+    let calCursor = new Date();
+    calCursor.setDate(1);
+
+    const pages = {
+      home: $("homePage"),
+      workout: $("workoutPage"),
+      calendar: $("calendarPage")
     };
 
-    const doneSetForTodayMode = (mode) => {
+    const getCurrentList = () => {
+      if (currentSection === "evening") return state.evening[currentVariant] || [];
+      if (currentSection === "gym") return state.gym[currentVariant] || [];
+      return [];
+    };
+
+    const setCurrentList = (arr) => {
+      if (currentSection === "evening") state.evening[currentVariant] = arr;
+      if (currentSection === "gym") state.gym[currentVariant] = arr;
+    };
+
+    const getTodayCompletedIds = () => {
       const log = ensureTodayLog();
-      return new Set(log.completed[mode] || []);
+      if (currentSection === "evening") return log.completed.evening[currentVariant] || [];
+      if (currentSection === "gym") return log.completed.gym[currentVariant] || [];
+      return [];
     };
 
-    // strength entry only if: exercises exist for that mode AND at least one completed today for that mode
-    const updateStrengthForTodayMode = (mode) => {
+    const setTodayCompletedIds = (ids) => {
       const log = ensureTodayLog();
-      const ex = listForMode(mode);
-      const done = (log.completed[mode] || []);
-      const eligible = ex.length > 0 && done.length > 0;
-      if (eligible) log.strength = mode;
-      else if (log.strength === mode) log.strength = null; // only clear if it was this mode
+      if (currentSection === "evening") log.completed.evening[currentVariant] = ids;
+      if (currentSection === "gym") log.completed.gym[currentVariant] = ids;
+    };
+
+    const updateTodayPrimaryBadge = () => {
+      const log = ensureTodayLog();
+      const list = getCurrentList();
+      const done = getTodayCompletedIds();
+      const eligible = list.length > 0 && done.length > 0;
+
+      if (currentSection === "evening") {
+        if (eligible) log.evening = currentVariant;
+        else if (log.evening === currentVariant) log.evening = null;
+      }
+
+      if (currentSection === "gym") {
+        if (eligible) log.gym = currentVariant;
+        else if (log.gym === currentVariant) log.gym = null;
+      }
+
       saveState();
     };
 
-    const startWorkout = (mode) => {
-      currentMode = mode;
-      $("workoutTitle").textContent = `${modeLabel(mode)}-Set`;
-      $("modeText").textContent = `${modeLabel(mode)}-Set`;
-      $("modeText").style.color = modeAccentText(mode);
-      updateStrengthForTodayMode(mode);
-      go("workout");
+    const currentVariantLabel = () => {
+      if (currentSection === "evening") return currentVariant === "full" ? "Full" : "Light";
+      if (currentSection === "gym") return currentVariant === "v1" ? "Variante 1" : "Variante 2";
+      return "";
     };
 
-    const formatMeta = (e) => {
-      if (e.goalType === "reps") {
-        const parts = [];
-        if (e.sets) parts.push(`${e.sets}x`);
-        parts.push(`${e.reps ?? 0} Wdh.`);
-        if (e.weightKg != null) parts.push(`${e.weightKg} kg`);
-        if (e.note) parts.push(e.note);
-        return parts.filter(Boolean).join(" • ");
-      }
-      if (e.goalType === "time") {
-        const parts = [];
-        if (e.sets) parts.push(`${e.sets}x`);
-        parts.push(`${e.seconds ?? 0}s`);
-        if (e.note) parts.push(e.note);
-        return parts.filter(Boolean).join(" • ");
-      }
-      return e.note || "";
+    const currentVariantColor = () => {
+      if (currentSection === "evening") return currentVariant === "full" ? "rgba(214,194,137,0.92)" : "rgba(62,209,196,0.90)";
+      if (currentSection === "gym") return currentVariant === "v1" ? "rgba(181,140,255,0.92)" : "rgba(255,127,176,0.92)";
+      return "rgba(214,194,137,0.92)";
     };
 
-    const dayStatusForMode = (mode) => {
-      const log = ensureTodayLog();
-      const total = listForMode(mode).length;
-      const done = (log.completed[mode] || []).length;
+    const showHeaderState = () => {
+      $("datePill").textContent = niceDate();
+
+      $("calendarBtn").style.display = "none";
+      $("statsBtn").style.display = currentPage === "calendar" ? "inline-flex" : "none";
+      $("backBtn").style.display = currentPage === "home" ? "none" : "inline-flex";
+
+      const subA = $("subModeA");
+      const subB = $("subModeB");
+
+      subA.style.display = "none";
+      subB.style.display = "none";
+
+      if (currentPage === "workout" && currentSection === "evening") {
+        $("headerTitle").textContent = "Abendroutine";
+        subA.style.display = "inline-flex";
+        subB.style.display = "inline-flex";
+        subA.textContent = "Full";
+        subB.textContent = "Light";
+        subA.classList.toggle("active", currentVariant === "full");
+        subB.classList.toggle("active", currentVariant === "light");
+      } else if (currentPage === "workout" && currentSection === "gym") {
+        $("headerTitle").textContent = "Fitnesscenter";
+        subA.style.display = "inline-flex";
+        subB.style.display = "inline-flex";
+        subA.textContent = "Variante 1";
+        subB.textContent = "Variante 2";
+        subA.classList.toggle("active", currentVariant === "v1");
+        subB.classList.toggle("active", currentVariant === "v2");
+      } else if (currentPage === "calendar") {
+        $("headerTitle").textContent = "Fitness";
+      } else {
+        $("headerTitle").textContent = "Fitness";
+        $("calendarBtn").style.display = "inline-flex";
+      }
+    };
+
+    const go = (page) => {
+      currentPage = page;
+      for (const k in pages) pages[k].classList.toggle("active", k === page);
+      showHeaderState();
+
+      if (page === "workout") renderWorkout();
+      if (page === "calendar") renderCalendar();
+    };
+
+    const dayStatus = () => {
+      const total = getCurrentList().length;
+      const done = getTodayCompletedIds().length;
       if (total === 0) return { kind:"none", text:"0/0" };
       if (done === 0) return { kind:"none", text:`${done}/${total}` };
       if (done >= total) return { kind:"ok", text:`${done}/${total}` };
       return { kind:"warn", text:`${done}/${total}` };
     };
 
-    const toggleExercise = (id) => {
-      const mode = currentMode;
-      const log = ensureTodayLog();
-      const set = new Set(log.completed[mode] || []);
-      if (set.has(id)) set.delete(id); else set.add(id);
-      log.completed[mode] = Array.from(set);
-
-      updateStrengthForTodayMode(mode);
-      saveState();
-      renderWorkout();
-    };
-
-    const deleteExercise = (id) => {
-      if (!confirm("Übung wirklich löschen?")) return;
-      const mode = currentMode;
-
-      setListForMode(mode, listForMode(mode).filter(e => e.id !== id));
-
-      // remove from all days for that mode
-      for (const l of state.logs) {
-        if (l.completed && Array.isArray(l.completed[mode])) {
-          l.completed[mode] = l.completed[mode].filter(x => x !== id);
-        }
-        // if this deletion makes a day no longer eligible, clear strength only if it matched that mode and would become invalid:
-        if (l.strength === mode) {
-          const ex = listForMode(mode);
-          const done = (l.completed?.[mode] || []);
-          const eligible = ex.length > 0 && done.length > 0;
-          if (!eligible) l.strength = null;
-        }
-      }
-
-      saveState();
-      renderWorkout();
-    };
-
-    $("exerciseList").addEventListener("click", (ev) => {
-      const trash = ev.target.closest("button[data-trash='1']");
-      if (trash) { ev.stopPropagation(); deleteExercise(trash.dataset.id); return; }
-      const row = ev.target.closest("[data-ex-id]");
-      if (!row) return;
-      toggleExercise(row.dataset.exId);
-    });
+    const eveningMeta = (e) => `${e.sets}x • ${e.reps} Wdh.`;
+    const gymMeta = (e) => `Gerät ${e.machine} • ${e.sets} Sätze • ${e.reps} Wdh.`;
 
     const renderWorkout = () => {
-      const mode = currentMode;
-      const log = ensureTodayLog();
-      const list = $("exerciseList");
-      const empty = $("exerciseEmpty");
+      const listEl = $("exerciseList");
+      const emptyEl = $("exerciseEmpty");
+      const list = getCurrentList();
+      const done = new Set(getTodayCompletedIds());
 
-      const ex = listForMode(mode);
-      const done = new Set(log.completed[mode] || []);
+      $("workoutTitle").textContent = currentSection === "evening" ? "Abendroutine" : "Fitnesscenter";
+      $("modeText").textContent = currentVariantLabel();
+      $("modeText").style.color = currentVariantColor();
 
-      empty.style.display = ex.length ? "none" : "block";
+      const st = dayStatus();
+      $("todayText").textContent = st.text;
+      $("todayDot").className = "dot " + st.kind;
+      $("progressPill").textContent = `${done.size}/${list.length}`;
+
+      $("gymWeightSection").style.display = currentSection === "gym" ? "block" : "none";
+      if (currentSection === "gym") {
+        $("startWeightValue").textContent = state.gym.startWeight ? `${state.gym.startWeight} kg` : "—";
+        $("startWeightInput").value = state.gym.startWeight || "";
+      }
+
+      emptyEl.style.display = list.length ? "none" : "block";
 
       let html = "";
-      for (const e of ex) {
+      for (const e of list) {
         const isDone = done.has(e.id);
         html += `
           <div class="item ${isDone ? "done" : ""}" data-ex-id="${escapeHtml(e.id)}">
             <div class="left">
               <div class="name">${escapeHtml(e.name)}</div>
-              <div class="meta">${escapeHtml(formatMeta(e))}</div>
+              <div class="meta">${escapeHtml(currentSection === "evening" ? eveningMeta(e) : gymMeta(e))}</div>
             </div>
             <div class="right">
               <div class="check">✓</div>
-              <button class="trash" type="button" data-trash="1" data-id="${escapeHtml(e.id)}" aria-label="Übung löschen" title="Löschen">🗑️</button>
+              <button class="trash" type="button" data-trash="1" data-id="${escapeHtml(e.id)}">🗑️</button>
             </div>
           </div>
         `;
       }
-      list.innerHTML = html;
+      listEl.innerHTML = html;
+    };
 
-      const doneCount = (log.completed[mode] || []).length;
-      $("progressPill").textContent = `${doneCount}/${ex.length}`;
+    $("exerciseList").addEventListener("click", (ev) => {
+      const trash = ev.target.closest("[data-trash='1']");
+      if (trash) {
+        ev.stopPropagation();
+        if (!confirm("Übung wirklich löschen?")) return;
+        const id = trash.dataset.id;
+        setCurrentList(getCurrentList().filter(e => e.id !== id));
 
-      const st = dayStatusForMode(mode);
-      $("todayText").textContent = st.text;
-      $("todayDot").className = "dot " + st.kind;
+        for (const log of state.logs) {
+          if (currentSection === "evening") {
+            log.completed.evening[currentVariant] = (log.completed.evening[currentVariant] || []).filter(x => x !== id);
+            if (log.evening === currentVariant) {
+              const eligible = state.evening[currentVariant].length > 0 && log.completed.evening[currentVariant].length > 0;
+              if (!eligible) log.evening = null;
+            }
+          } else if (currentSection === "gym") {
+            log.completed.gym[currentVariant] = (log.completed.gym[currentVariant] || []).filter(x => x !== id);
+            if (log.gym === currentVariant) {
+              const eligible = state.gym[currentVariant].length > 0 && log.completed.gym[currentVariant].length > 0;
+              if (!eligible) log.gym = null;
+            }
+          }
+        }
 
-      $("finishBtn").style.display = (ex.length > 0 && doneCount > 0) ? "inline-flex" : "none";
+        saveState();
+        renderWorkout();
+        return;
+      }
+
+      const row = ev.target.closest("[data-ex-id]");
+      if (!row) return;
+      const id = row.dataset.exId;
+      const set = new Set(getTodayCompletedIds());
+      if (set.has(id)) set.delete(id);
+      else set.add(id);
+      setTodayCompletedIds(Array.from(set));
+      updateTodayPrimaryBadge();
+      renderWorkout();
+    });
+
+    const openEveningWorkout = (variant) => {
+      currentSection = "evening";
+      currentVariant = variant;
+      go("workout");
+    };
+
+    const openGymWorkout = (variant) => {
+      currentSection = "gym";
+      currentVariant = variant;
+      go("workout");
     };
 
     const markBikingToday = () => {
       const log = ensureTodayLog();
       log.bike = true;
       saveState();
+      go("calendar");
     };
 
-    // ---- Day dialog ----
-    const dayDlg = $("dayDlg");
-    let dayDlgKey = null;
-    let dayDlgDateObj = null;
+    $("eveningMenuBtn").addEventListener("click", () => openEveningWorkout("full"));
+    $("gymMenuBtn").addEventListener("click", () => openGymWorkout("v1"));
+    $("bikeBtn").addEventListener("click", markBikingToday);
 
-    const openDayDialog = (dateKey, dateObj) => {
-      dayDlgKey = dateKey;
-      dayDlgDateObj = dateObj;
-
-      $("dayDlgTitle").textContent = fmtDay(dateObj);
-      const log = ensureLog(dateKey);
-
-      const items = [];
-      if (log.strength === "full") items.push({ type:"strength", value:"full", label:"Full-Set" });
-      if (log.strength === "light") items.push({ type:"strength", value:"light", label:"Light-Set" });
-      if (log.strength === "restart") items.push({ type:"strength", value:"restart", label:"Wiedereinstieg" });
-      if (log.bike) items.push({ type:"bike", value:"true", label:"Biking" });
-
-      const list = $("dayDlgList");
-      if (items.length === 0) {
-        list.innerHTML = `<div class="empty">Keine Einträge.</div>`;
-      } else {
-        list.innerHTML = items.map(it => `
-          <div class="item" data-del="${it.type}" data-val="${it.value}">
-            <div class="left"><div class="name">${escapeHtml(it.label)}</div></div>
-            <div class="right"><button class="trash" type="button" title="Löschen">🗑️</button></div>
-          </div>
-        `).join("");
-      }
-
-      dayDlg.showModal();
-    };
-
-    $("dayDlgClose").addEventListener("click", () => dayDlg.close());
-
-    $("dayDlgList").addEventListener("click", (ev) => {
-      const trashBtn = ev.target.closest("button.trash");
-      if (!trashBtn) return;
-      const row = ev.target.closest("[data-del]");
-      if (!row) return;
-
-      if (!confirm("Wirklich löschen?")) return;
-
-      const what = row.dataset.del;
-      const val = row.dataset.val;
-
-      const log = ensureLog(dayDlgKey);
-
-      if (what === "bike") log.bike = false;
-      if (what === "strength") {
-        if (log.strength === val) log.strength = null;
-        // optional: also clear completed for that day for that mode? -> NEIN, nur Badge entfernen (wie du’s willst)
-      }
-
-      saveState();
-      renderCalendar();
-      openDayDialog(dayDlgKey, dayDlgDateObj);
+    $("subModeA").addEventListener("click", () => {
+      if (currentSection === "evening") openEveningWorkout("full");
+      if (currentSection === "gym") openGymWorkout("v1");
     });
 
-    // ---- Calendar ----
+    $("subModeB").addEventListener("click", () => {
+      if (currentSection === "evening") openEveningWorkout("light");
+      if (currentSection === "gym") openGymWorkout("v2");
+    });
+
+    $("backBtn").addEventListener("click", () => go("home"));
+    $("calendarBtn").addEventListener("click", () => go("calendar"));
+
+    $("saveWeightBtn").addEventListener("click", () => {
+      state.gym.startWeight = $("startWeightInput").value.trim();
+      saveState();
+      renderWorkout();
+    });
+
+    // Abendroutine dialog
+    $("addExerciseBtn").addEventListener("click", () => {
+      if (currentSection === "evening") {
+        $("eveningName").value = "";
+        $("eveningSets").value = 1;
+        $("eveningReps").value = 10;
+        $("eveningDlg").showModal();
+      } else if (currentSection === "gym") {
+        $("gymName").value = "";
+        $("gymMachine").value = "";
+        $("gymSets").value = 3;
+        $("gymReps").value = 10;
+        $("gymDlg").showModal();
+      }
+    });
+
+    $("eveningCancel").addEventListener("click", () => $("eveningDlg").close());
+    $("eveningSave").addEventListener("click", () => {
+      const name = $("eveningName").value.trim();
+      if (!name) return alert("Bitte Name eingeben.");
+
+      const sets = Number($("eveningSets").value) || 1;
+      const reps = Number($("eveningReps").value) || 1;
+
+      state.evening[currentVariant].push({
+        id: crypto.randomUUID(),
+        name,
+        sets,
+        reps
+      });
+
+      saveState();
+      renderWorkout();
+      $("eveningDlg").close();
+    });
+
+    // Gym dialog
+    $("gymCancel").addEventListener("click", () => $("gymDlg").close());
+    $("gymSave").addEventListener("click", () => {
+      const name = $("gymName").value.trim();
+      if (!name) return alert("Bitte Name eingeben.");
+
+      const machine = $("gymMachine").value.trim();
+      const sets = Number($("gymSets").value) || 1;
+      const reps = Number($("gymReps").value) || 1;
+
+      state.gym[currentVariant].push({
+        id: crypto.randomUUID(),
+        name,
+        machine,
+        sets,
+        reps
+      });
+
+      saveState();
+      renderWorkout();
+      $("gymDlg").close();
+    });
+
+    // Calendar
     const renderCalendar = () => {
       $("calTitle").textContent = monthTitle(calCursor);
 
@@ -913,18 +1141,13 @@
       grid.innerHTML = "";
       const frag = document.createDocumentFragment();
 
-      for (let i=0; i<totalCells; i++){
+      for (let i=0; i<totalCells; i++) {
         const d = new Date(startDate);
         d.setDate(startDate.getDate() + i);
 
         const inMonth = d.getMonth() === calCursor.getMonth();
         const key = ymd(d);
         const log = state.logs.find(l => l.dateKey === key);
-
-        const hasFull = log?.strength === "full";
-        const hasLight = log?.strength === "light";
-        const hasRestart = log?.strength === "restart";
-        const hasBike = !!log?.bike;
 
         const cell = document.createElement("div");
         cell.className = "dayCell" + (inMonth ? "" : " out");
@@ -938,10 +1161,32 @@
 
         const markers = document.createElement("div");
         markers.className = "markers";
-        if (hasFull) { const m=document.createElement("span"); m.className="mk full"; markers.appendChild(m); }
-        if (hasLight){ const m=document.createElement("span"); m.className="mk light"; markers.appendChild(m); }
-        if (hasRestart){ const m=document.createElement("span"); m.className="mk restart"; markers.appendChild(m); }
-        if (hasBike) { const m=document.createElement("span"); m.className="mk bike"; markers.appendChild(m); }
+
+        if (log?.evening === "full") {
+          const m = document.createElement("span");
+          m.className = "mk evening-full";
+          markers.appendChild(m);
+        }
+        if (log?.evening === "light") {
+          const m = document.createElement("span");
+          m.className = "mk evening-light";
+          markers.appendChild(m);
+        }
+        if (log?.gym === "v1") {
+          const m = document.createElement("span");
+          m.className = "mk gym-v1";
+          markers.appendChild(m);
+        }
+        if (log?.gym === "v2") {
+          const m = document.createElement("span");
+          m.className = "mk gym-v2";
+          markers.appendChild(m);
+        }
+        if (log?.bike) {
+          const m = document.createElement("span");
+          m.className = "mk bike";
+          markers.appendChild(m);
+        }
 
         top.appendChild(dn);
         top.appendChild(markers);
@@ -950,17 +1195,86 @@
         if (inMonth) cell.addEventListener("click", () => openDayDialog(key, d));
         frag.appendChild(cell);
       }
+
       grid.appendChild(frag);
     };
 
-    // ---- Stats ----
+    $("prevMonth").addEventListener("click", () => {
+      calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    $("nextMonth").addEventListener("click", () => {
+      calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1);
+      renderCalendar();
+    });
+
+    // Day dialog
+    let dayDlgKey = null;
+    let dayDlgDateObj = null;
+
+    const openDayDialog = (dateKey, dateObj) => {
+      dayDlgKey = dateKey;
+      dayDlgDateObj = dateObj;
+      const log = ensureLog(dateKey);
+
+      $("dayDlgTitle").textContent = fmtDay(dateObj);
+
+      const items = [];
+      if (log.evening === "full") items.push({ type:"evening", value:"full", label:"Abendroutine Full" });
+      if (log.evening === "light") items.push({ type:"evening", value:"light", label:"Abendroutine Light" });
+      if (log.gym === "v1") items.push({ type:"gym", value:"v1", label:"Fitnesscenter Variante 1" });
+      if (log.gym === "v2") items.push({ type:"gym", value:"v2", label:"Fitnesscenter Variante 2" });
+      if (log.bike) items.push({ type:"bike", value:"true", label:"Biking" });
+
+      const list = $("dayDlgList");
+      if (!items.length) {
+        list.innerHTML = `<div class="empty">Keine Einträge.</div>`;
+      } else {
+        list.innerHTML = items.map(it => `
+          <div class="item" data-del="${it.type}" data-val="${it.value}">
+            <div class="left"><div class="name">${escapeHtml(it.label)}</div></div>
+            <div class="right"><button class="trash" type="button">🗑️</button></div>
+          </div>
+        `).join("");
+      }
+
+      $("dayDlg").showModal();
+    };
+
+    $("dayDlgClose").addEventListener("click", () => $("dayDlg").close());
+
+    $("dayDlgList").addEventListener("click", (ev) => {
+      const btn = ev.target.closest("button.trash");
+      if (!btn) return;
+      const row = ev.target.closest("[data-del]");
+      if (!row) return;
+
+      if (!confirm("Wirklich löschen?")) return;
+
+      const log = ensureLog(dayDlgKey);
+      const type = row.dataset.del;
+      const val = row.dataset.val;
+
+      if (type === "bike") log.bike = false;
+      if (type === "evening" && log.evening === val) log.evening = null;
+      if (type === "gym" && log.gym === val) log.gym = null;
+
+      saveState();
+      renderCalendar();
+      openDayDialog(dayDlgKey, dayDlgDateObj);
+    });
+
+    // Stats
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
     const daysInMonth = (year, monthIndex0) => new Date(year, monthIndex0 + 1, 0).getDate();
     const pct = (n, denom) => denom === 0 ? "0%" : `${Math.round((n / denom) * 100)}%`;
+
     const isSameMonth = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
     const isBeforeMonth = (a, b) =>
       (a.getFullYear() < b.getFullYear()) || (a.getFullYear() === b.getFullYear() && a.getMonth() < b.getMonth());
+
     const dayOfYear = (d) => {
       const start = new Date(d.getFullYear(), 0, 1);
       const oneDay = 24 * 60 * 60 * 1000;
@@ -981,13 +1295,14 @@
 
       const monthLogs = state.logs.filter(l => parseYearMonth(l.dateKey) === ym);
 
-      const monthActive = monthLogs.filter(l => (l.strength === "full" || l.strength === "light" || l.strength === "restart" || !!l.bike)).length;
-      const monthFull = monthLogs.filter(l => l.strength === "full").length;
-      const monthLight = monthLogs.filter(l => l.strength === "light").length;
-      const monthRestart = monthLogs.filter(l => l.strength === "restart").length;
-      const monthBike = monthLogs.filter(l => !!l.bike).length;
+      const monthActive = monthLogs.filter(l => (l.evening || l.gym || l.bike)).length;
+      const eveningFull = monthLogs.filter(l => l.evening === "full").length;
+      const eveningLight = monthLogs.filter(l => l.evening === "light").length;
+      const gymV1 = monthLogs.filter(l => l.gym === "v1").length;
+      const gymV2 = monthLogs.filter(l => l.gym === "v2").length;
+      const bike = monthLogs.filter(l => !!l.bike).length;
 
-      return { label: monthTitle(calCursor), denomDays, monthActive, monthFull, monthLight, monthRestart, monthBike };
+      return { label: monthTitle(calCursor), denomDays, monthActive, eveningFull, eveningLight, gymV1, gymV2, bike };
     };
 
     const computeYearStats = () => {
@@ -996,18 +1311,21 @@
       const denomDays = dayOfYear(today);
       const yearLogs = state.logs.filter(l => parseYear(l.dateKey) === String(currentYear));
 
-      const yearActive = yearLogs.filter(l => (l.strength === "full" || l.strength === "light" || l.strength === "restart" || !!l.bike)).length;
-      const yearFull = yearLogs.filter(l => l.strength === "full").length;
-      const yearLight = yearLogs.filter(l => l.strength === "light").length;
-      const yearRestart = yearLogs.filter(l => l.strength === "restart").length;
-      const yearBike = yearLogs.filter(l => !!l.bike).length;
+      const yearActive = yearLogs.filter(l => (l.evening || l.gym || l.bike)).length;
+      const eveningFull = yearLogs.filter(l => l.evening === "full").length;
+      const eveningLight = yearLogs.filter(l => l.evening === "light").length;
+      const gymV1 = yearLogs.filter(l => l.gym === "v1").length;
+      const gymV2 = yearLogs.filter(l => l.gym === "v2").length;
+      const bike = yearLogs.filter(l => !!l.bike).length;
 
-      return { currentYear, denomDays, yearActive, yearFull, yearLight, yearRestart, yearBike };
+      return { currentYear, denomDays, yearActive, eveningFull, eveningLight, gymV1, gymV2, bike };
     };
 
     const renderStatsGrid = (gridEl, rows) => {
       let html = "";
-      for (const [k,v] of rows) html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div>`;
+      for (const [k,v] of rows) {
+        html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div>`;
+      }
       gridEl.innerHTML = html;
     };
 
@@ -1021,111 +1339,38 @@
       renderStatsGrid($("statsGridMonth"), [
         ["Tage", String(m.denomDays)],
         ["Aktive Tage", `${m.monthActive} (${pct(m.monthActive, m.denomDays)})`],
-        ["Full", `${m.monthFull} (${pct(m.monthFull, m.denomDays)})`],
-        ["Light", `${m.monthLight} (${pct(m.monthLight, m.denomDays)})`],
-        ["Wiedereinstieg", `${m.monthRestart} (${pct(m.monthRestart, m.denomDays)})`],
-        ["Bike", `${m.monthBike} (${pct(m.monthBike, m.denomDays)})`],
+        ["Abendroutine Full", `${m.eveningFull} (${pct(m.eveningFull, m.denomDays)})`],
+        ["Abendroutine Light", `${m.eveningLight} (${pct(m.eveningLight, m.denomDays)})`],
+        ["Fitnesscenter Variante 1", `${m.gymV1} (${pct(m.gymV1, m.denomDays)})`],
+        ["Fitnesscenter Variante 2", `${m.gymV2} (${pct(m.gymV2, m.denomDays)})`],
+        ["Biking", `${m.bike} (${pct(m.bike, m.denomDays)})`],
       ]);
 
       renderStatsGrid($("statsGridYear"), [
         ["Tage", String(y.denomDays)],
         ["Aktive Tage", `${y.yearActive} (${pct(y.yearActive, y.denomDays)})`],
-        ["Full", `${y.yearFull} (${pct(y.yearFull, y.denomDays)})`],
-        ["Light", `${y.yearLight} (${pct(y.yearLight, y.denomDays)})`],
-        ["Wiedereinstieg", `${y.yearRestart} (${pct(y.yearRestart, y.denomDays)})`],
-        ["Bike", `${y.yearBike} (${pct(y.yearBike, y.denomDays)})`],
+        ["Abendroutine Full", `${y.eveningFull} (${pct(y.eveningFull, y.denomDays)})`],
+        ["Abendroutine Light", `${y.eveningLight} (${pct(y.eveningLight, y.denomDays)})`],
+        ["Fitnesscenter Variante 1", `${y.gymV1} (${pct(y.gymV1, y.denomDays)})`],
+        ["Fitnesscenter Variante 2", `${y.gymV2} (${pct(y.gymV2, y.denomDays)})`],
+        ["Biking", `${y.bike} (${pct(y.bike, y.denomDays)})`],
       ]);
 
       $("statsDlg").showModal();
     };
 
-    // ---- Exercise dialog ----
-    const dlg = $("dlg");
-    const applyGoalTypeUI = () => {
-      const t = $("goalType").value;
-      $("repsWrap").style.display = (t === "reps") ? "block" : "none";
-      $("weightWrap").style.display = (t === "reps") ? "flex" : "none";
-      $("secWrap").style.display = (t === "time") ? "block" : "none";
-    };
-    const openDialog = () => {
-      $("name").value = "";
-      $("goalType").value = "reps";
-      $("sets").value = 1;
-      $("reps").value = 10;
-      $("seconds").value = 60;
-      $("weight").value = "";
-      $("note").value = "";
-      applyGoalTypeUI();
-      dlg.showModal();
-    };
-
-    // ---- Wire buttons ----
-    $("fullBtn").addEventListener("click", () => startWorkout("full"));
-    $("lightBtn").addEventListener("click", () => startWorkout("light"));
-    $("restartBtn").addEventListener("click", () => startWorkout("restart"));
-    $("bikeBtn").addEventListener("click", () => { markBikingToday(); go("calendar"); });
-
-    $("calendarBtn").addEventListener("click", () => go("calendar"));
-    $("backBtn").addEventListener("click", () => go("home"));
-
     $("statsBtn").addEventListener("click", openStats);
     $("closeStats").addEventListener("click", () => $("statsDlg").close());
 
-    $("addExerciseBtn").addEventListener("click", openDialog);
-    $("cancel").addEventListener("click", () => dlg.close());
-    $("goalType").addEventListener("change", applyGoalTypeUI);
-
-    $("save").addEventListener("click", () => {
-      const mode = currentMode;
-      const name = $("name").value.trim();
-      if (!name) return alert("Bitte Name eingeben.");
-
-      const goalType = $("goalType").value;
-      const sets = Number($("sets").value) || null;
-
-      let reps = null, seconds = null, weightKg = null;
-      if (goalType === "reps") {
-        reps = Number($("reps").value) || 0;
-        const w = $("weight").value.trim().replace(",", ".");
-        weightKg = w ? Number(w) : null;
-        if (Number.isNaN(weightKg)) weightKg = null;
-      } else if (goalType === "time") {
-        seconds = Number($("seconds").value) || 0;
-      }
-      const note = $("note").value.trim() || null;
-
-      const ex = listForMode(mode).slice();
-      ex.push({
-        id: crypto.randomUUID(),
-        name,
-        goalType,
-        sets: (goalType === "done") ? null : sets,
-        reps,
-        seconds,
-        weightKg,
-        note
-      });
-      setListForMode(mode, ex);
-
-      saveState();
-      updateStrengthForTodayMode(mode);
-      renderWorkout();
-      dlg.close();
-    });
-
-    $("finishBtn").addEventListener("click", () => go("calendar"));
-
-    $("prevMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1); renderCalendar(); });
-    $("nextMonth").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1); renderCalendar(); });
-
-    // ---- Init ----
+    // init
     $("datePill").textContent = niceDate();
     ensureTodayLog();
     saveState();
     go("home");
 
-    // keep header date fresh
-    setInterval(() => { $("datePill").textContent = niceDate(); }, 60 * 1000);
+    setInterval(() => {
+      $("datePill").textContent = niceDate();
+    }, 60000);
   </script>
 </body>
 </html>
