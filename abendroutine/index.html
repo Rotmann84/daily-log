@@ -25,6 +25,9 @@
       --ok:#36c26a;
       --warn:#f2b84b;
       --none:rgba(255,255,255,0.18);
+      --danger:#d86f6f;
+      --dangerBg:rgba(216,111,111,0.16);
+      --dangerBorder:rgba(216,111,111,0.35);
       --shadow:0 14px 34px rgba(0,0,0,0.35);
       --radius:18px;
 
@@ -52,7 +55,7 @@
       min-height:100%;
       background:transparent;
       color:var(--fg);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior:none;
     }
@@ -72,7 +75,7 @@
       max-width:740px;
       margin:0 auto;
       min-height:100dvh;
-      padding: env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 16px) 16px;
+      padding:env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 16px) 16px;
       display:flex;
       flex-direction:column;
       gap:14px;
@@ -80,19 +83,19 @@
 
     .page{ display:none; padding-bottom:18px; }
     .page.active{ display:block; animation: fade .12s ease; }
-    @keyframes fade{ from{opacity:.3; transform: translateY(2px);} to{opacity:1; transform: translateY(0);} }
+    @keyframes fade{ from{opacity:.3; transform:translateY(2px);} to{opacity:1; transform:translateY(0);} }
 
     .panel{
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
       position:relative;
       overflow:hidden;
       overflow:clip;
       clip-path: inset(0 round var(--radius));
-      contain: paint;
+      contain:paint;
       isolation:isolate;
     }
 
@@ -100,32 +103,38 @@
       padding:9px 12px;
       border-radius:999px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,0.06);
+      background:rgba(255,255,255,0.06);
       font-weight:900;
       font-size:12px;
       line-height:1;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
       user-select:none;
       color:var(--fg);
+      min-height:40px;
     }
 
     .pill{
       cursor:pointer;
-      transition: transform .04s ease, background .12s ease, border-color .12s ease;
+      transition:transform .04s ease, background .12s ease, border-color .12s ease;
     }
     .pill:active{ transform:scale(.99); }
     .pill.gold{
-      border-color: rgba(185,162,106,0.35);
-      color: var(--accent2);
-      background: rgba(185,162,106,0.12);
+      border-color:rgba(185,162,106,0.35);
+      color:var(--accent2);
+      background:rgba(185,162,106,0.12);
     }
     .pill.active{
-      border-color: rgba(255,255,255,0.24);
-      background: rgba(255,255,255,0.12);
+      border-color:rgba(255,255,255,0.24);
+      background:rgba(255,255,255,0.12);
+    }
+    .pill.danger.active{
+      border-color:var(--dangerBorder);
+      background:var(--dangerBg);
+      color:#ffd2d2;
     }
 
     .homeHeader, .standardHeader{
@@ -135,12 +144,14 @@
       justify-content:space-between;
       gap:12px;
     }
+
     .homeHeader h1, .standardHeader h1{
       margin:0;
       font-size:20px;
       font-weight:950;
       letter-spacing:.3px;
     }
+
     .homeActions, .headerActions{
       display:flex;
       gap:10px;
@@ -151,46 +162,46 @@
 
     .homeRow{
       display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
-      padding: 6px 0 8px;
+      padding:6px 0 8px;
       align-items:stretch;
     }
 
     .homeAction{
-      border-radius: 18px;
-      border: 1px solid var(--homeFrameB);
+      border-radius:18px;
+      border:1px solid var(--homeFrameB);
       background:
         radial-gradient(900px 300px at 50% 0%, var(--homeFrameHi), transparent 62%),
         var(--homeFrame);
-      box-shadow: 0 10px 26px rgba(0,0,0,0.24);
-      padding: 14px 12px;
+      box-shadow:0 10px 26px rgba(0,0,0,0.24);
+      padding:14px 12px;
       display:flex;
       align-items:center;
       justify-content:center;
       gap:12px;
       cursor:pointer;
       user-select:none;
-      min-height: 76px;
+      min-height:76px;
     }
-    .homeAction:active{ transform: scale(.99); }
 
     .homeIcon{
       width:44px; height:44px;
-      border-radius: 14px;
+      border-radius:14px;
       display:grid;
       place-items:center;
-      background: rgba(0,0,0,0.10);
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.25);
-      font-size: 22px;
+      background:rgba(0,0,0,0.10);
+      border:1px solid rgba(255,255,255,0.10);
+      box-shadow:0 10px 22px rgba(0,0,0,0.25);
+      font-size:22px;
     }
+
     .homeText{
-      font-weight: 950;
+      font-weight:950;
       letter-spacing:.2px;
-      font-size: 15px;
-      color: var(--fg);
-      white-space: nowrap;
+      font-size:15px;
+      color:var(--fg);
+      white-space:nowrap;
     }
 
     .bar{
@@ -200,28 +211,36 @@
       gap:10px;
       margin-bottom:12px;
     }
+
     .barLeft{ display:flex; flex-direction:column; gap:4px; }
     .barTitle{ margin:0; font-size:16px; font-weight:950; letter-spacing:.2px; }
     .barMeta{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      font-size:12px; color: var(--muted); font-weight:850;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:850;
     }
 
     .dot{
-      width:9px; height:9px; border-radius:50%;
+      width:9px; height:9px;
+      border-radius:50%;
       display:inline-block;
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.15);
+      box-shadow:0 0 0 3px rgba(0,0,0,0.15);
     }
-    .dot.ok{ background: var(--ok); }
-    .dot.warn{ background: var(--warn); }
-    .dot.none{ background: var(--none); }
+    .dot.ok{ background:var(--ok); }
+    .dot.warn{ background:var(--warn); }
+    .dot.none{ background:var(--none); }
 
     .list{ display:flex; flex-direction:column; gap:10px; }
+
     .item{
       border:1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-      background: rgba(255,255,255,0.04);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,0.04);
       cursor:pointer;
       display:flex;
       align-items:center;
@@ -229,15 +248,16 @@
       gap:12px;
       user-select:none;
     }
+
     .left{ display:flex; flex-direction:column; gap:4px; min-width:0; }
-    .name{ font-weight: 950; letter-spacing:.2px; }
-    .meta{ font-size: 13px; color: var(--muted); font-weight: 820; }
+    .name{ font-weight:950; letter-spacing:.2px; }
+    .meta{ font-size:13px; color:var(--muted); font-weight:820; }
 
     .right{
       display:flex;
       align-items:center;
       gap:10px;
-      flex: 0 0 auto;
+      flex:0 0 auto;
     }
 
     .check{
@@ -247,16 +267,17 @@
       display:grid;
       place-items:center;
       font-size:15px;
-      color: transparent;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+      color:transparent;
+      box-shadow:0 10px 20px rgba(0,0,0,0.25);
     }
+
     .done{
-      background: rgba(54,194,106,0.12);
-      border-color: rgba(54,194,106,0.35);
+      background:rgba(54,194,106,0.12);
+      border-color:rgba(54,194,106,0.35);
     }
     .done .check{
-      border-color: rgba(54,194,106,0.85);
-      background: rgba(54,194,106,0.95);
+      border-color:rgba(54,194,106,0.85);
+      background:rgba(54,194,106,0.95);
       color:#0a1f16;
     }
 
@@ -265,34 +286,36 @@
       height:38px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.10);
-      color: rgba(238,246,241,0.85);
+      background:rgba(0,0,0,0.10);
+      color:rgba(238,246,241,0.85);
       cursor:pointer;
-      font-size: 16px;
-      font-weight: 900;
+      font-size:16px;
+      font-weight:900;
       display:grid;
       place-items:center;
     }
 
     .empty{
       text-align:center;
-      color: var(--muted);
+      color:var(--muted);
       font-weight:850;
-      padding: 14px 10px;
+      padding:14px 10px;
     }
 
     /* Fitnesscenter */
     .gymScreen{
       display:flex;
       flex-direction:column;
-      gap:16px;
+      gap:12px;
     }
+
     .gymTop{
       display:grid;
-      grid-template-columns: 1fr auto;
-      gap:14px;
+      grid-template-columns:1fr auto;
+      gap:12px;
       align-items:start;
     }
+
     .gymTitle{
       font-size:30px;
       font-weight:950;
@@ -300,18 +323,21 @@
       line-height:1.05;
       margin:0;
     }
+
     .gymTopRight{
       display:flex;
       flex-direction:column;
       align-items:flex-end;
-      gap:12px;
+      gap:10px;
     }
+
     .gymDate{
-      min-width:140px;
+      min-width:150px;
       justify-content:center;
       font-size:14px;
       padding:10px 16px;
     }
+
     .gymTabs{
       display:flex;
       gap:8px;
@@ -319,35 +345,39 @@
       justify-content:flex-end;
       flex-wrap:wrap;
     }
+
     .gymTab{
-      min-width:54px;
+      min-width:56px;
       padding:10px 14px;
     }
 
     .gymWeightLine{
-      display:flex;
+      display:grid;
+      grid-template-columns:auto auto 110px auto;
+      gap:10px;
       align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
-      margin-top:4px;
     }
+
     .gymWeightLabel{
       font-size:16px;
       font-weight:900;
       color:var(--fg);
+      white-space:nowrap;
     }
+
     .gymWeightValue{
       min-width:94px;
       justify-content:center;
       font-size:14px;
       padding:10px 14px;
     }
+
     .gymWeightInput{
       width:110px;
       padding:10px 12px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.06);
+      background:rgba(255,255,255,0.06);
       color:var(--fg);
       font-size:14px;
       font-weight:800;
@@ -357,57 +387,72 @@
     .gymExerciseWrap{
       border:1px solid var(--border);
       border-radius:24px;
-      background: rgba(255,255,255,0.04);
-      padding:18px 14px 14px;
-      min-height:340px;
+      background:rgba(255,255,255,0.04);
+      padding:14px 12px 12px;
+      min-height:300px;
       position:relative;
     }
 
-    .gymAddBtn{
-      position:absolute;
-      top:14px;
-      right:14px;
-      width:46px;
-      height:46px;
+    .gymTopActions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .gymTopIcon{
+      width:44px;
+      height:44px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.07);
+      background:rgba(255,255,255,0.07);
       color:var(--accent2);
-      font-size:28px;
+      font-size:26px;
       font-weight:900;
       display:grid;
       place-items:center;
       cursor:pointer;
     }
 
+    .gymTopIcon.danger.active{
+      color:#ffd2d2;
+      border-color:var(--dangerBorder);
+      background:var(--dangerBg);
+    }
+
     .gymRows{
       display:flex;
       flex-direction:column;
       gap:10px;
-      margin-top:58px;
     }
 
     .gymRow{
       display:grid;
-      grid-template-columns: 74px minmax(0, 1fr) 86px 42px 42px;
+      grid-template-columns:64px minmax(0,1fr) 90px 42px;
       gap:8px;
       align-items:center;
       border:1px solid var(--border);
       border-radius:16px;
       padding:10px;
-      background: rgba(255,255,255,0.04);
-      transition: background .12s ease, border-color .12s ease;
+      background:rgba(255,255,255,0.04);
+      transition:background .12s ease, border-color .12s ease;
     }
+
     .gymRow.done{
-      background: rgba(54,194,106,0.16);
-      border-color: rgba(54,194,106,0.34);
+      background:rgba(54,194,106,0.16);
+      border-color:rgba(54,194,106,0.34);
+    }
+
+    .gymRow.deleteMode{
+      border-color:var(--dangerBorder);
+      background:rgba(216,111,111,0.08);
     }
 
     .gymCell{
       min-height:42px;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.05);
+      background:rgba(255,255,255,0.05);
       display:flex;
       align-items:center;
       padding:0 12px;
@@ -417,64 +462,36 @@
       white-space:nowrap;
       text-overflow:ellipsis;
     }
+
     .gymCell.center{
       justify-content:center;
       padding:0 8px;
     }
 
-    .gymCheck{
+    .gymActionBtn{
       width:32px;
       height:32px;
       border-radius:10px;
       border:2px solid rgba(255,255,255,0.18);
-      background: transparent;
+      background:transparent;
       display:grid;
       place-items:center;
       font-size:16px;
-      color: transparent;
+      color:transparent;
       cursor:pointer;
       margin:0 auto;
     }
-    .gymRow.done .gymCheck{
-      border-color: rgba(54,194,106,0.88);
-      background: rgba(54,194,106,0.95);
+
+    .gymRow.done .gymActionBtn.checkMode{
+      border-color:rgba(54,194,106,0.88);
+      background:rgba(54,194,106,0.95);
       color:#0a1f16;
     }
 
-    .rowMenu{
-      position:relative;
-    }
-
-    .menuPopup{
-      position:absolute;
-      top:44px;
-      right:0;
-      min-width:150px;
-      padding:6px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(15,42,31,0.98);
-      box-shadow: 0 18px 30px rgba(0,0,0,0.35);
-      display:none;
-      z-index:20;
-    }
-    .menuPopup.open{ display:block; }
-
-    .menuItem{
-      width:100%;
-      text-align:left;
-      padding:10px 12px;
-      border:none;
-      background:transparent;
-      color:var(--fg);
-      border-radius:10px;
-      font-size:14px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .menuItem:active,
-    .menuItem:hover{
-      background: rgba(255,255,255,0.08);
+    .gymActionBtn.deleteMode{
+      border-color:var(--dangerBorder);
+      background:var(--dangerBg);
+      color:#ffd2d2;
     }
 
     /* Calendar */
@@ -483,16 +500,17 @@
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      margin-bottom: 12px;
+      margin-bottom:12px;
     }
+
     .calTitle{ font-weight:950; font-size:16px; letter-spacing:.2px; }
 
     .navBtn{
       width:40px; height:40px;
       border-radius:14px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,0.06);
-      color: var(--fg);
+      background:rgba(255,255,255,0.06);
+      color:var(--fg);
       cursor:pointer;
       font-size:18px;
       font-weight:950;
@@ -502,23 +520,24 @@
       width:100%;
       max-width:100%;
       display:grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+      grid-template-columns:repeat(7, minmax(0,1fr));
       gap:8px;
     }
+
     .dow{
       text-align:center;
       font-size:11px;
-      color: var(--muted);
+      color:var(--muted);
       font-weight:900;
-      padding: 4px 0;
+      padding:4px 0;
     }
 
     .dayCell{
       min-width:0;
-      aspect-ratio: 1 / 1;
+      aspect-ratio:1 / 1;
       border-radius:16px;
       border:1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
+      background:rgba(255,255,255,0.04);
       padding:8px;
       display:flex;
       flex-direction:column;
@@ -527,9 +546,11 @@
       min-height:44px;
       cursor:pointer;
     }
-    .dayCell.out{ opacity:0.35; cursor:default; }
+
+    .dayCell.out{ opacity:.35; cursor:default; }
     .dayTop{ display:flex; justify-content:space-between; gap:6px; align-items:flex-start; }
     .dayNum{ font-weight:950; font-size:12px; }
+
     .markers{
       display:flex;
       gap:3px;
@@ -537,43 +558,47 @@
       align-items:center;
       flex-wrap:wrap;
     }
+
     .mk{
       width:8px; height:8px;
       border-radius:3px;
       border:1px solid rgba(255,255,255,0.20);
     }
-    .mk.evening-full{ background: var(--mk-evening-full); border-color: var(--mk-evening-full-b); }
-    .mk.evening-light{ background: var(--mk-evening-light); border-color: var(--mk-evening-light-b); }
-    .mk.gym-v1{ background: var(--mk-gym-v1); border-color: var(--mk-gym-v1-b); }
-    .mk.gym-v2{ background: var(--mk-gym-v2); border-color: var(--mk-gym-v2-b); }
-    .mk.bike{ background: var(--mk-bike); border-color: var(--mk-bike-b); }
+    .mk.evening-full{ background:var(--mk-evening-full); border-color:var(--mk-evening-full-b); }
+    .mk.evening-light{ background:var(--mk-evening-light); border-color:var(--mk-evening-light-b); }
+    .mk.gym-v1{ background:var(--mk-gym-v1); border-color:var(--mk-gym-v1-b); }
+    .mk.gym-v2{ background:var(--mk-gym-v2); border-color:var(--mk-gym-v2-b); }
+    .mk.bike{ background:var(--mk-bike); border-color:var(--mk-bike-b); }
 
     dialog{
       border:none;
-      border-radius: 20px;
+      border-radius:20px;
       padding:0;
       width:min(640px, 96vw);
-      background: transparent;
+      background:transparent;
     }
+
     dialog::backdrop{
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      background:rgba(0,0,0,0.55);
+      backdrop-filter:blur(4px);
+      -webkit-backdrop-filter:blur(4px);
     }
+
     .modal{
-      background: linear-gradient(180deg, rgba(19,47,35,0.98), rgba(15,42,31,0.98));
-      border: 1px solid rgba(185,162,106,0.30);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: var(--shadow);
+      background:linear-gradient(180deg, rgba(19,47,35,0.98), rgba(15,42,31,0.98));
+      border:1px solid rgba(185,162,106,0.30);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow);
     }
+
     .modal h2{
       margin:0 0 10px;
       font-size:18px;
       font-weight:950;
       letter-spacing:.3px;
-      color: var(--accent2);
-      text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+      color:var(--accent2);
+      text-shadow:0 1px 0 rgba(0,0,0,0.35);
     }
 
     label{
@@ -583,17 +608,19 @@
       margin:10px 0 6px;
       font-weight:900;
     }
+
     input{
       width:100%;
       padding:10px 12px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.06);
-      color: var(--fg);
+      background:rgba(255,255,255,0.06);
+      color:var(--fg);
       font-size:14px;
       outline:none;
       font-weight:800;
     }
+
     .row{ display:flex; gap:10px; }
 
     .actionsRow{
@@ -611,27 +638,33 @@
       border:1px solid rgba(255,255,255,0.12);
       cursor:pointer;
       font-weight:950;
-      background: rgba(255,255,255,0.06);
-      color: var(--fg);
+      background:rgba(255,255,255,0.06);
+      color:var(--fg);
     }
+
     .btn.primary{
-      background: rgba(185,162,106,0.18);
-      border-color: rgba(185,162,106,0.45);
-      color: var(--accent2);
+      background:rgba(185,162,106,0.18);
+      border-color:rgba(185,162,106,0.45);
+      color:var(--accent2);
+    }
+
+    .btn.disabled{
+      opacity:.5;
+      pointer-events:none;
     }
 
     .statsGrid{
       display:grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns:1fr auto;
       gap:10px 12px;
       margin-top:10px;
       padding-top:10px;
       border-top:1px solid rgba(255,255,255,0.08);
       font-weight:900;
       font-size:13px;
-      color: var(--fg);
+      color:var(--fg);
     }
-    .statsGrid .k{ color: var(--muted); font-weight:900; }
+    .statsGrid .k{ color:var(--muted); font-weight:900; }
     .statsGrid .v{ text-align:right; }
 
     .historyList{
@@ -642,6 +675,7 @@
       max-height:320px;
       overflow:auto;
     }
+
     .historyItem{
       display:flex;
       justify-content:space-between;
@@ -649,19 +683,24 @@
       padding:10px 12px;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
+      background:rgba(255,255,255,0.04);
       font-size:14px;
       font-weight:800;
     }
 
     @media (max-width: 640px){
-      .homeRow{ grid-template-columns: 1fr; }
+      .homeRow{ grid-template-columns:1fr; }
       .homeAction{ justify-content:flex-start; }
-      .gymTop{ grid-template-columns: 1fr; }
+      .gymTop{ grid-template-columns:1fr; }
       .gymTopRight{ align-items:flex-start; }
       .gymTabs{ justify-content:flex-start; }
-      .gymRow{ grid-template-columns: 62px minmax(0,1fr) 74px 42px 42px; }
       .gymTitle{ font-size:26px; }
+      .gymWeightLine{
+        grid-template-columns:1fr 1fr;
+        align-items:start;
+      }
+      .gymWeightLabel{ grid-column:1 / -1; }
+      .gymRow{ grid-template-columns:56px minmax(0,1fr) 82px 42px; }
     }
   </style>
 </head>
@@ -754,9 +793,13 @@
         </div>
 
         <div class="gymExerciseWrap">
-          <button class="gymAddBtn" id="gymAddBtn" type="button">+</button>
+          <div class="gymTopActions">
+            <button class="gymTopIcon danger" id="gymDeleteToggleBtn" type="button">🗑️</button>
+            <button class="gymTopIcon" id="gymAddBtn" type="button">+</button>
+          </div>
+
           <div class="gymRows" id="gymRows"></div>
-          <div class="empty" id="gymRowsEmpty" style="display:none; margin-top:58px;">Noch keine Übungen.</div>
+          <div class="empty" id="gymRowsEmpty" style="display:none;">Noch keine Übungen.</div>
         </div>
       </div>
     </section>
@@ -885,7 +928,7 @@
   <script>
     "use strict";
 
-    const KEY = "fitness_app_v3_gym_edit_history";
+    const KEY = "fitness_app_v4_gym_delete_toggle";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -946,8 +989,7 @@
       if (!Array.isArray(state.gym.v2)) state.gym.v2 = [];
       if (typeof state.gym.startWeight !== "string") state.gym.startWeight = state.gym.startWeight == null ? "" : String(state.gym.startWeight);
 
-      // normalize gym items
-      for (const variant of ["v1","v2"]) {
+      for (const variant of ["v1", "v2"]) {
         state.gym[variant] = state.gym[variant].map(item => ({
           id: item.id || crypto.randomUUID(),
           name: item.name || "",
@@ -980,6 +1022,7 @@
       if (!("bike" in log)) log.bike = false;
       if (!("evening" in log)) log.evening = null;
       if (!("gym" in log)) log.gym = null;
+
       if (!log.completed) {
         log.completed = {
           evening: { full: [], light: [] },
@@ -1006,7 +1049,7 @@
     calCursor.setDate(1);
 
     let editingGymId = null;
-    let historyGymId = null;
+    let gymDeleteMode = false;
 
     const pages = {
       home: $("homePage"),
@@ -1019,7 +1062,7 @@
       currentPage = page;
       for (const k in pages) pages[k].classList.toggle("active", k === page);
       renderDates();
-      closeAllMenus();
+      if (page !== "gym") gymDeleteMode = false;
       if (page === "evening") renderEvening();
       if (page === "gym") renderGym();
       if (page === "calendar") renderCalendar();
@@ -1033,7 +1076,7 @@
       $("calendarDatePill").textContent = d;
     };
 
-    // -------- Evening --------
+    // Evening
     const getEveningList = () => state.evening[currentEveningVariant] || [];
     const getEveningDone = () => ensureTodayLog().completed.evening[currentEveningVariant] || [];
     const setEveningDone = (ids) => { ensureTodayLog().completed.evening[currentEveningVariant] = ids; };
@@ -1151,11 +1194,10 @@
       renderEvening();
     });
 
-    // -------- Gym --------
+    // Gym
     const getGymList = () => state.gym[currentGymVariant] || [];
     const getGymDone = () => ensureTodayLog().completed.gym[currentGymVariant] || [];
     const setGymDone = (ids) => { ensureTodayLog().completed.gym[currentGymVariant] = ids; };
-
     const findGymItem = (id) => getGymList().find(x => x.id === id);
 
     const addHistoryEntry = (item, kgValue) => {
@@ -1174,13 +1216,10 @@
       saveState();
     };
 
-    const closeAllMenus = () => {
-      document.querySelectorAll(".menuPopup.open").forEach(el => el.classList.remove("open"));
-    };
-
     const renderGym = () => {
       $("gymV1Btn").classList.toggle("active", currentGymVariant === "v1");
       $("gymV2Btn").classList.toggle("active", currentGymVariant === "v2");
+      $("gymDeleteToggleBtn").classList.toggle("active", gymDeleteMode);
       $("gymWeightValue").textContent = state.gym.startWeight ? `${state.gym.startWeight} kg` : "-- kg";
       $("gymWeightInput").value = state.gym.startWeight || "";
 
@@ -1191,20 +1230,14 @@
       let html = "";
       for (const e of list) {
         const isDone = done.has(e.id);
+        const actionIcon = gymDeleteMode ? "🗑️" : "✓";
+        const actionClass = gymDeleteMode ? "gymActionBtn deleteMode" : "gymActionBtn checkMode";
         html += `
-          <div class="gymRow ${isDone ? "done" : ""}" data-gym-row="${escapeHtml(e.id)}">
+          <div class="gymRow ${isDone ? "done" : ""} ${gymDeleteMode ? "deleteMode" : ""}" data-gym-row="${escapeHtml(e.id)}">
             <div class="gymCell center">${escapeHtml(e.machine || "Nr.")}</div>
             <div class="gymCell">${escapeHtml(e.name)}</div>
             <div class="gymCell center">${escapeHtml(e.kg ? `${e.kg} kg` : "-- kg")}</div>
-            <button class="gymCheck" type="button" data-gym-check="${escapeHtml(e.id)}">✓</button>
-            <div class="rowMenu">
-              <button class="iconBtn" type="button" data-gym-menu-btn="${escapeHtml(e.id)}">⋯</button>
-              <div class="menuPopup" id="menu-${escapeHtml(e.id)}">
-                <button class="menuItem" type="button" data-gym-edit="${escapeHtml(e.id)}">Bearbeiten</button>
-                <button class="menuItem" type="button" data-gym-history="${escapeHtml(e.id)}">Verlauf</button>
-                <button class="menuItem" type="button" data-gym-delete="${escapeHtml(e.id)}">Löschen</button>
-              </div>
-            </div>
+            <button class="${actionClass}" type="button" data-gym-action="${escapeHtml(e.id)}">${actionIcon}</button>
           </div>
         `;
       }
@@ -1213,11 +1246,28 @@
 
     $("gymMenuBtn").addEventListener("click", () => {
       currentGymVariant = "v1";
+      gymDeleteMode = false;
       go("gym");
     });
-    $("gymBackBtn").addEventListener("click", () => go("home"));
-    $("gymV1Btn").addEventListener("click", () => { currentGymVariant = "v1"; closeAllMenus(); renderGym(); });
-    $("gymV2Btn").addEventListener("click", () => { currentGymVariant = "v2"; closeAllMenus(); renderGym(); });
+    $("gymBackBtn").addEventListener("click", () => {
+      gymDeleteMode = false;
+      go("home");
+    });
+    $("gymV1Btn").addEventListener("click", () => {
+      currentGymVariant = "v1";
+      gymDeleteMode = false;
+      renderGym();
+    });
+    $("gymV2Btn").addEventListener("click", () => {
+      currentGymVariant = "v2";
+      gymDeleteMode = false;
+      renderGym();
+    });
+
+    $("gymDeleteToggleBtn").addEventListener("click", () => {
+      gymDeleteMode = !gymDeleteMode;
+      renderGym();
+    });
 
     $("saveGymWeightBtn").addEventListener("click", () => {
       state.gym.startWeight = $("gymWeightInput").value.trim();
@@ -1231,8 +1281,7 @@
       $("gymName").value = "";
       $("gymMachine").value = "";
       $("gymKg").value = "";
-      $("gymHistoryBtn").disabled = true;
-      $("gymHistoryBtn").style.opacity = ".5";
+      $("gymHistoryBtn").classList.add("disabled");
       $("gymDlg").showModal();
     });
 
@@ -1266,12 +1315,6 @@
       $("gymDlg").close();
     });
 
-    $("gymHistoryBtn").addEventListener("click", () => {
-      if (!editingGymId) return;
-      historyGymId = editingGymId;
-      openGymHistory(historyGymId);
-    });
-
     const openGymHistory = (id) => {
       const item = findGymItem(id);
       if (!item) return;
@@ -1290,67 +1333,33 @@
       $("gymHistoryDlg").showModal();
     };
 
+    $("gymHistoryBtn").addEventListener("click", () => {
+      if (!editingGymId) return;
+      openGymHistory(editingGymId);
+    });
+
     $("closeGymHistoryBtn").addEventListener("click", () => $("gymHistoryDlg").close());
 
     $("gymRows").addEventListener("click", (ev) => {
-      const menuBtn = ev.target.closest("[data-gym-menu-btn]");
-      if (menuBtn) {
-        ev.stopPropagation();
-        const id = menuBtn.dataset.gymMenuBtn;
-        const popup = $(`menu-${id}`);
-        const isOpen = popup.classList.contains("open");
-        closeAllMenus();
-        if (!isOpen) popup.classList.add("open");
-        return;
-      }
+      const actionBtn = ev.target.closest("[data-gym-action]");
+      if (actionBtn) {
+        const id = actionBtn.dataset.gymAction;
 
-      const editBtn = ev.target.closest("[data-gym-edit]");
-      if (editBtn) {
-        const id = editBtn.dataset.gymEdit;
-        const item = findGymItem(id);
-        if (!item) return;
-        editingGymId = id;
-        $("gymDlgTitle").textContent = "Übung bearbeiten";
-        $("gymName").value = item.name || "";
-        $("gymMachine").value = item.machine || "";
-        $("gymKg").value = item.kg || "";
-        $("gymHistoryBtn").disabled = false;
-        $("gymHistoryBtn").style.opacity = "1";
-        closeAllMenus();
-        $("gymDlg").showModal();
-        return;
-      }
-
-      const historyBtn = ev.target.closest("[data-gym-history]");
-      if (historyBtn) {
-        const id = historyBtn.dataset.gymHistory;
-        closeAllMenus();
-        openGymHistory(id);
-        return;
-      }
-
-      const deleteBtn = ev.target.closest("[data-gym-delete]");
-      if (deleteBtn) {
-        const id = deleteBtn.dataset.gymDelete;
-        closeAllMenus();
-        if (!confirm("Übung wirklich löschen?")) return;
-
-        state.gym[currentGymVariant] = state.gym[currentGymVariant].filter(x => x.id !== id);
-        for (const log of state.logs) {
-          log.completed.gym[currentGymVariant] = (log.completed.gym[currentGymVariant] || []).filter(x => x !== id);
-          if (log.gym === currentGymVariant) {
-            const eligible = state.gym[currentGymVariant].length > 0 && log.completed.gym[currentGymVariant].length > 0;
-            if (!eligible) log.gym = null;
+        if (gymDeleteMode) {
+          if (!confirm("Übung wirklich löschen?")) return;
+          state.gym[currentGymVariant] = state.gym[currentGymVariant].filter(x => x.id !== id);
+          for (const log of state.logs) {
+            log.completed.gym[currentGymVariant] = (log.completed.gym[currentGymVariant] || []).filter(x => x !== id);
+            if (log.gym === currentGymVariant) {
+              const eligible = state.gym[currentGymVariant].length > 0 && log.completed.gym[currentGymVariant].length > 0;
+              if (!eligible) log.gym = null;
+            }
           }
+          saveState();
+          renderGym();
+          return;
         }
-        saveState();
-        renderGym();
-        return;
-      }
 
-      const checkBtn = ev.target.closest("[data-gym-check]");
-      if (checkBtn) {
-        const id = checkBtn.dataset.gymCheck;
         const set = new Set(getGymDone());
         if (set.has(id)) {
           set.delete(id);
@@ -1365,13 +1374,23 @@
         renderGym();
         return;
       }
+
+      const row = ev.target.closest("[data-gym-row]");
+      if (!row || gymDeleteMode) return;
+      const id = row.dataset.gymRow;
+      const item = findGymItem(id);
+      if (!item) return;
+
+      editingGymId = id;
+      $("gymDlgTitle").textContent = "Übung bearbeiten";
+      $("gymName").value = item.name || "";
+      $("gymMachine").value = item.machine || "";
+      $("gymKg").value = item.kg || "";
+      $("gymHistoryBtn").classList.remove("disabled");
+      $("gymDlg").showModal();
     });
 
-    document.addEventListener("click", (ev) => {
-      if (!ev.target.closest(".rowMenu")) closeAllMenus();
-    });
-
-    // -------- Bike --------
+    // Bike
     $("bikeBtn").addEventListener("click", () => {
       const log = ensureTodayLog();
       log.bike = true;
@@ -1379,7 +1398,7 @@
       go("calendar");
     });
 
-    // -------- Calendar --------
+    // Calendar
     $("calendarBtn").addEventListener("click", () => go("calendar"));
     $("calendarBackBtn").addEventListener("click", () => go("home"));
 
@@ -1464,7 +1483,7 @@
       renderCalendar();
     });
 
-    // -------- Day dialog --------
+    // Day dialog
     let dayDlgKey = null;
     let dayDlgDateObj = null;
 
@@ -1520,7 +1539,7 @@
       openDayDialog(dayDlgKey, dayDlgDateObj);
     });
 
-    // -------- Stats --------
+    // Stats
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
     const daysInMonth = (year, monthIndex0) => new Date(year, monthIndex0 + 1, 0).getDate();
