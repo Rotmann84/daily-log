@@ -49,7 +49,10 @@
 
     *{ box-sizing:border-box; }
     html, body { height:100%; }
-    html{ background:var(--bg); overscroll-behavior:none; }
+    html{
+      background:var(--bg);
+      overscroll-behavior:none;
+    }
     body{
       margin:0;
       min-height:100%;
@@ -100,7 +103,7 @@
     }
 
     .pill, .datePill{
-      padding:9px 12px;
+      padding:8px 12px;
       border-radius:999px;
       border:1px solid var(--border);
       background:rgba(255,255,255,0.06);
@@ -114,7 +117,8 @@
       -webkit-backdrop-filter:blur(8px);
       user-select:none;
       color:var(--fg);
-      min-height:40px;
+      min-height:36px;
+      white-space:nowrap;
     }
 
     .pill{
@@ -195,7 +199,6 @@
       box-shadow:0 10px 22px rgba(0,0,0,0.25);
       font-size:22px;
     }
-
     .homeText{
       font-weight:950;
       letter-spacing:.2px;
@@ -281,7 +284,7 @@
       color:#0a1f16;
     }
 
-    .iconBtn, .trash{
+    .trash{
       width:38px;
       height:38px;
       border-radius:14px;
@@ -302,94 +305,84 @@
       padding:14px 10px;
     }
 
-    /* Fitnesscenter */
+    /* Fitnesscenter kompakt */
     .gymScreen{
       display:flex;
       flex-direction:column;
-      gap:12px;
-    }
-
-    .gymTop{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:12px;
-      align-items:start;
-    }
-
-    .gymTitle{
-      font-size:30px;
-      font-weight:950;
-      letter-spacing:.2px;
-      line-height:1.05;
-      margin:0;
-    }
-
-    .gymTopRight{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
       gap:10px;
     }
 
-    .gymDate{
-      min-width:150px;
-      justify-content:center;
-      font-size:14px;
-      padding:10px 16px;
+    .gymHeader{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
     }
 
-    .gymTabs{
+    .gymHeaderTop{
       display:flex;
-      gap:8px;
       align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .gymTitle{
+      margin:0;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:.2px;
+      line-height:1;
+      color:var(--fg);
+    }
+
+    .gymDate{
+      min-width:136px;
+      padding:8px 12px;
+      font-size:12px;
+      min-height:34px;
+    }
+
+    .gymHeaderBottom{
+      display:flex;
       justify-content:flex-end;
+      gap:8px;
       flex-wrap:wrap;
     }
 
     .gymTab{
-      min-width:56px;
-      padding:10px 14px;
+      min-width:48px;
+      padding:7px 12px;
+      min-height:32px;
+      font-size:11px;
     }
 
     .gymWeightLine{
-      display:grid;
-      grid-template-columns:auto auto 110px auto;
-      gap:10px;
+      display:flex;
       align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
     }
 
     .gymWeightLabel{
-      font-size:16px;
-      font-weight:900;
-      color:var(--fg);
-      white-space:nowrap;
-    }
-
-    .gymWeightValue{
-      min-width:94px;
-      justify-content:center;
-      font-size:14px;
-      padding:10px 14px;
-    }
-
-    .gymWeightInput{
-      width:110px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(255,255,255,0.06);
-      color:var(--fg);
-      font-size:14px;
+      font-size:13px;
       font-weight:800;
-      outline:none;
+      color:var(--muted);
+    }
+
+    .gymWeightField{
+      min-width:92px;
+      padding:8px 12px;
+      min-height:34px;
+      font-size:12px;
+      cursor:pointer;
+      justify-content:center;
     }
 
     .gymExerciseWrap{
       border:1px solid var(--border);
       border-radius:24px;
       background:rgba(255,255,255,0.04);
-      padding:14px 12px 12px;
-      min-height:300px;
+      padding:12px;
+      min-height:260px;
       position:relative;
     }
 
@@ -401,13 +394,13 @@
     }
 
     .gymTopIcon{
-      width:44px;
-      height:44px;
-      border-radius:16px;
+      width:40px;
+      height:40px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,0.12);
       background:rgba(255,255,255,0.07);
       color:var(--accent2);
-      font-size:26px;
+      font-size:22px;
       font-weight:900;
       display:grid;
       place-items:center;
@@ -423,17 +416,17 @@
     .gymRows{
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
     }
 
     .gymRow{
       display:grid;
-      grid-template-columns:64px minmax(0,1fr) 90px 42px;
-      gap:8px;
+      grid-template-columns:52px minmax(0,1fr) 70px 34px;
+      gap:6px;
       align-items:center;
       border:1px solid var(--border);
-      border-radius:16px;
-      padding:10px;
+      border-radius:14px;
+      padding:8px;
       background:rgba(255,255,255,0.04);
       transition:background .12s ease, border-color .12s ease;
     }
@@ -449,15 +442,15 @@
     }
 
     .gymCell{
-      min-height:42px;
-      border-radius:12px;
+      min-height:34px;
+      border-radius:10px;
       border:1px solid rgba(255,255,255,0.10);
       background:rgba(255,255,255,0.05);
       display:flex;
       align-items:center;
-      padding:0 12px;
-      font-size:14px;
-      font-weight:900;
+      padding:0 9px;
+      font-size:12px;
+      font-weight:800;
       overflow:hidden;
       white-space:nowrap;
       text-overflow:ellipsis;
@@ -465,21 +458,22 @@
 
     .gymCell.center{
       justify-content:center;
-      padding:0 8px;
+      padding:0 6px;
     }
 
     .gymActionBtn{
-      width:32px;
-      height:32px;
-      border-radius:10px;
+      width:28px;
+      height:28px;
+      border-radius:9px;
       border:2px solid rgba(255,255,255,0.18);
       background:transparent;
       display:grid;
       place-items:center;
-      font-size:16px;
+      font-size:14px;
       color:transparent;
       cursor:pointer;
       margin:0 auto;
+      padding:0;
     }
 
     .gymRow.done .gymActionBtn.checkMode{
@@ -691,16 +685,7 @@
     @media (max-width: 640px){
       .homeRow{ grid-template-columns:1fr; }
       .homeAction{ justify-content:flex-start; }
-      .gymTop{ grid-template-columns:1fr; }
-      .gymTopRight{ align-items:flex-start; }
-      .gymTabs{ justify-content:flex-start; }
-      .gymTitle{ font-size:26px; }
-      .gymWeightLine{
-        grid-template-columns:1fr 1fr;
-        align-items:start;
-      }
-      .gymWeightLabel{ grid-column:1 / -1; }
-      .gymRow{ grid-template-columns:56px minmax(0,1fr) 82px 42px; }
+      .gymWeightLine{ gap:6px; }
     }
   </style>
 </head>
@@ -772,24 +757,21 @@
 
     <section class="page" id="gymPage">
       <div class="gymScreen">
-        <div class="gymTop">
-          <h1 class="gymTitle">Fitnesscenter</h1>
-
-          <div class="gymTopRight">
+        <div class="gymHeader">
+          <div class="gymHeaderTop">
+            <h1 class="gymTitle">Fitnesscenter</h1>
             <span class="datePill gymDate" id="gymDatePill">—</span>
-            <div class="gymTabs">
-              <button class="pill gymTab" id="gymV1Btn" type="button">A</button>
-              <button class="pill gymTab" id="gymV2Btn" type="button">B</button>
-              <button class="pill gymTab" id="gymBackBtn" type="button">Zurück</button>
-            </div>
+          </div>
+          <div class="gymHeaderBottom">
+            <button class="pill gymTab" id="gymV1Btn" type="button">A</button>
+            <button class="pill gymTab" id="gymV2Btn" type="button">B</button>
+            <button class="pill gymTab" id="gymBackBtn" type="button">Zurück</button>
           </div>
         </div>
 
         <div class="gymWeightLine">
           <div class="gymWeightLabel">Startgewicht:</div>
-          <span class="datePill gymWeightValue" id="gymWeightValue">-- kg</span>
-          <input class="gymWeightInput" id="gymWeightInput" type="number" step="0.1" placeholder="kg" />
-          <button class="pill gold" id="saveGymWeightBtn" type="button">Speichern</button>
+          <button class="pill gymWeightField" id="gymWeightFieldBtn" type="button">-- kg</button>
         </div>
 
         <div class="gymExerciseWrap">
@@ -882,6 +864,23 @@
     </div>
   </dialog>
 
+  <dialog id="weightDlg">
+    <div class="modal">
+      <h2>Startgewicht</h2>
+
+      <label>Gewicht in kg</label>
+      <input id="weightInput" type="number" step="0.1" placeholder="z. B. 87.5" />
+
+      <div class="actionsRow">
+        <div></div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" id="weightCancel" type="button">Abbruch</button>
+          <button class="btn primary" id="weightSave" type="button">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="gymHistoryDlg">
     <div class="modal">
       <h2 id="gymHistoryTitle">Verlauf</h2>
@@ -928,7 +927,7 @@
   <script>
     "use strict";
 
-    const KEY = "fitness_app_v4_gym_delete_toggle";
+    const KEY = "fitness_app_v5_compact_layout";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -1074,6 +1073,7 @@
       $("eveningDatePill").textContent = d;
       $("gymDatePill").textContent = d;
       $("calendarDatePill").textContent = d;
+      $("gymWeightFieldBtn").textContent = state.gym.startWeight ? `${state.gym.startWeight} kg` : "-- kg";
     };
 
     // Evening
@@ -1220,8 +1220,6 @@
       $("gymV1Btn").classList.toggle("active", currentGymVariant === "v1");
       $("gymV2Btn").classList.toggle("active", currentGymVariant === "v2");
       $("gymDeleteToggleBtn").classList.toggle("active", gymDeleteMode);
-      $("gymWeightValue").textContent = state.gym.startWeight ? `${state.gym.startWeight} kg` : "-- kg";
-      $("gymWeightInput").value = state.gym.startWeight || "";
 
       const list = getGymList();
       const done = new Set(getGymDone());
@@ -1236,7 +1234,7 @@
           <div class="gymRow ${isDone ? "done" : ""} ${gymDeleteMode ? "deleteMode" : ""}" data-gym-row="${escapeHtml(e.id)}">
             <div class="gymCell center">${escapeHtml(e.machine || "Nr.")}</div>
             <div class="gymCell">${escapeHtml(e.name)}</div>
-            <div class="gymCell center">${escapeHtml(e.kg ? `${e.kg} kg` : "-- kg")}</div>
+            <div class="gymCell center">${escapeHtml(e.kg ? `${e.kg} kg` : "--")}</div>
             <button class="${actionClass}" type="button" data-gym-action="${escapeHtml(e.id)}">${actionIcon}</button>
           </div>
         `;
@@ -1269,10 +1267,16 @@
       renderGym();
     });
 
-    $("saveGymWeightBtn").addEventListener("click", () => {
-      state.gym.startWeight = $("gymWeightInput").value.trim();
+    $("gymWeightFieldBtn").addEventListener("click", () => {
+      $("weightInput").value = state.gym.startWeight || "";
+      $("weightDlg").showModal();
+    });
+    $("weightCancel").addEventListener("click", () => $("weightDlg").close());
+    $("weightSave").addEventListener("click", () => {
+      state.gym.startWeight = $("weightInput").value.trim();
       saveState();
-      renderGym();
+      renderDates();
+      $("weightDlg").close();
     });
 
     $("gymAddBtn").addEventListener("click", () => {
