@@ -16,35 +16,26 @@
     :root{
       --bg:#0f2a1f;
       --bg2:#0b231a;
-
       --panel:rgba(255,255,255,0.05);
       --border:rgba(255,255,255,0.10);
-
       --fg:#eef6f1;
       --muted:rgba(238,246,241,0.70);
-
       --accent:#b9a26a;
       --accent2:#d6c289;
-
       --ok:#36c26a;
       --warn:#f2b84b;
       --none:rgba(255,255,255,0.18);
-
       --shadow:0 14px 34px rgba(0,0,0,0.35);
       --radius:18px;
 
       --mk-evening-full:#D6C289;
       --mk-evening-full-b:#b9a26a;
-
       --mk-evening-light:#3ED1C4;
       --mk-evening-light-b:#2fb3a7;
-
       --mk-gym-v1:#B58CFF;
       --mk-gym-v1-b:#8F6BFF;
-
       --mk-gym-v2:#FF7FB0;
       --mk-gym-v2-b:#d96290;
-
       --mk-bike:#F29C38;
       --mk-bike-b:#d88426;
 
@@ -87,27 +78,22 @@
       gap:14px;
     }
 
-    header{
-      padding:18px 0 6px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
+    .page{ display:none; padding-bottom:18px; }
+    .page.active{ display:block; animation: fade .12s ease; }
+    @keyframes fade{ from{opacity:.3; transform: translateY(2px);} to{opacity:1; transform: translateY(0);} }
 
-    h1{
-      margin:0;
-      font-size:20px;
-      font-weight:950;
-      letter-spacing:.3px;
-    }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+      overflow:clip;
+      clip-path: inset(0 round var(--radius));
+      contain: paint;
+      isolation:isolate;
     }
 
     .pill, .datePill{
@@ -120,14 +106,15 @@
       line-height:1;
       display:inline-flex;
       align-items:center;
+      justify-content:center;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       user-select:none;
+      color:var(--fg);
     }
 
     .pill{
       cursor:pointer;
-      color:var(--fg);
       transition: transform .04s ease, background .12s ease, border-color .12s ease;
     }
     .pill:active{ transform:scale(.99); }
@@ -141,26 +128,26 @@
       background: rgba(255,255,255,0.12);
     }
 
-    .datePill{ color: var(--muted); }
-
-    .panel{
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
-
-      position:relative;
-      overflow:hidden;
-      overflow:clip;
-      clip-path: inset(0 round var(--radius));
-      contain: paint;
-      isolation:isolate;
+    .homeHeader, .standardHeader{
+      padding:18px 0 6px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
-
-    .page{ display:none; padding-bottom:18px; }
-    .page.active{ display:block; animation: fade .12s ease; }
-    @keyframes fade{ from{opacity:.3; transform: translateY(2px);} to{opacity:1; transform: translateY(0);} }
+    .homeHeader h1, .standardHeader h1{
+      margin:0;
+      font-size:20px;
+      font-weight:950;
+      letter-spacing:.3px;
+    }
+    .homeActions, .headerActions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
 
     .homeRow{
       display:grid;
@@ -184,11 +171,9 @@
       gap:12px;
       cursor:pointer;
       user-select:none;
-      transition: transform .05s ease, border-color .12s ease, background .12s ease;
       min-height: 76px;
     }
     .homeAction:active{ transform: scale(.99); }
-    .homeAction:hover{ border-color: rgba(54,194,106,0.38); }
 
     .homeIcon{
       width:44px; height:44px;
@@ -200,62 +185,12 @@
       box-shadow: 0 10px 22px rgba(0,0,0,0.25);
       font-size: 22px;
     }
-
     .homeText{
       font-weight: 950;
       letter-spacing:.2px;
       font-size: 15px;
       color: var(--fg);
       white-space: nowrap;
-    }
-
-    .sectionMeta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:12px;
-    }
-
-    .weightCard{
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.05);
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-
-    .weightTop{
-      font-size:12px;
-      color:var(--muted);
-      font-weight:900;
-    }
-
-    .weightValue{
-      font-size:20px;
-      font-weight:950;
-      line-height:1;
-    }
-
-    .weightRow{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .weightInput{
-      width:120px;
-      padding:8px 10px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.06);
-      color:var(--fg);
-      font-size:14px;
-      font-weight:800;
     }
 
     .bar{
@@ -265,7 +200,6 @@
       gap:10px;
       margin-bottom:12px;
     }
-
     .barLeft{ display:flex; flex-direction:column; gap:4px; }
     .barTitle{ margin:0; font-size:16px; font-weight:950; letter-spacing:.2px; }
     .barMeta{
@@ -283,7 +217,6 @@
     .dot.none{ background: var(--none); }
 
     .list{ display:flex; flex-direction:column; gap:10px; }
-
     .item{
       border:1px solid var(--border);
       border-radius: 18px;
@@ -295,10 +228,7 @@
       justify-content:space-between;
       gap:12px;
       user-select:none;
-      transition: transform .04s ease;
     }
-    .item:active{ transform: scale(.995); }
-
     .left{ display:flex; flex-direction:column; gap:4px; min-width:0; }
     .name{ font-weight: 950; letter-spacing:.2px; }
     .meta{ font-size: 13px; color: var(--muted); font-weight: 820; }
@@ -320,7 +250,6 @@
       color: transparent;
       box-shadow: 0 10px 20px rgba(0,0,0,0.25);
     }
-
     .done{
       background: rgba(54,194,106,0.12);
       border-color: rgba(54,194,106,0.35);
@@ -331,7 +260,7 @@
       color:#0a1f16;
     }
 
-    .trash{
+    .iconBtn, .trash{
       width:38px;
       height:38px;
       border-radius:14px;
@@ -343,9 +272,7 @@
       font-weight: 900;
       display:grid;
       place-items:center;
-      transition: transform .04s ease;
     }
-    .trash:active{ transform: scale(.99); }
 
     .empty{
       text-align:center;
@@ -354,6 +281,203 @@
       padding: 14px 10px;
     }
 
+    /* Fitnesscenter */
+    .gymScreen{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .gymTop{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:14px;
+      align-items:start;
+    }
+    .gymTitle{
+      font-size:30px;
+      font-weight:950;
+      letter-spacing:.2px;
+      line-height:1.05;
+      margin:0;
+    }
+    .gymTopRight{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:12px;
+    }
+    .gymDate{
+      min-width:140px;
+      justify-content:center;
+      font-size:14px;
+      padding:10px 16px;
+    }
+    .gymTabs{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .gymTab{
+      min-width:54px;
+      padding:10px 14px;
+    }
+
+    .gymWeightLine{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:4px;
+    }
+    .gymWeightLabel{
+      font-size:16px;
+      font-weight:900;
+      color:var(--fg);
+    }
+    .gymWeightValue{
+      min-width:94px;
+      justify-content:center;
+      font-size:14px;
+      padding:10px 14px;
+    }
+    .gymWeightInput{
+      width:110px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.06);
+      color:var(--fg);
+      font-size:14px;
+      font-weight:800;
+      outline:none;
+    }
+
+    .gymExerciseWrap{
+      border:1px solid var(--border);
+      border-radius:24px;
+      background: rgba(255,255,255,0.04);
+      padding:18px 14px 14px;
+      min-height:340px;
+      position:relative;
+    }
+
+    .gymAddBtn{
+      position:absolute;
+      top:14px;
+      right:14px;
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.07);
+      color:var(--accent2);
+      font-size:28px;
+      font-weight:900;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+    }
+
+    .gymRows{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:58px;
+    }
+
+    .gymRow{
+      display:grid;
+      grid-template-columns: 74px minmax(0, 1fr) 86px 42px 42px;
+      gap:8px;
+      align-items:center;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:10px;
+      background: rgba(255,255,255,0.04);
+      transition: background .12s ease, border-color .12s ease;
+    }
+    .gymRow.done{
+      background: rgba(54,194,106,0.16);
+      border-color: rgba(54,194,106,0.34);
+    }
+
+    .gymCell{
+      min-height:42px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      display:flex;
+      align-items:center;
+      padding:0 12px;
+      font-size:14px;
+      font-weight:900;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+    .gymCell.center{
+      justify-content:center;
+      padding:0 8px;
+    }
+
+    .gymCheck{
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      border:2px solid rgba(255,255,255,0.18);
+      background: transparent;
+      display:grid;
+      place-items:center;
+      font-size:16px;
+      color: transparent;
+      cursor:pointer;
+      margin:0 auto;
+    }
+    .gymRow.done .gymCheck{
+      border-color: rgba(54,194,106,0.88);
+      background: rgba(54,194,106,0.95);
+      color:#0a1f16;
+    }
+
+    .rowMenu{
+      position:relative;
+    }
+
+    .menuPopup{
+      position:absolute;
+      top:44px;
+      right:0;
+      min-width:150px;
+      padding:6px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(15,42,31,0.98);
+      box-shadow: 0 18px 30px rgba(0,0,0,0.35);
+      display:none;
+      z-index:20;
+    }
+    .menuPopup.open{ display:block; }
+
+    .menuItem{
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border:none;
+      background:transparent;
+      color:var(--fg);
+      border-radius:10px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .menuItem:active,
+    .menuItem:hover{
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Calendar */
     .calHeader{
       display:flex;
       align-items:center;
@@ -381,7 +505,6 @@
       grid-template-columns: repeat(7, minmax(0, 1fr));
       gap:8px;
     }
-
     .dow{
       text-align:center;
       font-size:11px;
@@ -404,11 +527,9 @@
       min-height:44px;
       cursor:pointer;
     }
-    .dayCell:active{ transform: scale(.995); }
     .dayCell.out{ opacity:0.35; cursor:default; }
     .dayTop{ display:flex; justify-content:space-between; gap:6px; align-items:flex-start; }
     .dayNum{ font-weight:950; font-size:12px; }
-
     .markers{
       display:flex;
       gap:3px;
@@ -416,7 +537,6 @@
       align-items:center;
       flex-wrap:wrap;
     }
-
     .mk{
       width:8px; height:8px;
       border-radius:3px;
@@ -435,13 +555,11 @@
       width:min(640px, 96vw);
       background: transparent;
     }
-
     dialog::backdrop{
       background: rgba(0,0,0,0.55);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
-
     .modal{
       background: linear-gradient(180deg, rgba(19,47,35,0.98), rgba(15,42,31,0.98));
       border: 1px solid rgba(185,162,106,0.30);
@@ -449,7 +567,6 @@
       padding: 16px;
       box-shadow: var(--shadow);
     }
-
     .modal h2{
       margin:0 0 10px;
       font-size:18px;
@@ -466,7 +583,6 @@
       margin:10px 0 6px;
       font-weight:900;
     }
-
     input{
       width:100%;
       padding:10px 12px;
@@ -478,14 +594,15 @@
       outline:none;
       font-weight:800;
     }
-
     .row{ display:flex; gap:10px; }
 
     .actionsRow{
       display:flex;
       gap:10px;
-      justify-content:flex-end;
-      margin-top:14px;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:16px;
+      flex-wrap:wrap;
     }
 
     .btn{
@@ -497,7 +614,6 @@
       background: rgba(255,255,255,0.06);
       color: var(--fg);
     }
-
     .btn.primary{
       background: rgba(185,162,106,0.18);
       border-color: rgba(185,162,106,0.45);
@@ -518,31 +634,50 @@
     .statsGrid .k{ color: var(--muted); font-weight:900; }
     .statsGrid .v{ text-align:right; }
 
-    @media (max-width: 520px){
+    .historyList{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:10px;
+      max-height:320px;
+      overflow:auto;
+    }
+    .historyItem{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      font-size:14px;
+      font-weight:800;
+    }
+
+    @media (max-width: 640px){
       .homeRow{ grid-template-columns: 1fr; }
-      .homeAction{ justify-content:flex-start; padding: 14px 14px; }
-      .homeText{ font-size: 16px; }
+      .homeAction{ justify-content:flex-start; }
+      .gymTop{ grid-template-columns: 1fr; }
+      .gymTopRight{ align-items:flex-start; }
+      .gymTabs{ justify-content:flex-start; }
+      .gymRow{ grid-template-columns: 62px minmax(0,1fr) 74px 42px 42px; }
+      .gymTitle{ font-size:26px; }
     }
   </style>
 </head>
 
 <body>
   <div class="app">
-    <header>
-      <h1 id="headerTitle">Fitness</h1>
-      <div class="actions">
-        <span class="datePill" id="datePill">—</span>
-
-        <button class="pill" id="subModeA" type="button" style="display:none;"></button>
-        <button class="pill" id="subModeB" type="button" style="display:none;"></button>
-
-        <button class="pill" id="statsBtn" type="button" style="display:none;">Statistik</button>
-        <button class="pill" id="backBtn" type="button" style="display:none;">Zurück</button>
-        <button class="pill gold" id="calendarBtn" type="button">Kalender</button>
-      </div>
-    </header>
 
     <section class="page active" id="homePage">
+      <div class="homeHeader">
+        <h1>Fitness</h1>
+        <div class="homeActions">
+          <span class="datePill" id="homeDatePill">—</span>
+          <button class="pill gold" id="calendarBtn" type="button">Kalender</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="homeRow">
           <button class="homeAction" id="eveningMenuBtn" type="button">
@@ -551,7 +686,7 @@
           </button>
 
           <button class="homeAction" id="gymMenuBtn" type="button">
-            <div class="homeIcon">🏛️</div>
+            <div class="homeIcon">🏋️</div>
             <div class="homeText">Fitnesscenter</div>
           </button>
 
@@ -563,47 +698,85 @@
       </div>
     </section>
 
-    <section class="page" id="workoutPage">
-      <div class="panel">
-        <div class="sectionMeta" id="gymWeightSection" style="display:none;">
-          <div class="weightCard">
-            <div class="weightTop">Startgewicht</div>
-            <div class="weightValue" id="startWeightValue">—</div>
-            <div class="weightRow">
-              <input class="weightInput" id="startWeightInput" type="number" step="0.1" placeholder="z. B. 87.5" />
-              <button class="pill gold" id="saveWeightBtn" type="button">Speichern</button>
-            </div>
-          </div>
+    <section class="page" id="eveningPage">
+      <div class="standardHeader">
+        <h1>Abendroutine</h1>
+        <div class="headerActions">
+          <span class="datePill" id="eveningDatePill">—</span>
+          <button class="pill" id="eveningFullBtn" type="button">Full</button>
+          <button class="pill" id="eveningLightBtn" type="button">Light</button>
+          <button class="pill" id="eveningBackBtn" type="button">Zurück</button>
         </div>
+      </div>
 
+      <div class="panel">
         <div class="bar">
           <div class="barLeft">
-            <p class="barTitle" id="workoutTitle">Set</p>
+            <p class="barTitle">Abendroutine</p>
             <div class="barMeta">
-              <span class="dot" id="todayDot"></span>
-              <span id="todayText">—</span>
-              <span id="modeText" style="font-weight:950;"></span>
+              <span class="dot" id="eveningDot"></span>
+              <span id="eveningTodayText">—</span>
+              <span id="eveningModeText" style="font-weight:950;"></span>
             </div>
           </div>
 
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
-            <span class="pill" id="progressPill">0/0</span>
-            <button class="pill gold" id="addExerciseBtn" type="button">+ Übung</button>
+            <span class="pill" id="eveningProgressPill">0/0</span>
+            <button class="pill gold" id="eveningAddExerciseBtn" type="button">+ Übung</button>
           </div>
         </div>
 
-        <div class="list" id="exerciseList"></div>
-        <div class="empty" id="exerciseEmpty" style="display:none;">Noch keine Übungen.</div>
+        <div class="list" id="eveningExerciseList"></div>
+        <div class="empty" id="eveningExerciseEmpty" style="display:none;">Noch keine Übungen.</div>
+      </div>
+    </section>
+
+    <section class="page" id="gymPage">
+      <div class="gymScreen">
+        <div class="gymTop">
+          <h1 class="gymTitle">Fitnesscenter</h1>
+
+          <div class="gymTopRight">
+            <span class="datePill gymDate" id="gymDatePill">—</span>
+            <div class="gymTabs">
+              <button class="pill gymTab" id="gymV1Btn" type="button">A</button>
+              <button class="pill gymTab" id="gymV2Btn" type="button">B</button>
+              <button class="pill gymTab" id="gymBackBtn" type="button">Zurück</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gymWeightLine">
+          <div class="gymWeightLabel">Startgewicht:</div>
+          <span class="datePill gymWeightValue" id="gymWeightValue">-- kg</span>
+          <input class="gymWeightInput" id="gymWeightInput" type="number" step="0.1" placeholder="kg" />
+          <button class="pill gold" id="saveGymWeightBtn" type="button">Speichern</button>
+        </div>
+
+        <div class="gymExerciseWrap">
+          <button class="gymAddBtn" id="gymAddBtn" type="button">+</button>
+          <div class="gymRows" id="gymRows"></div>
+          <div class="empty" id="gymRowsEmpty" style="display:none; margin-top:58px;">Noch keine Übungen.</div>
+        </div>
       </div>
     </section>
 
     <section class="page" id="calendarPage">
+      <div class="standardHeader">
+        <h1>Fitness</h1>
+        <div class="headerActions">
+          <span class="datePill" id="calendarDatePill">—</span>
+          <button class="pill" id="statsBtn" type="button">Statistik</button>
+          <button class="pill" id="calendarBackBtn" type="button">Zurück</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="calHeader">
           <div class="calTitle" id="calTitle">Monat</div>
           <div style="display:flex; gap:8px; align-items:center;">
-            <button class="navBtn" id="prevMonth" type="button" aria-label="Vorheriger Monat">‹</button>
-            <button class="navBtn" id="nextMonth" type="button" aria-label="Nächster Monat">›</button>
+            <button class="navBtn" id="prevMonth" type="button">‹</button>
+            <button class="navBtn" id="nextMonth" type="button">›</button>
           </div>
         </div>
 
@@ -615,7 +788,6 @@
     </section>
   </div>
 
-  <!-- Abendroutine Dialog -->
   <dialog id="eveningDlg">
     <div class="modal">
       <h2>Neue Übung</h2>
@@ -635,37 +807,45 @@
       </div>
 
       <div class="actionsRow">
-        <button class="btn" id="eveningCancel" type="button">Abbrechen</button>
-        <button class="btn primary" id="eveningSave" type="button">Speichern</button>
+        <div></div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" id="eveningCancel" type="button">Abbrechen</button>
+          <button class="btn primary" id="eveningSave" type="button">Speichern</button>
+        </div>
       </div>
     </div>
   </dialog>
 
-  <!-- Fitnesscenter Dialog -->
   <dialog id="gymDlg">
     <div class="modal">
-      <h2>Neue Übung</h2>
+      <h2 id="gymDlgTitle">Neue Übung</h2>
 
       <label>Name</label>
       <input id="gymName" placeholder="z. B. Brustpresse" />
 
-      <label>Gerätenummer</label>
-      <input id="gymMachine" placeholder="z. B. 12" />
+      <label>Nr.</label>
+      <input id="gymMachine" placeholder="optional" />
 
-      <div class="row">
-        <div style="flex:1;">
-          <label>Sätze</label>
-          <input id="gymSets" type="number" min="1" max="30" value="3" />
-        </div>
-        <div style="flex:1;">
-          <label>Wiederholungen</label>
-          <input id="gymReps" type="number" min="1" max="1000" value="10" />
-        </div>
-      </div>
+      <label>Gewicht</label>
+      <input id="gymKg" type="number" step="0.5" placeholder="z. B. 35" />
 
       <div class="actionsRow">
-        <button class="btn" id="gymCancel" type="button">Abbrechen</button>
-        <button class="btn primary" id="gymSave" type="button">Speichern</button>
+        <button class="btn" id="gymHistoryBtn" type="button">Verlauf</button>
+        <div style="display:flex; gap:10px;">
+          <button class="btn primary" id="gymSave" type="button">Speichern</button>
+          <button class="btn" id="gymCancel" type="button">Abbruch</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="gymHistoryDlg">
+    <div class="modal">
+      <h2 id="gymHistoryTitle">Verlauf</h2>
+      <div class="historyList" id="gymHistoryList"></div>
+      <div class="actionsRow">
+        <div></div>
+        <button class="btn primary" id="closeGymHistoryBtn" type="button">Schließen</button>
       </div>
     </div>
   </dialog>
@@ -685,6 +865,7 @@
       <div class="statsGrid" id="statsGridYear"></div>
 
       <div class="actionsRow">
+        <div></div>
         <button class="btn primary" id="closeStats" type="button">Schließen</button>
       </div>
     </div>
@@ -695,6 +876,7 @@
       <h2 id="dayDlgTitle">Tag</h2>
       <div id="dayDlgList" class="list" style="margin-top:10px;"></div>
       <div class="actionsRow">
+        <div></div>
         <button class="btn primary" id="dayDlgClose" type="button">Schließen</button>
       </div>
     </div>
@@ -703,7 +885,7 @@
   <script>
     "use strict";
 
-    const KEY = "fitness_app_v1";
+    const KEY = "fitness_app_v3_gym_edit_history";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -714,18 +896,16 @@
     };
     const ymd = (d) => todayKey(d);
 
-    const niceDate = () => {
-      const fmt = new Intl.DateTimeFormat("de-DE", { weekday:"short", day:"2-digit", month:"2-digit", year:"numeric" });
-      return fmt.format(new Date());
-    };
+    const niceDate = () => new Intl.DateTimeFormat("de-DE", {
+      weekday:"short", day:"2-digit", month:"2-digit", year:"numeric"
+    }).format(new Date());
 
     const fmtDay = (d) => new Intl.DateTimeFormat("de-DE", {
       weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
     }).format(d);
 
     const monthTitle = (d) => {
-      const fmt = new Intl.DateTimeFormat("de-DE", { month:"long", year:"numeric" });
-      const t = fmt.format(d);
+      const t = new Intl.DateTimeFormat("de-DE", { month:"long", year:"numeric" }).format(d);
       return t.charAt(0).toUpperCase() + t.slice(1);
     };
 
@@ -766,21 +946,21 @@
       if (!Array.isArray(state.gym.v2)) state.gym.v2 = [];
       if (typeof state.gym.startWeight !== "string") state.gym.startWeight = state.gym.startWeight == null ? "" : String(state.gym.startWeight);
 
+      // normalize gym items
+      for (const variant of ["v1","v2"]) {
+        state.gym[variant] = state.gym[variant].map(item => ({
+          id: item.id || crypto.randomUUID(),
+          name: item.name || "",
+          machine: item.machine || "",
+          kg: item.kg == null ? "" : String(item.kg),
+          history: Array.isArray(item.history) ? item.history : []
+        }));
+      }
+
       if (!Array.isArray(state.logs)) state.logs = [];
     };
     normalizeState();
 
-    // logs:
-    // {
-    //   dateKey,
-    //   bike:boolean,
-    //   evening:null|'full'|'light',
-    //   gym:null|'v1'|'v2',
-    //   completed:{
-    //     evening:{ full:[], light:[] },
-    //     gym:{ v1:[], v2:[] }
-    //   }
-    // }
     const ensureLog = (dateKey) => {
       let log = state.logs.find(l => l.dateKey === dateKey);
       if (!log) {
@@ -820,314 +1000,389 @@
     const ensureTodayLog = () => ensureLog(todayKey());
 
     let currentPage = "home";
-    let currentSection = null; // 'evening'|'gym'
-    let currentVariant = null; // evening: full|light; gym: v1|v2
+    let currentEveningVariant = "full";
+    let currentGymVariant = "v1";
     let calCursor = new Date();
     calCursor.setDate(1);
 
+    let editingGymId = null;
+    let historyGymId = null;
+
     const pages = {
       home: $("homePage"),
-      workout: $("workoutPage"),
+      evening: $("eveningPage"),
+      gym: $("gymPage"),
       calendar: $("calendarPage")
-    };
-
-    const getCurrentList = () => {
-      if (currentSection === "evening") return state.evening[currentVariant] || [];
-      if (currentSection === "gym") return state.gym[currentVariant] || [];
-      return [];
-    };
-
-    const setCurrentList = (arr) => {
-      if (currentSection === "evening") state.evening[currentVariant] = arr;
-      if (currentSection === "gym") state.gym[currentVariant] = arr;
-    };
-
-    const getTodayCompletedIds = () => {
-      const log = ensureTodayLog();
-      if (currentSection === "evening") return log.completed.evening[currentVariant] || [];
-      if (currentSection === "gym") return log.completed.gym[currentVariant] || [];
-      return [];
-    };
-
-    const setTodayCompletedIds = (ids) => {
-      const log = ensureTodayLog();
-      if (currentSection === "evening") log.completed.evening[currentVariant] = ids;
-      if (currentSection === "gym") log.completed.gym[currentVariant] = ids;
-    };
-
-    const updateTodayPrimaryBadge = () => {
-      const log = ensureTodayLog();
-      const list = getCurrentList();
-      const done = getTodayCompletedIds();
-      const eligible = list.length > 0 && done.length > 0;
-
-      if (currentSection === "evening") {
-        if (eligible) log.evening = currentVariant;
-        else if (log.evening === currentVariant) log.evening = null;
-      }
-
-      if (currentSection === "gym") {
-        if (eligible) log.gym = currentVariant;
-        else if (log.gym === currentVariant) log.gym = null;
-      }
-
-      saveState();
-    };
-
-    const currentVariantLabel = () => {
-      if (currentSection === "evening") return currentVariant === "full" ? "Full" : "Light";
-      if (currentSection === "gym") return currentVariant === "v1" ? "Variante 1" : "Variante 2";
-      return "";
-    };
-
-    const currentVariantColor = () => {
-      if (currentSection === "evening") return currentVariant === "full" ? "rgba(214,194,137,0.92)" : "rgba(62,209,196,0.90)";
-      if (currentSection === "gym") return currentVariant === "v1" ? "rgba(181,140,255,0.92)" : "rgba(255,127,176,0.92)";
-      return "rgba(214,194,137,0.92)";
-    };
-
-    const showHeaderState = () => {
-      $("datePill").textContent = niceDate();
-
-      $("calendarBtn").style.display = "none";
-      $("statsBtn").style.display = currentPage === "calendar" ? "inline-flex" : "none";
-      $("backBtn").style.display = currentPage === "home" ? "none" : "inline-flex";
-
-      const subA = $("subModeA");
-      const subB = $("subModeB");
-
-      subA.style.display = "none";
-      subB.style.display = "none";
-
-      if (currentPage === "workout" && currentSection === "evening") {
-        $("headerTitle").textContent = "Abendroutine";
-        subA.style.display = "inline-flex";
-        subB.style.display = "inline-flex";
-        subA.textContent = "Full";
-        subB.textContent = "Light";
-        subA.classList.toggle("active", currentVariant === "full");
-        subB.classList.toggle("active", currentVariant === "light");
-      } else if (currentPage === "workout" && currentSection === "gym") {
-        $("headerTitle").textContent = "Fitnesscenter";
-        subA.style.display = "inline-flex";
-        subB.style.display = "inline-flex";
-        subA.textContent = "Variante 1";
-        subB.textContent = "Variante 2";
-        subA.classList.toggle("active", currentVariant === "v1");
-        subB.classList.toggle("active", currentVariant === "v2");
-      } else if (currentPage === "calendar") {
-        $("headerTitle").textContent = "Fitness";
-      } else {
-        $("headerTitle").textContent = "Fitness";
-        $("calendarBtn").style.display = "inline-flex";
-      }
     };
 
     const go = (page) => {
       currentPage = page;
       for (const k in pages) pages[k].classList.toggle("active", k === page);
-      showHeaderState();
-
-      if (page === "workout") renderWorkout();
+      renderDates();
+      closeAllMenus();
+      if (page === "evening") renderEvening();
+      if (page === "gym") renderGym();
       if (page === "calendar") renderCalendar();
     };
 
-    const dayStatus = () => {
-      const total = getCurrentList().length;
-      const done = getTodayCompletedIds().length;
-      if (total === 0) return { kind:"none", text:"0/0" };
-      if (done === 0) return { kind:"none", text:`${done}/${total}` };
-      if (done >= total) return { kind:"ok", text:`${done}/${total}` };
-      return { kind:"warn", text:`${done}/${total}` };
+    const renderDates = () => {
+      const d = niceDate();
+      $("homeDatePill").textContent = d;
+      $("eveningDatePill").textContent = d;
+      $("gymDatePill").textContent = d;
+      $("calendarDatePill").textContent = d;
     };
 
-    const eveningMeta = (e) => `${e.sets}x • ${e.reps} Wdh.`;
-    const gymMeta = (e) => `Gerät ${e.machine} • ${e.sets} Sätze • ${e.reps} Wdh.`;
+    // -------- Evening --------
+    const getEveningList = () => state.evening[currentEveningVariant] || [];
+    const getEveningDone = () => ensureTodayLog().completed.evening[currentEveningVariant] || [];
+    const setEveningDone = (ids) => { ensureTodayLog().completed.evening[currentEveningVariant] = ids; };
 
-    const renderWorkout = () => {
-      const listEl = $("exerciseList");
-      const emptyEl = $("exerciseEmpty");
-      const list = getCurrentList();
-      const done = new Set(getTodayCompletedIds());
+    const updateEveningBadge = () => {
+      const log = ensureTodayLog();
+      const eligible = getEveningList().length > 0 && getEveningDone().length > 0;
+      if (eligible) log.evening = currentEveningVariant;
+      else if (log.evening === currentEveningVariant) log.evening = null;
+      saveState();
+    };
 
-      $("workoutTitle").textContent = currentSection === "evening" ? "Abendroutine" : "Fitnesscenter";
-      $("modeText").textContent = currentVariantLabel();
-      $("modeText").style.color = currentVariantColor();
+    const renderEvening = () => {
+      $("eveningFullBtn").classList.toggle("active", currentEveningVariant === "full");
+      $("eveningLightBtn").classList.toggle("active", currentEveningVariant === "light");
+      $("eveningModeText").textContent = currentEveningVariant === "full" ? "Full" : "Light";
+      $("eveningModeText").style.color = currentEveningVariant === "full" ? "rgba(214,194,137,0.92)" : "rgba(62,209,196,0.90)";
 
-      const st = dayStatus();
-      $("todayText").textContent = st.text;
-      $("todayDot").className = "dot " + st.kind;
-      $("progressPill").textContent = `${done.size}/${list.length}`;
+      const list = getEveningList();
+      const done = new Set(getEveningDone());
+      const total = list.length;
+      const doneCount = done.size;
 
-      $("gymWeightSection").style.display = currentSection === "gym" ? "block" : "none";
-      if (currentSection === "gym") {
-        $("startWeightValue").textContent = state.gym.startWeight ? `${state.gym.startWeight} kg` : "—";
-        $("startWeightInput").value = state.gym.startWeight || "";
+      let kind = "none";
+      let text = "0/0";
+      if (total > 0) {
+        text = `${doneCount}/${total}`;
+        if (doneCount === 0) kind = "none";
+        else if (doneCount >= total) kind = "ok";
+        else kind = "warn";
       }
 
-      emptyEl.style.display = list.length ? "none" : "block";
+      $("eveningDot").className = "dot " + kind;
+      $("eveningTodayText").textContent = text;
+      $("eveningProgressPill").textContent = text;
+      $("eveningExerciseEmpty").style.display = list.length ? "none" : "block";
 
       let html = "";
       for (const e of list) {
         const isDone = done.has(e.id);
         html += `
-          <div class="item ${isDone ? "done" : ""}" data-ex-id="${escapeHtml(e.id)}">
+          <div class="item ${isDone ? "done" : ""}" data-evening-id="${escapeHtml(e.id)}">
             <div class="left">
               <div class="name">${escapeHtml(e.name)}</div>
-              <div class="meta">${escapeHtml(currentSection === "evening" ? eveningMeta(e) : gymMeta(e))}</div>
+              <div class="meta">${e.sets}x • ${e.reps} Wdh.</div>
             </div>
             <div class="right">
               <div class="check">✓</div>
-              <button class="trash" type="button" data-trash="1" data-id="${escapeHtml(e.id)}">🗑️</button>
+              <button class="trash" type="button" data-evening-trash="${escapeHtml(e.id)}">🗑️</button>
             </div>
           </div>
         `;
       }
-      listEl.innerHTML = html;
+      $("eveningExerciseList").innerHTML = html;
     };
 
-    $("exerciseList").addEventListener("click", (ev) => {
-      const trash = ev.target.closest("[data-trash='1']");
-      if (trash) {
-        ev.stopPropagation();
-        if (!confirm("Übung wirklich löschen?")) return;
-        const id = trash.dataset.id;
-        setCurrentList(getCurrentList().filter(e => e.id !== id));
-
-        for (const log of state.logs) {
-          if (currentSection === "evening") {
-            log.completed.evening[currentVariant] = (log.completed.evening[currentVariant] || []).filter(x => x !== id);
-            if (log.evening === currentVariant) {
-              const eligible = state.evening[currentVariant].length > 0 && log.completed.evening[currentVariant].length > 0;
-              if (!eligible) log.evening = null;
-            }
-          } else if (currentSection === "gym") {
-            log.completed.gym[currentVariant] = (log.completed.gym[currentVariant] || []).filter(x => x !== id);
-            if (log.gym === currentVariant) {
-              const eligible = state.gym[currentVariant].length > 0 && log.completed.gym[currentVariant].length > 0;
-              if (!eligible) log.gym = null;
-            }
-          }
-        }
-
-        saveState();
-        renderWorkout();
-        return;
-      }
-
-      const row = ev.target.closest("[data-ex-id]");
-      if (!row) return;
-      const id = row.dataset.exId;
-      const set = new Set(getTodayCompletedIds());
-      if (set.has(id)) set.delete(id);
-      else set.add(id);
-      setTodayCompletedIds(Array.from(set));
-      updateTodayPrimaryBadge();
-      renderWorkout();
+    $("eveningMenuBtn").addEventListener("click", () => {
+      currentEveningVariant = "full";
+      go("evening");
     });
+    $("eveningBackBtn").addEventListener("click", () => go("home"));
+    $("eveningFullBtn").addEventListener("click", () => { currentEveningVariant = "full"; renderEvening(); });
+    $("eveningLightBtn").addEventListener("click", () => { currentEveningVariant = "light"; renderEvening(); });
 
-    const openEveningWorkout = (variant) => {
-      currentSection = "evening";
-      currentVariant = variant;
-      go("workout");
-    };
-
-    const openGymWorkout = (variant) => {
-      currentSection = "gym";
-      currentVariant = variant;
-      go("workout");
-    };
-
-    const markBikingToday = () => {
-      const log = ensureTodayLog();
-      log.bike = true;
-      saveState();
-      go("calendar");
-    };
-
-    $("eveningMenuBtn").addEventListener("click", () => openEveningWorkout("full"));
-    $("gymMenuBtn").addEventListener("click", () => openGymWorkout("v1"));
-    $("bikeBtn").addEventListener("click", markBikingToday);
-
-    $("subModeA").addEventListener("click", () => {
-      if (currentSection === "evening") openEveningWorkout("full");
-      if (currentSection === "gym") openGymWorkout("v1");
-    });
-
-    $("subModeB").addEventListener("click", () => {
-      if (currentSection === "evening") openEveningWorkout("light");
-      if (currentSection === "gym") openGymWorkout("v2");
-    });
-
-    $("backBtn").addEventListener("click", () => go("home"));
-    $("calendarBtn").addEventListener("click", () => go("calendar"));
-
-    $("saveWeightBtn").addEventListener("click", () => {
-      state.gym.startWeight = $("startWeightInput").value.trim();
-      saveState();
-      renderWorkout();
-    });
-
-    // Abendroutine dialog
-    $("addExerciseBtn").addEventListener("click", () => {
-      if (currentSection === "evening") {
-        $("eveningName").value = "";
-        $("eveningSets").value = 1;
-        $("eveningReps").value = 10;
-        $("eveningDlg").showModal();
-      } else if (currentSection === "gym") {
-        $("gymName").value = "";
-        $("gymMachine").value = "";
-        $("gymSets").value = 3;
-        $("gymReps").value = 10;
-        $("gymDlg").showModal();
-      }
+    $("eveningAddExerciseBtn").addEventListener("click", () => {
+      $("eveningName").value = "";
+      $("eveningSets").value = 1;
+      $("eveningReps").value = 10;
+      $("eveningDlg").showModal();
     });
 
     $("eveningCancel").addEventListener("click", () => $("eveningDlg").close());
     $("eveningSave").addEventListener("click", () => {
       const name = $("eveningName").value.trim();
       if (!name) return alert("Bitte Name eingeben.");
-
-      const sets = Number($("eveningSets").value) || 1;
-      const reps = Number($("eveningReps").value) || 1;
-
-      state.evening[currentVariant].push({
+      state.evening[currentEveningVariant].push({
         id: crypto.randomUUID(),
         name,
-        sets,
-        reps
+        sets: Number($("eveningSets").value) || 1,
+        reps: Number($("eveningReps").value) || 1
       });
-
       saveState();
-      renderWorkout();
+      renderEvening();
       $("eveningDlg").close();
     });
 
-    // Gym dialog
+    $("eveningExerciseList").addEventListener("click", (ev) => {
+      const trash = ev.target.closest("[data-evening-trash]");
+      if (trash) {
+        ev.stopPropagation();
+        if (!confirm("Übung wirklich löschen?")) return;
+        const id = trash.dataset.eveningTrash;
+        state.evening[currentEveningVariant] = state.evening[currentEveningVariant].filter(e => e.id !== id);
+
+        for (const log of state.logs) {
+          log.completed.evening[currentEveningVariant] = (log.completed.evening[currentEveningVariant] || []).filter(x => x !== id);
+          if (log.evening === currentEveningVariant) {
+            const eligible = state.evening[currentEveningVariant].length > 0 && log.completed.evening[currentEveningVariant].length > 0;
+            if (!eligible) log.evening = null;
+          }
+        }
+        saveState();
+        renderEvening();
+        return;
+      }
+
+      const row = ev.target.closest("[data-evening-id]");
+      if (!row) return;
+      const id = row.dataset.eveningId;
+      const set = new Set(getEveningDone());
+      if (set.has(id)) set.delete(id);
+      else set.add(id);
+      setEveningDone(Array.from(set));
+      updateEveningBadge();
+      renderEvening();
+    });
+
+    // -------- Gym --------
+    const getGymList = () => state.gym[currentGymVariant] || [];
+    const getGymDone = () => ensureTodayLog().completed.gym[currentGymVariant] || [];
+    const setGymDone = (ids) => { ensureTodayLog().completed.gym[currentGymVariant] = ids; };
+
+    const findGymItem = (id) => getGymList().find(x => x.id === id);
+
+    const addHistoryEntry = (item, kgValue) => {
+      if (kgValue === "" || kgValue == null) return;
+      const today = todayKey();
+      const existing = item.history.find(h => h.dateKey === today);
+      if (existing) existing.kg = String(kgValue);
+      else item.history.unshift({ dateKey: today, kg: String(kgValue) });
+    };
+
+    const updateGymBadge = () => {
+      const log = ensureTodayLog();
+      const eligible = getGymList().length > 0 && getGymDone().length > 0;
+      if (eligible) log.gym = currentGymVariant;
+      else if (log.gym === currentGymVariant) log.gym = null;
+      saveState();
+    };
+
+    const closeAllMenus = () => {
+      document.querySelectorAll(".menuPopup.open").forEach(el => el.classList.remove("open"));
+    };
+
+    const renderGym = () => {
+      $("gymV1Btn").classList.toggle("active", currentGymVariant === "v1");
+      $("gymV2Btn").classList.toggle("active", currentGymVariant === "v2");
+      $("gymWeightValue").textContent = state.gym.startWeight ? `${state.gym.startWeight} kg` : "-- kg";
+      $("gymWeightInput").value = state.gym.startWeight || "";
+
+      const list = getGymList();
+      const done = new Set(getGymDone());
+      $("gymRowsEmpty").style.display = list.length ? "none" : "block";
+
+      let html = "";
+      for (const e of list) {
+        const isDone = done.has(e.id);
+        html += `
+          <div class="gymRow ${isDone ? "done" : ""}" data-gym-row="${escapeHtml(e.id)}">
+            <div class="gymCell center">${escapeHtml(e.machine || "Nr.")}</div>
+            <div class="gymCell">${escapeHtml(e.name)}</div>
+            <div class="gymCell center">${escapeHtml(e.kg ? `${e.kg} kg` : "-- kg")}</div>
+            <button class="gymCheck" type="button" data-gym-check="${escapeHtml(e.id)}">✓</button>
+            <div class="rowMenu">
+              <button class="iconBtn" type="button" data-gym-menu-btn="${escapeHtml(e.id)}">⋯</button>
+              <div class="menuPopup" id="menu-${escapeHtml(e.id)}">
+                <button class="menuItem" type="button" data-gym-edit="${escapeHtml(e.id)}">Bearbeiten</button>
+                <button class="menuItem" type="button" data-gym-history="${escapeHtml(e.id)}">Verlauf</button>
+                <button class="menuItem" type="button" data-gym-delete="${escapeHtml(e.id)}">Löschen</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      $("gymRows").innerHTML = html;
+    };
+
+    $("gymMenuBtn").addEventListener("click", () => {
+      currentGymVariant = "v1";
+      go("gym");
+    });
+    $("gymBackBtn").addEventListener("click", () => go("home"));
+    $("gymV1Btn").addEventListener("click", () => { currentGymVariant = "v1"; closeAllMenus(); renderGym(); });
+    $("gymV2Btn").addEventListener("click", () => { currentGymVariant = "v2"; closeAllMenus(); renderGym(); });
+
+    $("saveGymWeightBtn").addEventListener("click", () => {
+      state.gym.startWeight = $("gymWeightInput").value.trim();
+      saveState();
+      renderGym();
+    });
+
+    $("gymAddBtn").addEventListener("click", () => {
+      editingGymId = null;
+      $("gymDlgTitle").textContent = "Neue Übung";
+      $("gymName").value = "";
+      $("gymMachine").value = "";
+      $("gymKg").value = "";
+      $("gymHistoryBtn").disabled = true;
+      $("gymHistoryBtn").style.opacity = ".5";
+      $("gymDlg").showModal();
+    });
+
     $("gymCancel").addEventListener("click", () => $("gymDlg").close());
+
     $("gymSave").addEventListener("click", () => {
       const name = $("gymName").value.trim();
       if (!name) return alert("Bitte Name eingeben.");
 
       const machine = $("gymMachine").value.trim();
-      const sets = Number($("gymSets").value) || 1;
-      const reps = Number($("gymReps").value) || 1;
+      const kg = $("gymKg").value.trim();
 
-      state.gym[currentVariant].push({
-        id: crypto.randomUUID(),
-        name,
-        machine,
-        sets,
-        reps
-      });
+      if (editingGymId) {
+        const item = findGymItem(editingGymId);
+        if (!item) return;
+        item.name = name;
+        item.machine = machine;
+        item.kg = kg;
+      } else {
+        state.gym[currentGymVariant].push({
+          id: crypto.randomUUID(),
+          name,
+          machine,
+          kg,
+          history: []
+        });
+      }
 
       saveState();
-      renderWorkout();
+      renderGym();
       $("gymDlg").close();
     });
 
-    // Calendar
+    $("gymHistoryBtn").addEventListener("click", () => {
+      if (!editingGymId) return;
+      historyGymId = editingGymId;
+      openGymHistory(historyGymId);
+    });
+
+    const openGymHistory = (id) => {
+      const item = findGymItem(id);
+      if (!item) return;
+      $("gymHistoryTitle").textContent = `Verlauf – ${item.name}`;
+      const list = $("gymHistoryList");
+      if (!item.history.length) {
+        list.innerHTML = `<div class="empty">Noch kein Verlauf vorhanden.</div>`;
+      } else {
+        list.innerHTML = item.history.map(h => `
+          <div class="historyItem">
+            <span>${escapeHtml(h.dateKey)}</span>
+            <span>${escapeHtml(h.kg)} kg</span>
+          </div>
+        `).join("");
+      }
+      $("gymHistoryDlg").showModal();
+    };
+
+    $("closeGymHistoryBtn").addEventListener("click", () => $("gymHistoryDlg").close());
+
+    $("gymRows").addEventListener("click", (ev) => {
+      const menuBtn = ev.target.closest("[data-gym-menu-btn]");
+      if (menuBtn) {
+        ev.stopPropagation();
+        const id = menuBtn.dataset.gymMenuBtn;
+        const popup = $(`menu-${id}`);
+        const isOpen = popup.classList.contains("open");
+        closeAllMenus();
+        if (!isOpen) popup.classList.add("open");
+        return;
+      }
+
+      const editBtn = ev.target.closest("[data-gym-edit]");
+      if (editBtn) {
+        const id = editBtn.dataset.gymEdit;
+        const item = findGymItem(id);
+        if (!item) return;
+        editingGymId = id;
+        $("gymDlgTitle").textContent = "Übung bearbeiten";
+        $("gymName").value = item.name || "";
+        $("gymMachine").value = item.machine || "";
+        $("gymKg").value = item.kg || "";
+        $("gymHistoryBtn").disabled = false;
+        $("gymHistoryBtn").style.opacity = "1";
+        closeAllMenus();
+        $("gymDlg").showModal();
+        return;
+      }
+
+      const historyBtn = ev.target.closest("[data-gym-history]");
+      if (historyBtn) {
+        const id = historyBtn.dataset.gymHistory;
+        closeAllMenus();
+        openGymHistory(id);
+        return;
+      }
+
+      const deleteBtn = ev.target.closest("[data-gym-delete]");
+      if (deleteBtn) {
+        const id = deleteBtn.dataset.gymDelete;
+        closeAllMenus();
+        if (!confirm("Übung wirklich löschen?")) return;
+
+        state.gym[currentGymVariant] = state.gym[currentGymVariant].filter(x => x.id !== id);
+        for (const log of state.logs) {
+          log.completed.gym[currentGymVariant] = (log.completed.gym[currentGymVariant] || []).filter(x => x !== id);
+          if (log.gym === currentGymVariant) {
+            const eligible = state.gym[currentGymVariant].length > 0 && log.completed.gym[currentGymVariant].length > 0;
+            if (!eligible) log.gym = null;
+          }
+        }
+        saveState();
+        renderGym();
+        return;
+      }
+
+      const checkBtn = ev.target.closest("[data-gym-check]");
+      if (checkBtn) {
+        const id = checkBtn.dataset.gymCheck;
+        const set = new Set(getGymDone());
+        if (set.has(id)) {
+          set.delete(id);
+        } else {
+          set.add(id);
+          const item = findGymItem(id);
+          if (item) addHistoryEntry(item, item.kg);
+        }
+        setGymDone(Array.from(set));
+        updateGymBadge();
+        saveState();
+        renderGym();
+        return;
+      }
+    });
+
+    document.addEventListener("click", (ev) => {
+      if (!ev.target.closest(".rowMenu")) closeAllMenus();
+    });
+
+    // -------- Bike --------
+    $("bikeBtn").addEventListener("click", () => {
+      const log = ensureTodayLog();
+      log.bike = true;
+      saveState();
+      go("calendar");
+    });
+
+    // -------- Calendar --------
+    $("calendarBtn").addEventListener("click", () => go("calendar"));
+    $("calendarBackBtn").addEventListener("click", () => go("home"));
+
     const renderCalendar = () => {
       $("calTitle").textContent = monthTitle(calCursor);
 
@@ -1209,7 +1464,7 @@
       renderCalendar();
     });
 
-    // Day dialog
+    // -------- Day dialog --------
     let dayDlgKey = null;
     let dayDlgDateObj = null;
 
@@ -1223,8 +1478,8 @@
       const items = [];
       if (log.evening === "full") items.push({ type:"evening", value:"full", label:"Abendroutine Full" });
       if (log.evening === "light") items.push({ type:"evening", value:"light", label:"Abendroutine Light" });
-      if (log.gym === "v1") items.push({ type:"gym", value:"v1", label:"Fitnesscenter Variante 1" });
-      if (log.gym === "v2") items.push({ type:"gym", value:"v2", label:"Fitnesscenter Variante 2" });
+      if (log.gym === "v1") items.push({ type:"gym", value:"v1", label:"Fitnesscenter A" });
+      if (log.gym === "v2") items.push({ type:"gym", value:"v2", label:"Fitnesscenter B" });
       if (log.bike) items.push({ type:"bike", value:"true", label:"Biking" });
 
       const list = $("dayDlgList");
@@ -1265,7 +1520,7 @@
       openDayDialog(dayDlgKey, dayDlgDateObj);
     });
 
-    // Stats
+    // -------- Stats --------
     const parseYearMonth = (dateKey) => dateKey.slice(0,7);
     const parseYear = (dateKey) => dateKey.slice(0,4);
     const daysInMonth = (year, monthIndex0) => new Date(year, monthIndex0 + 1, 0).getDate();
@@ -1341,8 +1596,8 @@
         ["Aktive Tage", `${m.monthActive} (${pct(m.monthActive, m.denomDays)})`],
         ["Abendroutine Full", `${m.eveningFull} (${pct(m.eveningFull, m.denomDays)})`],
         ["Abendroutine Light", `${m.eveningLight} (${pct(m.eveningLight, m.denomDays)})`],
-        ["Fitnesscenter Variante 1", `${m.gymV1} (${pct(m.gymV1, m.denomDays)})`],
-        ["Fitnesscenter Variante 2", `${m.gymV2} (${pct(m.gymV2, m.denomDays)})`],
+        ["Fitnesscenter A", `${m.gymV1} (${pct(m.gymV1, m.denomDays)})`],
+        ["Fitnesscenter B", `${m.gymV2} (${pct(m.gymV2, m.denomDays)})`],
         ["Biking", `${m.bike} (${pct(m.bike, m.denomDays)})`],
       ]);
 
@@ -1351,8 +1606,8 @@
         ["Aktive Tage", `${y.yearActive} (${pct(y.yearActive, y.denomDays)})`],
         ["Abendroutine Full", `${y.eveningFull} (${pct(y.eveningFull, y.denomDays)})`],
         ["Abendroutine Light", `${y.eveningLight} (${pct(y.eveningLight, y.denomDays)})`],
-        ["Fitnesscenter Variante 1", `${y.gymV1} (${pct(y.gymV1, y.denomDays)})`],
-        ["Fitnesscenter Variante 2", `${y.gymV2} (${pct(y.gymV2, y.denomDays)})`],
+        ["Fitnesscenter A", `${y.gymV1} (${pct(y.gymV1, y.denomDays)})`],
+        ["Fitnesscenter B", `${y.gymV2} (${pct(y.gymV2, y.denomDays)})`],
         ["Biking", `${y.bike} (${pct(y.bike, y.denomDays)})`],
       ]);
 
@@ -1363,14 +1618,12 @@
     $("closeStats").addEventListener("click", () => $("statsDlg").close());
 
     // init
-    $("datePill").textContent = niceDate();
+    renderDates();
     ensureTodayLog();
     saveState();
     go("home");
 
-    setInterval(() => {
-      $("datePill").textContent = niceDate();
-    }, 60000);
+    setInterval(renderDates, 60000);
   </script>
 </body>
 </html>
