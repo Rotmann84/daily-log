@@ -155,11 +155,11 @@
       justify-content:flex-end;
     }
 
-    .homeRow{
+    .homeGrid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
-      padding:6px 0 8px;
+      padding:6px 0 0;
       align-items:stretch;
     }
 
@@ -178,6 +178,11 @@
       cursor:pointer;
       user-select:none;
       min-height:76px;
+    }
+
+    .homeAction.wide{
+      margin-top:16px;
+      width:100%;
     }
 
     .homeIcon{
@@ -441,6 +446,42 @@
       white-space:nowrap;
     }
 
+    .retroForm{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .retroActionRow{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .importExportRow{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:14px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,0.08);
+    }
+
+    .tinyIconBtn{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.06);
+      color:var(--accent2);
+      font-size:16px;
+      font-weight:900;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+    }
+
     .calHeader{
       display:flex;
       align-items:center;
@@ -564,7 +605,7 @@
       margin:10px 0 6px;
       font-weight:900;
     }
-    input{
+    input, select{
       width:100%;
       padding:10px 12px;
       border-radius:14px;
@@ -574,6 +615,9 @@
       font-size:14px;
       outline:none;
       font-weight:800;
+    }
+    option{
+      color:#111;
     }
     .row{ display:flex; gap:10px; }
     .actionsRow{
@@ -614,7 +658,7 @@
     .statsGrid .v{ text-align:right; }
 
     @media (max-width: 640px){
-      .homeRow{ grid-template-columns:1fr; }
+      .homeGrid{ grid-template-columns:1fr; }
       .homeAction{ justify-content:flex-start; }
       .cyclingOptions{ grid-template-columns:1fr; }
       .calendarHeader{ align-items:flex-start; }
@@ -635,7 +679,7 @@
       </div>
 
       <div class="panel">
-        <div class="homeRow">
+        <div class="homeGrid">
           <button class="homeAction" id="routineMenuBtn" type="button">
             <div class="homeIcon">💪</div>
             <div class="homeText">Fitnessroutine</div>
@@ -651,6 +695,11 @@
             <div class="homeText">Cycling</div>
           </button>
         </div>
+
+        <button class="homeAction wide" id="retroMenuBtn" type="button">
+          <div class="homeIcon">↺</div>
+          <div class="homeText">Nachtrag</div>
+        </button>
       </div>
     </section>
 
@@ -738,6 +787,45 @@
       </div>
     </section>
 
+    <section class="page" id="retroPage">
+      <div class="sectionScreen">
+        <div class="sectionHeader">
+          <div class="sectionHeaderTop">
+            <h1 class="sectionTitle">Nachtrag</h1>
+            <span class="datePill sectionDate" id="retroDatePill">—</span>
+          </div>
+          <div class="sectionHeaderBottom">
+            <button class="pill sectionTab" id="retroBackBtn" type="button">Zurück</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="retroForm">
+            <div>
+              <label for="retroDateInput">Datum</label>
+              <input id="retroDateInput" type="date" />
+            </div>
+
+            <div>
+              <label for="retroActivitySelect">Aktivität</label>
+              <select id="retroActivitySelect">
+                <option value="routine-full">Fitnessroutine Full</option>
+                <option value="routine-light">Fitnessroutine Light</option>
+                <option value="gym-v1">Fitnesscenter A</option>
+                <option value="gym-v2">Fitnesscenter B</option>
+                <option value="peloton">Peloton</option>
+                <option value="outdoor">Outdoor</option>
+              </select>
+            </div>
+
+            <div class="retroActionRow">
+              <button class="btn primary" id="retroSaveBtn" type="button">Speichern</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="page" id="calendarPage">
       <div class="calendarHeader">
         <h1>Fitness</h1>
@@ -763,6 +851,12 @@
           <div class="dow">Mo</div><div class="dow">Di</div><div class="dow">Mi</div><div class="dow">Do</div><div class="dow">Fr</div><div class="dow">Sa</div><div class="dow">So</div>
         </div>
         <div class="calGrid" id="calGrid"></div>
+
+        <div class="importExportRow">
+          <button class="tinyIconBtn" id="importBtn" type="button" title="Import">📥</button>
+          <button class="tinyIconBtn" id="exportBtn" type="button" title="Export">📤</button>
+          <input id="importFileInput" type="file" accept=".json,application/json" style="display:none" />
+        </div>
       </div>
     </section>
   </div>
@@ -867,7 +961,7 @@
   <script>
     "use strict";
 
-    const KEY = "fitness_app_v8_routine_edit_and_cycling_split";
+    const KEY = "fitness_app_v9_retro_import_export";
     const $ = (id) => document.getElementById(id);
 
     const todayKey = (d = new Date()) => {
@@ -925,12 +1019,7 @@
     const saveState = () => localStorage.setItem(KEY, JSON.stringify(state));
 
     const normalizeState = () => {
-      if (!state.routine) {
-        state.routine = state.evening ? {
-          full: Array.isArray(state.evening.full) ? state.evening.full : [],
-          light: Array.isArray(state.evening.light) ? state.evening.light : []
-        } : { full: [], light: [] };
-      }
+      if (!state.routine) state.routine = { full: [], light: [] };
       if (!Array.isArray(state.routine.full)) state.routine.full = [];
       if (!Array.isArray(state.routine.light)) state.routine.light = [];
 
@@ -957,16 +1046,18 @@
             gym: { v1: [], v2: [] }
           };
         }
-        if (!log.completed.routine) {
-          log.completed.routine = log.completed.evening
-            ? { full: log.completed.evening.full || [], light: log.completed.evening.light || [] }
-            : { full: [], light: [] };
-        }
+        if (!log.completed.routine) log.completed.routine = { full: [], light: [] };
         if (!log.completed.gym) log.completed.gym = { v1: [], v2: [] };
 
-        if (log.routine == null && log.evening != null) log.routine = log.evening;
-        if (log.peloton == null) log.peloton = !!log.bike;
+        if (!Array.isArray(log.completed.routine.full)) log.completed.routine.full = [];
+        if (!Array.isArray(log.completed.routine.light)) log.completed.routine.light = [];
+        if (!Array.isArray(log.completed.gym.v1)) log.completed.gym.v1 = [];
+        if (!Array.isArray(log.completed.gym.v2)) log.completed.gym.v2 = [];
+
+        if (log.peloton == null) log.peloton = false;
         if (log.outdoor == null) log.outdoor = false;
+        if (log.routine == null) log.routine = null;
+        if (log.gym == null) log.gym = null;
       }
 
       if (!state.meta) state.meta = { lastSeenDate: todayKey() };
@@ -1031,6 +1122,7 @@
       routine: $("routinePage"),
       gym: $("gymPage"),
       cycling: $("cyclingPage"),
+      retro: $("retroPage"),
       calendar: $("calendarPage")
     };
 
@@ -1043,6 +1135,7 @@
       if (page === "routine") renderRoutine();
       if (page === "gym") renderGym();
       if (page === "calendar") renderCalendar();
+      if (page === "retro") initRetroForm();
     };
 
     const renderDates = () => {
@@ -1051,6 +1144,7 @@
       $("routineDatePill").textContent = d;
       $("gymDatePill").textContent = d;
       $("cyclingDatePill").textContent = d;
+      $("retroDatePill").textContent = d;
       $("calendarTodayBadge").textContent = shortDate();
       $("gymWeightFieldBtn").textContent = state.gym.startWeight ? `${state.gym.startWeight} kg` : "-- kg";
     };
@@ -1389,6 +1483,51 @@
       go("calendar");
     });
 
+    // Nachtrag
+    const initRetroForm = () => {
+      $("retroDateInput").value = todayKey();
+      $("retroActivitySelect").value = "routine-full";
+    };
+
+    $("retroMenuBtn").addEventListener("click", () => go("retro"));
+    $("retroBackBtn").addEventListener("click", () => go("home"));
+
+    $("retroSaveBtn").addEventListener("click", () => {
+      const dateValue = $("retroDateInput").value;
+      const activity = $("retroActivitySelect").value;
+
+      if (!dateValue) {
+        alert("Bitte Datum auswählen.");
+        return;
+      }
+
+      const log = ensureLog(dateValue);
+
+      switch (activity) {
+        case "routine-full":
+          log.routine = "full";
+          break;
+        case "routine-light":
+          log.routine = "light";
+          break;
+        case "gym-v1":
+          log.gym = "v1";
+          break;
+        case "gym-v2":
+          log.gym = "v2";
+          break;
+        case "peloton":
+          log.peloton = true;
+          break;
+        case "outdoor":
+          log.outdoor = true;
+          break;
+      }
+
+      saveState();
+      alert("Nachtrag gespeichert.");
+    });
+
     $("calendarBtn").addEventListener("click", () => go("calendar"));
     $("calendarBackBtn").addEventListener("click", () => go("home"));
 
@@ -1475,6 +1614,53 @@
     $("nextMonth").addEventListener("click", () => {
       calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1);
       renderCalendar();
+    });
+
+    // Export / Import
+    $("exportBtn").addEventListener("click", () => {
+      const exportPayload = {
+        logs: state.logs
+      };
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `fitness-kalender-export-${todayKey()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    $("importBtn").addEventListener("click", () => {
+      $("importFileInput").value = "";
+      $("importFileInput").click();
+    });
+
+    $("importFileInput").addEventListener("change", async (ev) => {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        if (!data || !Array.isArray(data.logs)) {
+          alert("Ungültige Importdatei.");
+          return;
+        }
+
+        if (!confirm("Bestehende Kalendereinträge durch Import ersetzen?")) return;
+
+        state.logs = data.logs;
+        normalizeState();
+        saveState();
+
+        if (currentPage === "calendar") renderCalendar();
+        alert("Import erfolgreich.");
+      } catch {
+        alert("Import fehlgeschlagen.");
+      }
     });
 
     let dayDlgKey = null;
