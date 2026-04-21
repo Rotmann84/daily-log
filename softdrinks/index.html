@@ -20,20 +20,17 @@
       --green-2: #146c43;
       --red: #b42318;
       --red-2: #8f1c13;
+      --amber: #d4a017;
+      --gray: #6b7280;
       --open: #4b5563;
       --shadow: 0 10px 30px rgba(0,0,0,.28);
       --radius: 18px;
+      --radius-sm: 12px;
       --max: 760px;
     }
 
     * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
+    html, body { margin: 0; padding: 0; background: linear-gradient(180deg, #0b1220 0%, #0f172a 100%); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { min-height: 100vh; }
 
     .app {
@@ -126,27 +123,43 @@
       margin: 0 0 12px;
     }
 
-    .series-lines {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 2px 0 0;
-    }
+    .series-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 2px;
+}
 
-    .series-line {
-      font-size: 1rem;
-      line-height: 1.45;
-      color: var(--muted);
-      word-break: break-word;
-    }
+.series-item {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
 
-    .series-line strong {
-      color: var(--text);
-      font-size: 1rem;
-      font-weight: 800;
-    }
+.series-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
 
-    .ten-day-wrap {
+.series-main {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.series-main strong {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.series-sub {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 1.35;
+}
+
+.ten-day-wrap {
       display: none;
       padding-top: 2px;
     }
@@ -203,43 +216,51 @@
     details[open] summary::after { transform: translateY(-50%) rotate(180deg); }
     .details-body { padding: 0 16px 16px; }
 
-    .stats-list {
-      display: flex;
-      flex-direction: column;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
 
-    .stat-row {
+    .stat-box {
       padding: 12px;
       border-radius: 12px;
       background: rgba(255,255,255,.03);
       border: 1px solid var(--line);
     }
 
-    .stat-row .top {
+    .stat-box .k { color: var(--muted); font-size: .82rem; margin-bottom: 5px; }
+    .stat-box .v { font-size: 1.08rem; font-weight: 800; }
+
+    .stats-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 14px 0 10px;
+    }
+
+    .year-stats-list {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .year-stat-item {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+    }
+
+    .year-stat-title {
+      color: var(--text);
+      font-weight: 700;
       margin-bottom: 6px;
     }
 
-    .stat-row .label {
+    .year-stat-sub {
       color: var(--muted);
-      font-size: .92rem;
-      font-weight: 600;
-    }
-
-    .stat-row .value {
-      font-size: 1.02rem;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .stat-row .sub {
-      color: var(--muted);
-      font-size: .86rem;
-      line-height: 1.4;
+      font-size: .9rem;
+      line-height: 1.35;
     }
 
     .history-list {
@@ -307,7 +328,7 @@
 
     .comment-wrap.show { display: block; }
 
-    textarea {
+    textarea, input[type="text"], input[type="date"] {
       width: 100%;
       border: 1px solid var(--line);
       background: rgba(255,255,255,.04);
@@ -315,6 +336,9 @@
       border-radius: 12px;
       padding: 12px 13px;
       font: inherit;
+    }
+
+    textarea {
       min-height: 86px;
       resize: vertical;
     }
@@ -338,16 +362,29 @@
     }
 
     .small-btn.primary { background: rgba(255,255,255,.1); }
+
+    .empty-note {
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.5;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 12px 0;
+    }
+
     .hidden { display: none !important; }
 
     @media (max-width: 560px) {
-      .hero-buttons {
+      .hero-buttons,
+      .series-grid,
+      .stats-grid {
         grid-template-columns: 1fr;
       }
 
       .title { font-size: 1.4rem; }
-      .series-line { font-size: .97rem; }
-      .series-line strong { font-size: .97rem; }
     }
   </style>
 </head>
@@ -371,29 +408,54 @@
     </div>
 
     <div class="card hidden" id="seriesCard">
-      <h2 class="section-title">Serien</h2>
-      <div class="series-lines">
-        <div class="series-line" id="currentSeriesLine">Aktuelle Serie: <strong>0 Tage</strong></div>
-        <div class="series-line" id="bestSeriesLine">Längste Serie: <strong>0 Tage</strong></div>
-      </div>
+  <h2 class="section-title">Serien</h2>
+  <div class="series-block">
+    <div class="series-item">
+      <div class="series-main">Aktuelle Serie: <strong><span id="currentStreakValue">0</span> Tag(e)</strong></div>
+      <div class="series-sub" id="currentStreakSub">Noch keine Daten</div>
     </div>
+    <div class="series-item">
+      <div class="series-main">Längste Serie: <strong><span id="bestStreakValue">0</span> Tag(e)</strong></div>
+      <div class="series-sub" id="bestStreakSub">Noch keine Daten</div>
+    </div>
+  </div>
+</div>
 
-    <div class="card ten-day-wrap" id="tenDayWrap">
+<div class="card ten-day-wrap id="tenDayWrap">
       <div class="ten-day-row" id="tenDayRow"></div>
     </div>
 
     <div class="card" id="statsCard">
-      <details id="statsDetails">
-        <summary>Gesamtstatistik</summary>
-        <div class="details-body">
-          <div class="stats-list" id="statsList"></div>
+  <details id="statsDetails">
+    <summary>Gesamtstatistik</summary>
+    <div class="details-body">
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="k">Erfasste Tage</div>
+          <div class="v" id="totalTrackedDays">0</div>
         </div>
-      </details>
+        <div class="stat-box">
+          <div class="k">Softdrinkfrei</div>
+          <div class="v" id="totalNoValue">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="k">Mit Softdrink</div>
+          <div class="v" id="totalYesValue">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="k">Softdrinkfreie Quote</div>
+          <div class="v" id="quoteValue">0 %</div>
+        </div>
+      </div>
+      <div class="stats-divider"></div>
+      <div class="year-stats-list" id="yearStatsList"></div>
     </div>
+  </details>
+</div>
 
-    <div class="card hidden" id="historyCard">
+<div class="card hidden" id="historyCard">
       <details>
-        <summary>Historie (letzte 21 Tage)</summary>
+        <summary>Letzte 21 Tage</summary>
         <div class="details-body">
           <div class="history-list" id="historyList"></div>
         </div>
@@ -404,12 +466,8 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'softdrinkTrackerData_v2';
-    const LEGACY_STORAGE_KEY = 'softdrinkTrackerData_v1';
+    const STORAGE_KEY = 'softdrinkTrackerData_v1';
     const COMMENT_LABEL = 'Kommentar';
-    const TRACKER_STARTS = {
-      2026: '2026-04-20'
-    };
 
     function todayKey() {
       const d = new Date();
@@ -439,14 +497,6 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-    }
-
-    function migrateLegacyData() {
-      const hasCurrent = localStorage.getItem(STORAGE_KEY);
-      if (hasCurrent) return;
-      const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
-      if (!legacy) return;
-      localStorage.setItem(STORAGE_KEY, legacy);
     }
 
     function loadData() {
@@ -497,19 +547,9 @@
       return 'Offen';
     }
 
-    function shiftDateString(dateStr, offsetDays) {
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const dt = new Date(y, m - 1, d);
-      dt.setDate(dt.getDate() + offsetDays);
-      const yy = dt.getFullYear();
-      const mm = String(dt.getMonth() + 1).padStart(2, '0');
-      const dd = String(dt.getDate()).padStart(2, '0');
-      return `${yy}-${mm}-${dd}`;
-    }
-
-    function computeCounts(keys, data) {
-      let no = 0;
-      let yes = 0;
+    function computeStats(data) {
+      const keys = getSortedKeys(data);
+      let no = 0, yes = 0;
       for (const k of keys) {
         const status = data[k]?.status;
         if (status === 'no') no++;
@@ -517,11 +557,72 @@
       }
       const total = keys.length;
       const quote = total ? Math.round((no / total) * 100) : 0;
-      return { total, no, yes, quote };
+      return { keys, total, no, yes, quote };
     }
+
+function computeStatsForKeys(data, keys) {
+  let no = 0, yes = 0;
+  for (const k of keys) {
+    const status = data[k]?.status;
+    if (status === 'no') no++;
+    if (status === 'yes') yes++;
+  }
+  const total = keys.length;
+  const quote = total ? Math.round((no / total) * 100) : 0;
+  return { total, no, yes, quote };
+}
+
+function getYearTrackingStart(year) {
+  if (year === 2026) return '2026-04-20';
+  return `${year}-01-01`;
+}
+
+function getVisibleStatisticYears() {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = 2026; y <= currentYear; y++) years.push(y);
+  return years;
+}
+
+function computeYearStat(data, year) {
+  const start = getYearTrackingStart(year);
+  const end = `${year}-12-31`;
+  const keys = getSortedKeys(data).filter(k => k >= start && k <= end);
+  return {
+    year,
+    start,
+    ...computeStatsForKeys(data, keys)
+  };
+}
+
+function renderYearStats(data) {
+  const wrap = document.getElementById('yearStatsList');
+  const years = getVisibleStatisticYears();
+  if (!years.length) {
+    wrap.innerHTML = '';
+    return;
+  }
+
+  wrap.innerHTML = years.map(year => {
+    const stat = computeYearStat(data, year);
+    const startLabel = formatShortDE(stat.start);
+    const content = stat.total > 0
+      ? `${stat.no} von ${stat.total} Tagen softdrinkfrei (${stat.quote} %)`
+      : 'Noch keine Daten';
+    return `
+      <div class="year-stat-item">
+        <div class="year-stat-title">${year} (seit ${escapeHtml(startLabel)})</div>
+        <div class="year-stat-sub">${escapeHtml(content)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
 
     function computeStreaks(data) {
       const keys = getSortedKeys(data);
+      let best = 0;
+      let bestEnd = null;
       let currentRun = 0;
       let bestRun = 0;
       let bestRunEnd = null;
@@ -539,6 +640,9 @@
         }
       }
 
+      best = bestRun;
+      bestEnd = bestRunEnd;
+
       let current = 0;
       let start = null;
       for (let i = keys.length - 1; i >= 0; i--) {
@@ -554,53 +658,20 @@
       return {
         current,
         currentStart: start,
-        best: bestRun,
-        bestEnd: bestRunEnd,
-        bestStart: (bestRun && bestRunEnd) ? shiftDateString(bestRunEnd, -(bestRun - 1)) : null
+        best,
+        bestEnd,
+        bestStart: (best && bestEnd) ? shiftDateString(bestEnd, -(best - 1)) : null
       };
     }
 
-    function getYearStats(data) {
-      const keys = getSortedKeys(data);
-      const years = [...new Set(keys.map(k => Number(k.slice(0, 4))))].sort((a, b) => a - b);
-      const rows = [];
-
-      rows.push({
-        label: 'Gesamt (alle Jahre)',
-        sub: null,
-        ...computeCounts(keys, data)
-      });
-
-      for (const year of years) {
-        const yearKeys = keys.filter(k => Number(k.slice(0, 4)) === year);
-        const startMarker = TRACKER_STARTS[year] || null;
-        rows.push({
-          label: startMarker ? `${year} (seit ${formatShortDE(startMarker)})` : `${year}`,
-          sub: startMarker ? `Jahresstatistik ab Tracker-Start ${formatShortDE(startMarker)}` : 'Eigenständige Jahresstatistik',
-          ...computeCounts(yearKeys, data)
-        });
-      }
-
-      return rows;
-    }
-
-    function renderStats(data) {
-      const list = document.getElementById('statsList');
-      list.innerHTML = '';
-      const rows = getYearStats(data);
-
-      for (const row of rows) {
-        const el = document.createElement('div');
-        el.className = 'stat-row';
-        el.innerHTML = `
-          <div class="top">
-            <div class="label">${escapeHtml(row.label)}</div>
-            <div class="value">${row.no} / ${row.total}</div>
-          </div>
-          <div class="sub">${row.no} softdrinkfrei · ${row.yes} mit Softdrink · Quote ${row.quote} %${row.sub ? `<br>${escapeHtml(row.sub)}` : ''}</div>
-        `;
-        list.appendChild(el);
-      }
+    function shiftDateString(dateStr, offsetDays) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      dt.setDate(dt.getDate() + offsetDays);
+      const yy = dt.getFullYear();
+      const mm = String(dt.getMonth() + 1).padStart(2, '0');
+      const dd = String(dt.getDate()).padStart(2, '0');
+      return `${yy}-${mm}-${dd}`;
     }
 
     function buildTenDayDisplay(data) {
@@ -696,11 +767,16 @@
 
     function render() {
       const data = loadData();
+      const stats = computeStats(data);
       const streaks = computeStreaks(data);
       const tracked = hasTrackedDays(data);
 
       document.getElementById('todayLine').innerHTML = `${escapeHtml(formatDateDE(todayKey()))}<br><strong>Status heute: ${escapeHtml(getTodayStatusText(data))}</strong>`;
-      renderStats(data);
+
+      document.getElementById('totalTrackedDays').textContent = String(stats.total);
+      document.getElementById('totalNoValue').textContent = String(stats.no);
+      document.getElementById('totalYesValue').textContent = String(stats.yes);
+      document.getElementById('quoteValue').textContent = `${stats.quote} %`;
 
       const seriesCard = document.getElementById('seriesCard');
       const tenDayWrap = document.getElementById('tenDayWrap');
@@ -711,22 +787,28 @@
         tenDayWrap.style.display = 'block';
         historyCard.classList.remove('hidden');
 
-        document.getElementById('currentSeriesLine').innerHTML = streaks.current > 0 && streaks.currentStart
-          ? `Aktuelle Serie: <strong>${streaks.current} ${streaks.current === 1 ? 'Tag' : 'Tage'}</strong> (seit: ${escapeHtml(formatShortDE(streaks.currentStart))})`
-          : `Aktuelle Serie: <strong>0 Tage</strong>`;
+        document.getElementById('currentStreakValue').textContent = String(streaks.current);
+        document.getElementById('currentStreakSub').textContent = streaks.current > 0 && streaks.currentStart
+          ? `(seit: ${formatShortDE(streaks.currentStart)})`
+          : 'Aktuell keine laufende Serie';
 
-        document.getElementById('bestSeriesLine').innerHTML = streaks.best > 0 && streaks.bestStart && streaks.bestEnd
-          ? `Längste Serie: <strong>${streaks.best} ${streaks.best === 1 ? 'Tag' : 'Tage'}</strong> (Zeitraum: ${escapeHtml(formatShortDE(streaks.bestStart))} – ${escapeHtml(formatShortDE(streaks.bestEnd))})`
-          : `Längste Serie: <strong>0 Tage</strong>`;
+        document.getElementById('bestStreakValue').textContent = String(streaks.best);
+        document.getElementById('bestStreakSub').textContent = streaks.best > 0 && streaks.bestStart && streaks.bestEnd
+          ? `(Zeitraum: ${formatShortDE(streaks.bestStart)} bis ${formatShortDE(streaks.bestEnd)})`
+          : 'Noch keine Serie';
 
         buildTenDayDisplay(data);
+        renderYearStats(data);
         renderHistory(data);
       } else {
         seriesCard.classList.add('hidden');
         tenDayWrap.style.display = 'none';
         historyCard.classList.add('hidden');
-        document.getElementById('currentSeriesLine').innerHTML = 'Aktuelle Serie: <strong>0 Tage</strong>';
-        document.getElementById('bestSeriesLine').innerHTML = 'Längste Serie: <strong>0 Tage</strong>';
+        document.getElementById('currentStreakValue').textContent = '0';
+        document.getElementById('currentStreakSub').textContent = 'Noch keine Daten';
+        document.getElementById('bestStreakValue').textContent = '0';
+        document.getElementById('bestStreakSub').textContent = 'Noch keine Daten';
+        renderYearStats(data);
       }
     }
 
@@ -844,7 +926,7 @@
           saveData(imported);
           render();
           alert('Import erfolgreich.');
-        } catch {
+        } catch (e) {
           alert('Import fehlgeschlagen. Bitte CSV prüfen.');
         }
       };
@@ -880,11 +962,9 @@
       const ok = confirm('Wirklich alle Daten löschen?');
       if (!ok) return;
       localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(LEGACY_STORAGE_KEY);
       render();
     });
 
-    migrateLegacyData();
     render();
   </script>
 </body>
