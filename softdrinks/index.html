@@ -9,382 +9,348 @@
   <meta name="apple-mobile-web-app-title" content="Softdrink-Tracker" />
   <title>Softdrink-Tracker</title>
   <style>
-    :root {
-      --bg: #0b1220;
-      --card: #121a2b;
-      --card-2: #172133;
-      --text: #eef2ff;
-      --muted: #aab4c8;
-      --line: rgba(255,255,255,.08);
-      --green: #198754;
-      --green-2: #146c43;
-      --red: #b42318;
-      --red-2: #8f1c13;
-      --amber: #d4a017;
-      --gray: #6b7280;
-      --open: #4b5563;
-      --shadow: 0 10px 30px rgba(0,0,0,.28);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --max: 760px;
+    :root{
+      --bg1:#071225;
+      --bg2:#0b1830;
+      --card:#101b31;
+      --card-soft:rgba(255,255,255,.03);
+      --line:rgba(255,255,255,.08);
+      --text:#eef2ff;
+      --muted:#aeb8cc;
+      --green:#198754;
+      --green2:#136c43;
+      --red:#c11a12;
+      --red2:#9d160f;
+      --open:#4b5563;
+      --shadow:0 12px 32px rgba(0,0,0,.28);
+      --radius:22px;
+      --max:760px;
     }
 
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: linear-gradient(180deg, #0b1220 0%, #0f172a 100%); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { min-height: 100vh; }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      min-height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top, rgba(14,52,119,.22), transparent 38%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
+    }
+    body{min-height:100vh}
 
-    .app {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 28px);
+    .app{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 28px);
     }
 
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .title{
+      font-size:1.5rem;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .icon-bar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0;
+    }
+    .icon-btn{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.05rem;
+      cursor:pointer;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .icon-btn:active{transform:scale(.98)}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      margin-bottom:16px;
+      backdrop-filter:blur(8px);
     }
 
-    .title {
-      font-size: 1.55rem;
-      font-weight: 700;
-      letter-spacing: .2px;
+    .hero-buttons{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .hero-btn{
+      border:0;
+      min-height:84px;
+      border-radius:18px;
+      padding:16px 14px;
+      color:#fff;
+      font-size:1.1rem;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:inset 0 -3px 0 rgba(0,0,0,.18);
+    }
+    .btn-green{background:linear-gradient(180deg,var(--green),var(--green2))}
+    .btn-red{background:linear-gradient(180deg,var(--red),var(--red2))}
+    .hero-btn:active{transform:translateY(1px)}
+
+    .today-line{
+      text-align:center;
+      line-height:1.55;
+      color:var(--muted);
+      font-size:1rem;
+    }
+    .today-line strong{color:var(--text)}
+
+    .hidden{display:none!important}
+
+    .section-title{
+      margin:0 0 12px;
+      font-size:1rem;
+      font-weight:800;
     }
 
-    .icon-bar {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+    .series-block{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      padding-top:2px;
+    }
+    .series-item{
+      padding-bottom:12px;
+      border-bottom:1px solid var(--line);
+    }
+    .series-item:last-child{
+      padding-bottom:0;
+      border-bottom:0;
+    }
+    .series-main{
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.4;
+    }
+    .series-main strong{
+      color:var(--text);
+      font-size:1rem;
+      font-weight:800;
+    }
+    .series-sub{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.35;
     }
 
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      font-size: 1.05rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+    .ten-day-wrap{display:none}
+    .ten-day-row{
+      display:grid;
+      grid-template-columns:repeat(10, minmax(0,1fr));
+      gap:8px;
+    }
+    .day-box{
+      aspect-ratio:1 / 1;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.1rem;
+      font-weight:800;
+      background:rgba(255,255,255,.03);
+      color:#d7dbe7;
+      user-select:none;
+    }
+    .day-box.no{
+      background:rgba(25,135,84,.18);
+      color:#65e0a1;
+      border-color:rgba(25,135,84,.35);
+    }
+    .day-box.yes{
+      background:rgba(193,26,18,.18);
+      color:#ff8d86;
+      border-color:rgba(193,26,18,.35);
+    }
+    .day-box.open{
+      color:#d2d7e2;
+      background:rgba(255,255,255,.03);
+    }
+    .ten-day-label{
+      margin-top:12px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.95rem;
     }
 
-    .icon-btn:active { transform: scale(.98); }
+    details{
+      border-radius:16px;
+      overflow:hidden;
+    }
+    summary{
+      list-style:none;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size:1rem;
+      font-weight:800;
+      color:var(--text);
+    }
+    summary::-webkit-details-marker{display:none}
+    summary::after{
+      content:"▾";
+      color:var(--muted);
+      font-size:1rem;
+      transition:transform .18s ease;
+    }
+    details[open] summary::after{transform:rotate(180deg)}
+    .details-body{padding-top:14px}
 
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      margin-bottom: 16px;
-      backdrop-filter: blur(8px);
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+    }
+    .stat-box{
+      padding:12px;
+      border-radius:14px;
+      background:var(--card-soft);
+      border:1px solid var(--line);
+    }
+    .stat-box .k{
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.35;
+      margin-bottom:6px;
+    }
+    .stat-box .v{
+      color:var(--text);
+      font-size:1.08rem;
+      font-weight:800;
+    }
+    .stats-divider{
+      height:1px;
+      background:var(--line);
+      margin:14px 0 10px;
+    }
+    .year-stats-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .year-stat-item{
+      padding:12px;
+      border-radius:14px;
+      background:var(--card-soft);
+      border:1px solid var(--line);
+    }
+    .year-stat-title{
+      color:var(--text);
+      font-size:.95rem;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    .year-stat-sub{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.35;
     }
 
-    .hero-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+    .history-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .history-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.03);
+    }
+    .history-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .history-date{
+      font-weight:700;
+      font-size:.95rem;
+    }
+    .badge{
+      font-size:.78rem;
+      padding:5px 8px;
+      border-radius:999px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .badge.green{background:rgba(25,135,84,.18); color:#65e0a1; border:1px solid rgba(25,135,84,.35)}
+    .badge.red{background:rgba(193,26,18,.18); color:#ff8d86; border:1px solid rgba(193,26,18,.35)}
+    .badge.open{background:rgba(255,255,255,.07); color:#d7dbe7; border:1px solid rgba(255,255,255,.1)}
+
+    .history-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:8px;
+      margin-top:10px;
+    }
+    .small-btn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      min-height:40px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .small-btn.green{background:rgba(25,135,84,.14)}
+    .small-btn.red{background:rgba(193,26,18,.14)}
+
+    .comment-wrap{
+      margin-top:10px;
+      display:none;
+    }
+    .comment-wrap.show{display:block}
+    .comment-wrap label{
+      display:block;
+      font-size:.82rem;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .comment-input{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:11px 12px;
+      font:inherit;
+      min-height:44px;
+      outline:none;
     }
 
-    .hero-btn {
-      min-height: 72px;
-      border: 0;
-      border-radius: 16px;
-      color: white;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 14px 12px;
-      box-shadow: inset 0 -2px 0 rgba(0,0,0,.18);
-    }
-
-    .hero-btn:active { transform: translateY(1px); }
-    .btn-green { background: linear-gradient(180deg, var(--green), var(--green-2)); }
-    .btn-red { background: linear-gradient(180deg, var(--red), var(--red-2)); }
-
-    .today-line {
-      text-align: center;
-      color: var(--muted);
-      font-size: .96rem;
-      line-height: 1.5;
-    }
-
-    .today-line strong { color: var(--text); }
-
-    .section-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin: 0 0 12px;
-    }
-
-    .series-block {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 2px;
-}
-
-.series-item {
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
-}
-
-.series-item:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.series-main {
-  font-size: 1rem;
-  line-height: 1.4;
-  color: var(--muted);
-}
-
-.series-main strong {
-  color: var(--text);
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.series-sub {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: .9rem;
-  line-height: 1.35;
-}
-
-.ten-day-wrap {
-      display: none;
-      padding-top: 2px;
-    }
-
-    .ten-day-row {
-      display: grid;
-      grid-template-columns: repeat(10, minmax(0, 1fr));
-      gap: 6px;
-    }
-
-    .day-box {
-      aspect-ratio: 1 / 1;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .92rem;
-      font-weight: 700;
-      background: rgba(255,255,255,.03);
-    }
-
-    .day-box.green { background: rgba(25,135,84,.18); color: #7ef0b3; }
-    .day-box.red { background: rgba(180,35,24,.18); color: #ff8e85; }
-    .day-box.open { background: rgba(107,114,128,.18); color: #d1d5db; }
-
-    details {
-      border-radius: 14px;
-      background: var(--card-2);
-      border: 1px solid var(--line);
-      overflow: hidden;
-    }
-
-    summary {
-      list-style: none;
-      cursor: pointer;
-      padding: 14px 16px;
-      font-weight: 700;
-      user-select: none;
-      position: relative;
-    }
-
-    summary::-webkit-details-marker { display: none; }
-    summary::after {
-      content: '▾';
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      transition: transform .15s ease;
-    }
-
-    details[open] summary::after { transform: translateY(-50%) rotate(180deg); }
-    .details-body { padding: 0 16px 16px; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .stat-box {
-      padding: 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--line);
-    }
-
-    .stat-box .k { color: var(--muted); font-size: .82rem; margin-bottom: 5px; }
-    .stat-box .v { font-size: 1.08rem; font-weight: 800; }
-
-    .stats-divider {
-      height: 1px;
-      background: var(--line);
-      margin: 14px 0 10px;
-    }
-
-    .year-stats-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .year-stat-item {
-      padding: 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--line);
-    }
-
-    .year-stat-title {
-      color: var(--text);
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .year-stat-sub {
-      color: var(--muted);
-      font-size: .9rem;
-      line-height: 1.35;
-    }
-
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .history-item {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      background: rgba(255,255,255,.03);
-    }
-
-    .history-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .history-date {
-      font-weight: 700;
-      font-size: .95rem;
-    }
-
-    .badge {
-      font-size: .78rem;
-      padding: 5px 8px;
-      border-radius: 999px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .badge.green { background: rgba(25,135,84,.18); color: #8ef5bb; }
-    .badge.red { background: rgba(180,35,24,.18); color: #ff9a92; }
-    .badge.open { background: rgba(107,114,128,.22); color: #d5d9df; }
-
-    .segmented {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-    }
-
-    .seg-btn {
-      min-height: 42px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .seg-btn.active-green { border-color: rgba(25,135,84,.55); background: rgba(25,135,84,.18); }
-    .seg-btn.active-red { border-color: rgba(180,35,24,.55); background: rgba(180,35,24,.18); }
-    .seg-btn.active-open { border-color: rgba(107,114,128,.55); background: rgba(107,114,128,.2); }
-
-    .comment-wrap {
-      margin-top: 10px;
-      display: none;
-    }
-
-    .comment-wrap.show { display: block; }
-
-    textarea, input[type="text"], input[type="date"] {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 12px 13px;
-      font: inherit;
-    }
-
-    textarea {
-      min-height: 86px;
-      resize: vertical;
-    }
-
-    .row-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .small-btn {
-      min-height: 38px;
-      padding: 0 12px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .small-btn.primary { background: rgba(255,255,255,.1); }
-
-    .empty-note {
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.5;
-    }
-
-    .divider {
-      height: 1px;
-      background: var(--line);
-      margin: 12px 0;
-    }
-
-    .hidden { display: none !important; }
-
-    @media (max-width: 560px) {
-      .hero-buttons,
-      .series-grid,
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .title { font-size: 1.4rem; }
+    @media (max-width:540px){
+      .stats-grid{grid-template-columns:1fr 1fr}
+      .title{font-size:1.38rem}
+      .hero-btn{min-height:78px; font-size:1.02rem}
     }
   </style>
 </head>
@@ -393,8 +359,8 @@
     <div class="header">
       <div class="title">Softdrink-Tracker</div>
       <div class="icon-bar">
-        <button class="icon-btn" id="importBtn" title="Importieren" aria-label="Importieren">⤓</button>
-        <button class="icon-btn" id="exportBtn" title="Exportieren" aria-label="Exportieren">⤒</button>
+        <button class="icon-btn" id="importBtn" title="Importieren" aria-label="Importieren">↓</button>
+        <button class="icon-btn" id="exportBtn" title="Exportieren" aria-label="Exportieren">↑</button>
         <button class="icon-btn" id="deleteBtn" title="Daten löschen" aria-label="Daten löschen">🗑️</button>
       </div>
     </div>
@@ -408,54 +374,55 @@
     </div>
 
     <div class="card hidden" id="seriesCard">
-  <h2 class="section-title">Serien</h2>
-  <div class="series-block">
-    <div class="series-item">
-      <div class="series-main">Aktuelle Serie: <strong><span id="currentStreakValue">0</span> Tag(e)</strong></div>
-      <div class="series-sub" id="currentStreakSub">Noch keine Daten</div>
+      <h2 class="section-title">Serien</h2>
+      <div class="series-block">
+        <div class="series-item">
+          <div class="series-main">Aktuelle Serie: <strong><span id="currentStreakValue">0</span> Tag(e)</strong></div>
+          <div class="series-sub" id="currentStreakSub">Noch keine Daten</div>
+        </div>
+        <div class="series-item">
+          <div class="series-main">Längste Serie: <strong><span id="bestStreakValue">0</span> Tag(e)</strong></div>
+          <div class="series-sub" id="bestStreakSub">Noch keine Daten</div>
+        </div>
+      </div>
     </div>
-    <div class="series-item">
-      <div class="series-main">Längste Serie: <strong><span id="bestStreakValue">0</span> Tag(e)</strong></div>
-      <div class="series-sub" id="bestStreakSub">Noch keine Daten</div>
-    </div>
-  </div>
-</div>
 
-<div class="card ten-day-wrap id="tenDayWrap">
+    <div class="card ten-day-wrap" id="tenDayWrap">
       <div class="ten-day-row" id="tenDayRow"></div>
+      <div class="ten-day-label">Letzte 10 Tage</div>
     </div>
 
     <div class="card" id="statsCard">
-  <details id="statsDetails">
-    <summary>Gesamtstatistik</summary>
-    <div class="details-body">
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="k">Erfasste Tage</div>
-          <div class="v" id="totalTrackedDays">0</div>
+      <details id="statsDetails">
+        <summary>Gesamtstatistik</summary>
+        <div class="details-body">
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="k">Erfasste Tage</div>
+              <div class="v" id="totalTrackedDays">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="k">Softdrinkfrei</div>
+              <div class="v" id="totalNoValue">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="k">Mit Softdrink</div>
+              <div class="v" id="totalYesValue">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="k">Softdrinkfreie Quote</div>
+              <div class="v" id="quoteValue">0 %</div>
+            </div>
+          </div>
+          <div class="stats-divider"></div>
+          <div class="year-stats-list" id="yearStatsList"></div>
         </div>
-        <div class="stat-box">
-          <div class="k">Softdrinkfrei</div>
-          <div class="v" id="totalNoValue">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="k">Mit Softdrink</div>
-          <div class="v" id="totalYesValue">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="k">Softdrinkfreie Quote</div>
-          <div class="v" id="quoteValue">0 %</div>
-        </div>
-      </div>
-      <div class="stats-divider"></div>
-      <div class="year-stats-list" id="yearStatsList"></div>
+      </details>
     </div>
-  </details>
-</div>
 
-<div class="card hidden" id="historyCard">
-      <details>
-        <summary>Letzte 21 Tage</summary>
+    <div class="card hidden" id="historyCard">
+      <details open>
+        <summary>Historie (letzte 21 Tage)</summary>
         <div class="details-body">
           <div class="history-list" id="historyList"></div>
         </div>
@@ -466,45 +433,15 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'softdrinkTrackerData_v1';
+    const STORAGE_KEY = 'softdrinkTrackerData';
     const COMMENT_LABEL = 'Kommentar';
-
-    function todayKey() {
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-
-    function formatDateDE(dateStr) {
-      if (!dateStr) return '';
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const dt = new Date(y, (m || 1) - 1, d || 1);
-      return dt.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
-    }
-
-    function formatShortDE(dateStr) {
-      if (!dateStr) return '';
-      const [y, m, d] = dateStr.split('-');
-      return `${d}.${m}.${y}`;
-    }
-
-    function escapeHtml(str) {
-      return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
+    const TRACKING_START_2026 = '2026-04-20';
 
     function loadData() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return {};
-        const parsed = JSON.parse(raw);
-        return (parsed && typeof parsed === 'object') ? parsed : {};
+        const data = raw ? JSON.parse(raw) : {};
+        return data && typeof data === 'object' ? data : {};
       } catch {
         return {};
       }
@@ -514,9 +451,60 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
+    function todayKey() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function dateKeyFromDate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function parseDateKey(dateStr) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function shiftDateString(dateStr, offsetDays) {
+      const d = parseDateKey(dateStr);
+      d.setDate(d.getDate() + offsetDays);
+      return dateKeyFromDate(d);
+    }
+
+    function formatDateDE(dateStr) {
+      const d = parseDateKey(dateStr);
+      return d.toLocaleDateString('de-DE', {
+        weekday: 'long',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
+
+    function formatShortDE(dateStr) {
+      if (!dateStr) return '';
+      const [y, m, d] = dateStr.split('-');
+      return `${d}.${m}.${y}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
     function getSortedKeys(data) {
       return Object.keys(data)
-        .filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k))
+        .filter(k => data[k] && (data[k].status === 'no' || data[k].status === 'yes'))
         .sort();
     }
 
@@ -524,31 +512,31 @@
       return getSortedKeys(data).length > 0;
     }
 
+    function getEntry(data, key) {
+      return data[key] || null;
+    }
+
     function setStatus(dateKey, status, comment = '') {
       const data = loadData();
       if (status === 'open') {
         delete data[dateKey];
       } else {
-        data[dateKey] = { status, comment: status === 'yes' ? String(comment || '').trim() : '' };
+        data[dateKey] = {
+          status,
+          comment: status === 'yes' ? String(comment || '').trim() : ''
+        };
       }
       saveData(data);
       render();
     }
 
-    function getEntry(data, dateKey) {
-      return data[dateKey] || null;
-    }
-
     function getTodayStatusText(data) {
       const entry = getEntry(data, todayKey());
       if (!entry) return 'Offen';
-      if (entry.status === 'no') return 'Kein Softdrink';
-      if (entry.status === 'yes') return 'Softdrink';
-      return 'Offen';
+      return entry.status === 'no' ? 'Kein Softdrink' : 'Softdrink';
     }
 
-    function computeStats(data) {
-      const keys = getSortedKeys(data);
+    function computeStatsForKeys(data, keys) {
       let no = 0, yes = 0;
       for (const k of keys) {
         const status = data[k]?.status;
@@ -557,266 +545,176 @@
       }
       const total = keys.length;
       const quote = total ? Math.round((no / total) * 100) : 0;
-      return { keys, total, no, yes, quote };
+      return { total, no, yes, quote };
     }
 
-function computeStatsForKeys(data, keys) {
-  let no = 0, yes = 0;
-  for (const k of keys) {
-    const status = data[k]?.status;
-    if (status === 'no') no++;
-    if (status === 'yes') yes++;
-  }
-  const total = keys.length;
-  const quote = total ? Math.round((no / total) * 100) : 0;
-  return { total, no, yes, quote };
-}
-
-function getYearTrackingStart(year) {
-  if (year === 2026) return '2026-04-20';
-  return `${year}-01-01`;
-}
-
-function getVisibleStatisticYears() {
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let y = 2026; y <= currentYear; y++) years.push(y);
-  return years;
-}
-
-function computeYearStat(data, year) {
-  const start = getYearTrackingStart(year);
-  const end = `${year}-12-31`;
-  const keys = getSortedKeys(data).filter(k => k >= start && k <= end);
-  return {
-    year,
-    start,
-    ...computeStatsForKeys(data, keys)
-  };
-}
-
-function renderYearStats(data) {
-  const wrap = document.getElementById('yearStatsList');
-  const years = getVisibleStatisticYears();
-  if (!years.length) {
-    wrap.innerHTML = '';
-    return;
-  }
-
-  wrap.innerHTML = years.map(year => {
-    const stat = computeYearStat(data, year);
-    const startLabel = formatShortDE(stat.start);
-    const content = stat.total > 0
-      ? `${stat.no} von ${stat.total} Tagen softdrinkfrei (${stat.quote} %)`
-      : 'Noch keine Daten';
-    return `
-      <div class="year-stat-item">
-        <div class="year-stat-title">${year} (seit ${escapeHtml(startLabel)})</div>
-        <div class="year-stat-sub">${escapeHtml(content)}</div>
-      </div>
-    `;
-  }).join('');
-}
-
-
-    function computeStreaks(data) {
+    function computeStats(data) {
       const keys = getSortedKeys(data);
-      let best = 0;
-      let bestEnd = null;
-      let currentRun = 0;
-      let bestRun = 0;
-      let bestRunEnd = null;
-
-      for (const k of keys) {
-        const status = data[k]?.status;
-        if (status === 'no') {
-          currentRun++;
-          if (currentRun > bestRun) {
-            bestRun = currentRun;
-            bestRunEnd = k;
-          }
-        } else {
-          currentRun = 0;
-        }
-      }
-
-      best = bestRun;
-      bestEnd = bestRunEnd;
-
-      let current = 0;
-      let start = null;
-      for (let i = keys.length - 1; i >= 0; i--) {
-        const k = keys[i];
-        if (data[k]?.status === 'no') {
-          current++;
-          start = k;
-        } else {
-          break;
-        }
-      }
-
       return {
-        current,
-        currentStart: start,
-        best,
-        bestEnd,
-        bestStart: (best && bestEnd) ? shiftDateString(bestEnd, -(best - 1)) : null
+        keys,
+        ...computeStatsForKeys(data, keys)
       };
     }
 
-    function shiftDateString(dateStr, offsetDays) {
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const dt = new Date(y, m - 1, d);
-      dt.setDate(dt.getDate() + offsetDays);
-      const yy = dt.getFullYear();
-      const mm = String(dt.getMonth() + 1).padStart(2, '0');
-      const dd = String(dt.getDate()).padStart(2, '0');
-      return `${yy}-${mm}-${dd}`;
+    function computeStreaks(data) {
+      const keys = getSortedKeys(data);
+      let current = 0;
+      let currentStart = '';
+      let best = 0;
+      let bestStart = '';
+      let bestEnd = '';
+
+      let running = 0;
+      let runningStart = '';
+
+      for (const key of keys) {
+        const status = data[key]?.status;
+        if (status === 'no') {
+          if (running === 0) runningStart = key;
+          running++;
+          if (running > best) {
+            best = running;
+            bestStart = runningStart;
+            bestEnd = key;
+          }
+        } else {
+          running = 0;
+          runningStart = '';
+        }
+      }
+
+      const tKey = todayKey();
+      let cursor = tKey;
+      while (data[cursor]?.status === 'no') {
+        current++;
+        currentStart = cursor;
+        cursor = shiftDateString(cursor, -1);
+      }
+
+      return { current, currentStart, best, bestStart, bestEnd };
     }
 
     function buildTenDayDisplay(data) {
       const row = document.getElementById('tenDayRow');
       row.innerHTML = '';
       const today = todayKey();
+      const start = shiftDateString(today, -9);
 
-      for (let offset = -9; offset <= 0; offset++) {
-        const key = shiftDateString(today, offset);
-        const entry = data[key];
+      for (let i = 0; i < 10; i++) {
+        const key = shiftDateString(start, i);
+        const status = data[key]?.status || 'open';
         const box = document.createElement('div');
-        let cls = 'open';
-        let symbol = '?';
-
-        if (entry?.status === 'no') {
-          cls = 'green';
-          symbol = '✓';
-        } else if (entry?.status === 'yes') {
-          cls = 'red';
-          symbol = '✕';
-        }
-
-        box.className = `day-box ${cls}`;
-        box.textContent = symbol;
-        box.title = `${formatShortDE(key)} – ${entry?.status === 'no' ? 'Kein Softdrink' : entry?.status === 'yes' ? 'Softdrink' : 'Offen'}`;
+        box.className = `day-box ${status}`;
+        box.textContent = status === 'no' ? '✓' : status === 'yes' ? '✕' : '?';
         row.appendChild(box);
       }
+    }
+
+    function getYearTrackingStart(year) {
+      if (year === 2026) return TRACKING_START_2026;
+      return `${year}-01-01`;
+    }
+
+    function getVisibleStatisticYears() {
+      const currentYear = new Date().getFullYear();
+      const years = [];
+      for (let y = 2026; y <= currentYear; y++) years.push(y);
+      return years;
+    }
+
+    function computeYearStat(data, year) {
+      const start = getYearTrackingStart(year);
+      const end = `${year}-12-31`;
+      const keys = getSortedKeys(data).filter(k => k >= start && k <= end);
+      return {
+        year,
+        start,
+        ...computeStatsForKeys(data, keys)
+      };
+    }
+
+    function renderYearStats(data) {
+      const wrap = document.getElementById('yearStatsList');
+      const years = getVisibleStatisticYears();
+      wrap.innerHTML = years.map(year => {
+        const stat = computeYearStat(data, year);
+        const title = `${year} (seit ${formatShortDE(stat.start)})`;
+        const text = stat.total > 0
+          ? `${stat.no} von ${stat.total} Tagen softdrinkfrei (${stat.quote} %)`
+          : 'Noch keine Daten';
+        return `
+          <div class="year-stat-item">
+            <div class="year-stat-title">${escapeHtml(title)}</div>
+            <div class="year-stat-sub">${escapeHtml(text)}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderHistory(data) {
       const list = document.getElementById('historyList');
       list.innerHTML = '';
       const today = todayKey();
-      const items = [];
 
       for (let offset = 0; offset < 21; offset++) {
         const key = shiftDateString(today, -offset);
-        const entry = data[key] || null;
-        items.push({ key, entry });
-      }
-
-      for (const { key, entry } of items) {
+        const entry = data[key];
         const status = entry?.status || 'open';
-        const comment = entry?.comment || '';
-
         const wrap = document.createElement('div');
         wrap.className = 'history-item';
 
-        wrap.innerHTML = `
-          <div class="history-top">
-            <div class="history-date">${escapeHtml(formatDateDE(key))}</div>
-            <div class="badge ${status === 'no' ? 'green' : status === 'yes' ? 'red' : 'open'}">${status === 'no' ? 'Kein Softdrink' : status === 'yes' ? 'Softdrink' : 'Offen'}</div>
+        const commentBlock = status === 'yes' ? `
+          <div class="comment-wrap show" id="comment-wrap-${key}">
+            <label for="comment-${key}">${COMMENT_LABEL}</label>
+            <input class="comment-input" id="comment-${key}" type="text" value="${escapeHtml(entry?.comment || '')}" placeholder="Optionaler Kommentar" />
           </div>
-          <div class="segmented">
-            <button class="seg-btn ${status === 'no' ? 'active-green' : ''}" data-date="${key}" data-status="no">Kein</button>
-            <button class="seg-btn ${status === 'yes' ? 'active-red' : ''}" data-date="${key}" data-status="yes">Softdrink</button>
-            <button class="seg-btn ${status === 'open' ? 'active-open' : ''}" data-date="${key}" data-status="open">Offen</button>
-          </div>
-          <div class="comment-wrap ${status === 'yes' ? 'show' : ''}" id="comment-wrap-${key}">
-            <textarea id="comment-${key}" placeholder="Optionaler Kommentar oder Anlass">${escapeHtml(comment)}</textarea>
-            <div class="row-actions">
-              <button class="small-btn primary" data-save-comment="${key}">Speichern</button>
-            </div>
+        ` : `
+          <div class="comment-wrap" id="comment-wrap-${key}">
+            <label for="comment-${key}">${COMMENT_LABEL}</label>
+            <input class="comment-input" id="comment-${key}" type="text" value="" placeholder="Optionaler Kommentar" />
           </div>
         `;
 
+        wrap.innerHTML = `
+          <div class="history-top">
+            <div class="history-date">${escapeHtml(offset === 0 ? 'Heute' : formatDateDE(key))}</div>
+            <div class="badge ${status === 'no' ? 'green' : status === 'yes' ? 'red' : 'open'}">
+              ${status === 'no' ? 'Kein Softdrink' : status === 'yes' ? 'Softdrink' : 'Offen'}
+            </div>
+          </div>
+          ${commentBlock}
+          <div class="history-actions">
+            <button class="small-btn green" data-date="${key}" data-action="no">Kein Softdrink</button>
+            <button class="small-btn red" data-date="${key}" data-action="yes">Softdrink</button>
+            <button class="small-btn" data-date="${key}" data-action="open">Offen</button>
+          </div>
+        `;
         list.appendChild(wrap);
       }
 
-      list.querySelectorAll('[data-status]').forEach(btn => {
+      list.querySelectorAll('button[data-action]').forEach(btn => {
         btn.addEventListener('click', () => {
-          const date = btn.getAttribute('data-date');
-          const status = btn.getAttribute('data-status');
-          if (status === 'yes') {
-            const existing = loadData()[date]?.comment || '';
-            setStatus(date, 'yes', existing);
-          } else if (status === 'no') {
-            setStatus(date, 'no');
-          } else {
+          const date = btn.dataset.date;
+          const action = btn.dataset.action;
+          if (action === 'open') {
             setStatus(date, 'open');
+            return;
           }
+          if (action === 'no') {
+            setStatus(date, 'no', '');
+            return;
+          }
+          const input = document.getElementById(`comment-${date}`);
+          const comment = input ? input.value.trim() : '';
+          setStatus(date, 'yes', comment);
         });
       });
-
-      list.querySelectorAll('[data-save-comment]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const date = btn.getAttribute('data-save-comment');
-          const text = document.getElementById(`comment-${date}`).value.trim();
-          setStatus(date, 'yes', text);
-        });
-      });
-    }
-
-    function render() {
-      const data = loadData();
-      const stats = computeStats(data);
-      const streaks = computeStreaks(data);
-      const tracked = hasTrackedDays(data);
-
-      document.getElementById('todayLine').innerHTML = `${escapeHtml(formatDateDE(todayKey()))}<br><strong>Status heute: ${escapeHtml(getTodayStatusText(data))}</strong>`;
-
-      document.getElementById('totalTrackedDays').textContent = String(stats.total);
-      document.getElementById('totalNoValue').textContent = String(stats.no);
-      document.getElementById('totalYesValue').textContent = String(stats.yes);
-      document.getElementById('quoteValue').textContent = `${stats.quote} %`;
-
-      const seriesCard = document.getElementById('seriesCard');
-      const tenDayWrap = document.getElementById('tenDayWrap');
-      const historyCard = document.getElementById('historyCard');
-
-      if (tracked) {
-        seriesCard.classList.remove('hidden');
-        tenDayWrap.style.display = 'block';
-        historyCard.classList.remove('hidden');
-
-        document.getElementById('currentStreakValue').textContent = String(streaks.current);
-        document.getElementById('currentStreakSub').textContent = streaks.current > 0 && streaks.currentStart
-          ? `(seit: ${formatShortDE(streaks.currentStart)})`
-          : 'Aktuell keine laufende Serie';
-
-        document.getElementById('bestStreakValue').textContent = String(streaks.best);
-        document.getElementById('bestStreakSub').textContent = streaks.best > 0 && streaks.bestStart && streaks.bestEnd
-          ? `(Zeitraum: ${formatShortDE(streaks.bestStart)} bis ${formatShortDE(streaks.bestEnd)})`
-          : 'Noch keine Serie';
-
-        buildTenDayDisplay(data);
-        renderYearStats(data);
-        renderHistory(data);
-      } else {
-        seriesCard.classList.add('hidden');
-        tenDayWrap.style.display = 'none';
-        historyCard.classList.add('hidden');
-        document.getElementById('currentStreakValue').textContent = '0';
-        document.getElementById('currentStreakSub').textContent = 'Noch keine Daten';
-        document.getElementById('bestStreakValue').textContent = '0';
-        document.getElementById('bestStreakSub').textContent = 'Noch keine Daten';
-        renderYearStats(data);
-      }
     }
 
     function exportCsv() {
       const data = loadData();
       const keys = getSortedKeys(data);
       const lines = [['Datum', 'Softdrink', COMMENT_LABEL]];
-
       for (const k of keys) {
         const entry = data[k];
         const val = entry?.status === 'yes' ? 'ja' : entry?.status === 'no' ? 'nein' : '';
@@ -839,9 +737,7 @@ function renderYearStats(data) {
 
     function csvEscape(value) {
       const str = String(value ?? '');
-      if (/[";\n]/.test(str)) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
+      if (/[";\n]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
       return str;
     }
 
@@ -875,87 +771,136 @@ function renderYearStats(data) {
             rows.push(row);
             row = [];
             cell = '';
-          } else if (ch === '\r') {
-          } else {
+          } else if (ch !== '\r') {
             cell += ch;
           }
         }
       }
 
       row.push(cell);
-      if (row.some(v => v !== '')) rows.push(row);
+      if (row.length > 1 || row[0] !== '') rows.push(row);
       return rows;
     }
 
-    function importCsv(file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const text = String(reader.result || '');
-          const rows = parseCsv(text);
-          if (!rows.length) {
-            alert('Die CSV-Datei ist leer.');
-            return;
-          }
+    function importCsvText(text) {
+      const rows = parseCsv(text);
+      if (!rows.length) throw new Error('CSV leer');
 
-          const header = rows[0].map(h => String(h || '').trim().toLowerCase());
-          const dateIdx = header.indexOf('datum');
-          const statusIdx = header.indexOf('softdrink');
-          const commentIdx = header.findIndex(h => h === 'kommentar' || h === 'anlass');
+      const header = rows[0].map(v => String(v || '').trim().toLowerCase());
+      const dateIdx = header.findIndex(v => v === 'datum');
+      const statusIdx = header.findIndex(v => v === 'softdrink');
+      const commentIdx = header.findIndex(v => v === COMMENT_LABEL.toLowerCase());
 
-          if (dateIdx === -1 || statusIdx === -1) {
-            alert('Ungültige CSV. Erwartet werden mindestens die Spalten „Datum“ und „Softdrink“.');
-            return;
-          }
+      if (dateIdx === -1 || statusIdx === -1) {
+        throw new Error('CSV-Format ungültig');
+      }
 
-          const imported = {};
-          for (let i = 1; i < rows.length; i++) {
-            const cols = rows[i];
-            const date = String(cols[dateIdx] || '').trim();
-            const rawStatus = String(cols[statusIdx] || '').trim().toLowerCase();
-            const comment = commentIdx >= 0 ? String(cols[commentIdx] || '').trim() : '';
+      const data = {};
+      for (let i = 1; i < rows.length; i++) {
+        const cols = rows[i];
+        const date = String(cols[dateIdx] || '').trim();
+        const rawStatus = String(cols[statusIdx] || '').trim().toLowerCase();
+        const comment = commentIdx >= 0 ? String(cols[commentIdx] || '').trim() : '';
 
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
-            if (rawStatus === 'ja') {
-              imported[date] = { status: 'yes', comment };
-            } else if (rawStatus === 'nein') {
-              imported[date] = { status: 'no', comment: '' };
-            }
-          }
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
 
-          saveData(imported);
-          render();
-          alert('Import erfolgreich.');
-        } catch (e) {
-          alert('Import fehlgeschlagen. Bitte CSV prüfen.');
+        if (rawStatus === 'nein') {
+          data[date] = { status: 'no', comment: '' };
+        } else if (rawStatus === 'ja') {
+          data[date] = { status: 'yes', comment };
         }
-      };
-      reader.readAsText(file, 'utf-8');
+      }
+
+      saveData(data);
+      render();
+    }
+
+    function render() {
+      const data = loadData();
+      const stats = computeStats(data);
+      const streaks = computeStreaks(data);
+      const tracked = hasTrackedDays(data);
+
+      document.getElementById('todayLine').innerHTML =
+        `${escapeHtml(formatDateDE(todayKey()))}<br><strong>Status heute: ${escapeHtml(getTodayStatusText(data))}</strong>`;
+
+      document.getElementById('totalTrackedDays').textContent = String(stats.total);
+      document.getElementById('totalNoValue').textContent = String(stats.no);
+      document.getElementById('totalYesValue').textContent = String(stats.yes);
+      document.getElementById('quoteValue').textContent = `${stats.quote} %`;
+
+      renderYearStats(data);
+
+      const seriesCard = document.getElementById('seriesCard');
+      const tenDayWrap = document.getElementById('tenDayWrap');
+      const historyCard = document.getElementById('historyCard');
+
+      if (tracked) {
+        seriesCard.classList.remove('hidden');
+        tenDayWrap.style.display = 'block';
+        historyCard.classList.remove('hidden');
+
+        document.getElementById('currentStreakValue').textContent = String(streaks.current);
+        document.getElementById('currentStreakSub').textContent =
+          streaks.current > 0 && streaks.currentStart
+            ? `(seit: ${formatShortDE(streaks.currentStart)})`
+            : 'Aktuell keine laufende Serie';
+
+        document.getElementById('bestStreakValue').textContent = String(streaks.best);
+        document.getElementById('bestStreakSub').textContent =
+          streaks.best > 0 && streaks.bestStart && streaks.bestEnd
+            ? `(Zeitraum: ${formatShortDE(streaks.bestStart)} bis ${formatShortDE(streaks.bestEnd)})`
+            : 'Noch keine Serie';
+
+        buildTenDayDisplay(data);
+        renderHistory(data);
+      } else {
+        seriesCard.classList.add('hidden');
+        tenDayWrap.style.display = 'none';
+        historyCard.classList.add('hidden');
+        document.getElementById('currentStreakValue').textContent = '0';
+        document.getElementById('currentStreakSub').textContent = 'Noch keine Daten';
+        document.getElementById('bestStreakValue').textContent = '0';
+        document.getElementById('bestStreakSub').textContent = 'Noch keine Daten';
+      }
     }
 
     document.getElementById('noSoftdrinkBtn').addEventListener('click', () => {
-      setStatus(todayKey(), 'no');
+      setStatus(todayKey(), 'no', '');
     });
 
     document.getElementById('softdrinkBtn').addEventListener('click', () => {
-      const data = loadData();
-      const existing = data[todayKey()]?.comment || '';
-      const comment = prompt('Optionaler Kommentar oder Anlass:', existing);
+      const existing = loadData()[todayKey()];
+      const preset = existing?.status === 'yes' ? (existing.comment || '') : '';
+      const comment = prompt('Optionaler Kommentar zu Softdrink:', preset);
       if (comment === null) {
-        setStatus(todayKey(), 'yes', existing);
+        setStatus(todayKey(), 'yes', preset);
       } else {
         setStatus(todayKey(), 'yes', comment);
       }
     });
 
     document.getElementById('exportBtn').addEventListener('click', exportCsv);
+
     document.getElementById('importBtn').addEventListener('click', () => {
       document.getElementById('fileInput').click();
     });
+
     document.getElementById('fileInput').addEventListener('change', (e) => {
       const file = e.target.files?.[0];
-      if (file) importCsv(file);
-      e.target.value = '';
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          importCsvText(String(reader.result || ''));
+          alert('Import erfolgreich.');
+        } catch (err) {
+          alert('Import fehlgeschlagen. Bitte CSV prüfen.');
+        } finally {
+          e.target.value = '';
+        }
+      };
+      reader.readAsText(file, 'utf-8');
     });
 
     document.getElementById('deleteBtn').addEventListener('click', () => {
