@@ -63,13 +63,30 @@ h1 {
 }
 
 .icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   border: 1px solid var(--line);
   background: rgba(31,41,55,0.9);
   color: var(--text);
-  font-size: 17px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1;
+}
+
+.icon-symbol {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.icon-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.3px;
 }
 
 .card {
@@ -112,6 +129,10 @@ textarea {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.time-field input {
+  text-align: center;
 }
 
 .button-grid {
@@ -277,8 +298,27 @@ button {
   }
 
   .grid-2 {
-    grid-template-columns: 1fr;
-    gap: 0;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  input, select, textarea {
+    min-height: 44px;
+    font-size: 15px;
+    padding: 9px 10px;
+  }
+
+  .button-grid {
+    gap: 10px;
+  }
+
+  button {
+    min-height: 46px;
+    font-size: 15px;
   }
 }
 </style>
@@ -290,8 +330,14 @@ button {
   <header class="header">
     <h1>Lärmprotokoll</h1>
     <div class="header-actions">
-      <button class="icon-btn" onclick="exportCSV()" title="CSV exportieren">↓</button>
-      <button class="icon-btn" onclick="importCSV()" title="CSV importieren">↑</button>
+      <button class="icon-btn" onclick="exportCSV()" title="CSV exportieren" aria-label="CSV exportieren">
+        <span class="icon-symbol">⇩</span>
+        <span class="icon-label">CSV</span>
+      </button>
+      <button class="icon-btn" onclick="importCSV()" title="CSV importieren" aria-label="CSV importieren">
+        <span class="icon-symbol">⇧</span>
+        <span class="icon-label">CSV</span>
+      </button>
     </div>
   </header>
 
@@ -303,19 +349,19 @@ button {
       </div>
 
       <div class="field-group">
-        <label>Art der Belästigung</label>
+        <label>Art</label>
         <select id="type"></select>
       </div>
     </div>
 
     <div class="grid-2">
-      <div class="field-group">
-        <label>Anfangszeit</label>
+      <div class="field-group time-field">
+        <label>Anfang</label>
         <input type="time" id="start">
       </div>
 
-      <div class="field-group">
-        <label>Endzeit</label>
+      <div class="field-group time-field">
+        <label>Ende</label>
         <input type="time" id="end">
       </div>
     </div>
@@ -360,8 +406,8 @@ button {
 </div>
 
 <script>
-const ENTRY_KEY = "noiseLogEntries_v3";
-const TYPE_KEY = "noiseLogTypes_v3";
+const ENTRY_KEY = "noiseLogEntries_v4";
+const TYPE_KEY = "noiseLogTypes_v4";
 
 let entries = JSON.parse(localStorage.getItem(ENTRY_KEY) || "[]");
 let types = JSON.parse(localStorage.getItem(TYPE_KEY) || "[]");
@@ -488,8 +534,8 @@ function updateEntry(id, field, value) {
 
   const labels = {
     date: "Datum",
-    start: "Anfangszeit",
-    end: "Endzeit",
+    start: "Anfang",
+    end: "Ende",
     type: "Art",
     note: "Anmerkung",
     authority: "Polizei/Ordnungsamt informiert"
@@ -557,12 +603,12 @@ function render() {
         </div>
 
         <div class="grid-2">
-          <div class="field-group">
+          <div class="field-group time-field">
             <label>Anfang</label>
             <input type="time" value="${escapeAttr(e.start || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'start', this.value)">
           </div>
 
-          <div class="field-group">
+          <div class="field-group time-field">
             <label>Ende</label>
             <input type="time" value="${escapeAttr(e.end || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'end', this.value)">
           </div>
