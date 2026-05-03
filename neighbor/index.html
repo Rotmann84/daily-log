@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#111827" />
+<meta name="theme-color" content="#101827" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Lärmprotokoll" />
@@ -11,15 +11,16 @@
 
 <style>
 :root {
-  --bg: #111827;
+  --bg: #101827;
+  --bg2: #172033;
   --card: #1f2937;
-  --card2: #273244;
+  --field: #263244;
+  --line: #3a4658;
   --text: #f3f4f6;
   --muted: #aeb7c5;
-  --line: #374151;
   --accent: #4f8cff;
+  --green: #18a84a;
   --danger: #dc2626;
-  --green: #16a34a;
 }
 
 * { box-sizing: border-box; }
@@ -33,131 +34,153 @@ body {
   margin: 0;
   min-height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #111827 0%, #172033 100%);
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
   color: var(--text);
 }
 
 .app {
   max-width: 680px;
   margin: 0 auto;
-  padding: 18px;
-  padding-bottom: 40px;
+  padding: calc(env(safe-area-inset-top) + 18px) 16px 42px;
 }
 
-header {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 h1 {
-  font-size: 24px;
   margin: 0;
+  font-size: 27px;
+  letter-spacing: -0.4px;
 }
 
-.icon-row {
+.header-actions {
   display: flex;
   gap: 8px;
 }
 
 .icon-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
   border: 1px solid var(--line);
-  background: var(--card);
+  background: rgba(31,41,55,0.9);
   color: var(--text);
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .card {
-  background: rgba(31, 41, 55, 0.96);
+  background: rgba(31,41,55,0.94);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 16px;
   margin-bottom: 14px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
 }
 
 label {
   display: block;
-  font-size: 14px;
   color: var(--muted);
-  margin: 12px 0 6px;
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+
+.field-group {
+  margin-bottom: 12px;
 }
 
 input, select, textarea {
   width: 100%;
+  min-height: 46px;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--card2);
+  border-radius: 13px;
+  background: var(--field);
   color: var(--text);
-  padding: 12px;
+  padding: 10px 12px;
   font-size: 16px;
 }
 
 textarea {
-  min-height: 92px;
+  min-height: 82px;
   resize: vertical;
 }
 
-.row {
+.grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
-
-button {
-  border: none;
-  border-radius: 13px;
-  padding: 13px 14px;
-  font-size: 16px;
-  font-weight: 650;
-  color: white;
-}
-
-.primary { background: var(--accent); }
-.secondary { background: #4b5563; }
-.success { background: var(--green); }
-.danger { background: var(--danger); }
 
 .button-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-top: 14px;
+  margin: 4px 0 14px;
 }
+
+button {
+  border: none;
+  border-radius: 14px;
+  min-height: 48px;
+  padding: 11px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+.primary { background: var(--accent); }
+.success { background: var(--green); }
+.secondary { background: #536174; }
+.danger { background: var(--danger); }
 
 .full {
   width: 100%;
-  margin-top: 10px;
 }
 
 .checkline {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 14px;
+  margin: 6px 0 16px;
 }
 
 .checkline input {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  min-height: 24px;
+  height: 24px;
 }
 
-.log-head {
+.checkline label {
+  margin: 0;
+  font-size: 15px;
+}
+
+.subtle-toggle {
+  width: 100%;
+  min-height: 42px;
+  background: transparent;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
+.section-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-.log-title {
+.section-title {
   font-size: 18px;
-  font-weight: 750;
+  font-weight: 800;
 }
 
 .muted {
@@ -166,70 +189,97 @@ button {
 }
 
 .entry {
-  background: #182233;
   border: 1px solid var(--line);
+  background: #182234;
   border-radius: 15px;
-  padding: 14px;
   margin-top: 10px;
+  overflow: hidden;
 }
 
-.entry-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: flex-start;
+.entry-summary {
+  padding: 13px 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.entry-main {
+  min-width: 0;
 }
 
 .entry-title {
-  font-weight: 750;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 800;
 }
 
-.badge {
-  display: inline-block;
-  margin-top: 7px;
-  padding: 4px 8px;
-  border-radius: 999px;
+.entry-meta {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.entry-type {
   background: #334155;
   color: var(--text);
+  border-radius: 999px;
+  padding: 5px 9px;
   font-size: 12px;
+  white-space: nowrap;
 }
 
-.note {
-  white-space: pre-wrap;
-  margin-top: 10px;
-  color: #e5e7eb;
-}
-
-.details {
-  margin-top: 12px;
+.entry-details {
+  display: none;
   border-top: 1px solid var(--line);
-  padding-top: 12px;
+  padding: 14px;
+}
+
+.entry.open .entry-details {
+  display: block;
+}
+
+.note-preview {
+  margin-top: 8px;
+  color: #d9dee7;
+  font-size: 14px;
+  line-height: 1.35;
 }
 
 .history {
-  font-size: 12px;
+  margin-top: 12px;
   color: var(--muted);
-  margin-top: 8px;
+  font-size: 12px;
   line-height: 1.45;
 }
 
-.small-btn {
-  padding: 9px 10px;
-  font-size: 14px;
-  border-radius: 11px;
+.small-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .empty {
-  color: var(--muted);
   text-align: center;
+  color: var(--muted);
   padding: 20px 8px;
 }
 
-@media (max-width: 420px) {
-  .app { padding: 14px; }
-  h1 { font-size: 22px; }
-  .row, .button-grid { grid-template-columns: 1fr; }
+@media (max-width: 430px) {
+  .app {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }
 </style>
 </head>
@@ -237,72 +287,81 @@ button {
 <body>
 <div class="app">
 
-<header>
-  <h1>Lärmprotokoll</h1>
-  <div class="icon-row">
-    <button class="icon-btn" onclick="exportCSV()" title="CSV exportieren">⬇️</button>
-    <button class="icon-btn" onclick="importCSV()" title="CSV importieren">⬆️</button>
-  </div>
-</header>
-
-<section class="card">
-  <div class="row">
-    <div>
-      <label>Datum</label>
-      <input type="date" id="date">
+  <header class="header">
+    <h1>Lärmprotokoll</h1>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="exportCSV()" title="CSV exportieren">↓</button>
+      <button class="icon-btn" onclick="importCSV()" title="CSV importieren">↑</button>
     </div>
-    <div>
-      <label>Art der Belästigung</label>
-      <select id="type"></select>
+  </header>
+
+  <section class="card">
+    <div class="grid-2">
+      <div class="field-group">
+        <label>Datum</label>
+        <input type="date" id="date">
+      </div>
+
+      <div class="field-group">
+        <label>Art der Belästigung</label>
+        <select id="type"></select>
+      </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div>
-      <label>Anfangszeit</label>
-      <input type="time" id="start">
+    <div class="grid-2">
+      <div class="field-group">
+        <label>Anfangszeit</label>
+        <input type="time" id="start">
+      </div>
+
+      <div class="field-group">
+        <label>Endzeit</label>
+        <input type="time" id="end">
+      </div>
     </div>
-    <div>
-      <label>Endzeit</label>
-      <input type="time" id="end">
+
+    <div class="button-grid">
+      <button class="success" onclick="setNow('start')">Start jetzt</button>
+      <button class="secondary" onclick="setNow('end')">Ende jetzt</button>
     </div>
-  </div>
 
-  <div class="button-grid">
-    <button class="success" onclick="setNow('start')">Start jetzt</button>
-    <button class="secondary" onclick="setNow('end')">Ende jetzt</button>
-  </div>
+    <div class="field-group">
+      <label>Anmerkungen</label>
+      <textarea id="note" placeholder="Was war zu hören? Wie laut? Wo wahrnehmbar? Dauer? Besonderheiten?"></textarea>
+    </div>
 
-  <label>Anmerkungen</label>
-  <textarea id="note" placeholder="Was war zu hören? Wie laut? Wo wahrnehmbar? Dauer? Besonderheiten?"></textarea>
+    <div class="checkline">
+      <input type="checkbox" id="authority">
+      <label for="authority">Polizei/Ordnungsamt informiert</label>
+    </div>
 
-  <div class="checkline">
-    <input type="checkbox" id="authority">
-    <label for="authority" style="margin:0;">Polizei/Ordnungsamt informiert</label>
-  </div>
+    <button class="primary full" onclick="addEntry()">Eintrag speichern</button>
+  </section>
 
-  <button class="primary full" onclick="addEntry()">Eintrag speichern</button>
-</section>
+  <section class="card">
+    <button class="subtle-toggle" onclick="toggleTypeManager()">+ Art der Belästigung verwalten</button>
+    <div id="typeManager" class="hidden" style="margin-top:12px;">
+      <div class="field-group">
+        <label>Weitere Art ergänzen</label>
+        <input type="text" id="newType" placeholder="z. B. Laute Gespräche, Maschinenlärm">
+      </div>
+      <button class="secondary full" onclick="addType()">Art ergänzen</button>
+    </div>
+  </section>
 
-<section class="card">
-  <label>Weitere Art der Belästigung ergänzen</label>
-  <input type="text" id="newType" placeholder="z. B. Laute Gespräche, Maschinenlärm">
-  <button class="secondary full" onclick="addType()">Art ergänzen</button>
-</section>
-
-<section class="card">
-  <div class="log-head">
-    <div class="log-title">Log-Einträge</div>
-    <div class="muted" id="count"></div>
-  </div>
-  <div id="log"></div>
-</section>
+  <section class="card">
+    <div class="section-head">
+      <div class="section-title">Log-Einträge</div>
+      <div class="muted" id="count"></div>
+    </div>
+    <div id="log"></div>
+  </section>
 
 </div>
 
 <script>
-const ENTRY_KEY = "noiseLogEntries_v2";
-const TYPE_KEY = "noiseLogTypes_v2";
+const ENTRY_KEY = "noiseLogEntries_v3";
+const TYPE_KEY = "noiseLogTypes_v3";
 
 let entries = JSON.parse(localStorage.getItem(ENTRY_KEY) || "[]");
 let types = JSON.parse(localStorage.getItem(TYPE_KEY) || "[]");
@@ -346,12 +405,17 @@ function init() {
 function renderTypes() {
   const select = document.getElementById("type");
   select.innerHTML = "";
+
   types.forEach(t => {
-    const option = document.createElement("option");
-    option.value = t;
-    option.textContent = t;
-    select.appendChild(option);
+    const opt = document.createElement("option");
+    opt.value = t;
+    opt.textContent = t;
+    select.appendChild(opt);
   });
+}
+
+function toggleTypeManager() {
+  document.getElementById("typeManager").classList.toggle("hidden");
 }
 
 function addType() {
@@ -359,6 +423,7 @@ function addType() {
   const value = input.value.trim();
 
   if (!value) return;
+
   if (types.includes(value)) {
     alert("Diese Art ist bereits vorhanden.");
     return;
@@ -367,7 +432,6 @@ function addType() {
   types.push(value);
   input.value = "";
   save();
-  renderTypes();
 }
 
 function setNow(field) {
@@ -388,7 +452,7 @@ function addEntry() {
     return;
   }
 
-  const entry = {
+  entries.push({
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
     createdAt: timestamp(),
     updatedAt: timestamp(),
@@ -399,9 +463,8 @@ function addEntry() {
     note,
     authority,
     history: [`${timestamp()}: Eintrag erstellt`]
-  };
+  });
 
-  entries.push(entry);
   clearForm();
   save();
 }
@@ -415,28 +478,25 @@ function clearForm() {
 }
 
 function updateEntry(id, field, value) {
-  const entry = entries.find(e => e.id === id);
-  if (!entry) return;
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
 
-  const oldValue = entry[field];
+  if (e[field] === value) return;
 
-  if (oldValue === value) return;
+  e[field] = value;
+  e.updatedAt = timestamp();
 
-  entry[field] = value;
-  entry.updatedAt = timestamp();
-
-  const label = {
+  const labels = {
     date: "Datum",
     start: "Anfangszeit",
     end: "Endzeit",
     type: "Art",
     note: "Anmerkung",
     authority: "Polizei/Ordnungsamt informiert"
-  }[field] || field;
+  };
 
-  entry.history = entry.history || [];
-  entry.history.push(`${timestamp()}: ${label} geändert`);
-
+  e.history = e.history || [];
+  e.history.push(`${timestamp()}: ${labels[field] || field} geändert`);
   save();
 }
 
@@ -446,6 +506,11 @@ function deleteEntry(id) {
   save();
 }
 
+function toggleEntry(id) {
+  const el = document.getElementById("entry-" + id);
+  if (el) el.classList.toggle("open");
+}
+
 function render() {
   renderTypes();
 
@@ -453,9 +518,7 @@ function render() {
   const count = document.getElementById("count");
 
   const sorted = [...entries].sort((a, b) => {
-    const da = `${a.date || ""} ${a.start || ""}`;
-    const db = `${b.date || ""} ${b.start || ""}`;
-    return db.localeCompare(da);
+    return `${b.date || ""} ${b.start || ""}`.localeCompare(`${a.date || ""} ${a.start || ""}`);
   });
 
   count.textContent = sorted.length === 1 ? "1 Eintrag" : `${sorted.length} Einträge`;
@@ -466,56 +529,64 @@ function render() {
   }
 
   log.innerHTML = sorted.map(e => `
-    <div class="entry">
-      <div class="entry-top">
-        <div>
+    <div class="entry" id="entry-${escapeAttr(e.id)}">
+      <div class="entry-summary" onclick="toggleEntry('${escapeAttr(e.id)}')">
+        <div class="entry-main">
           <div class="entry-title">${escapeHTML(formatDate(e.date))} · ${escapeHTML(e.start || "-")}–${escapeHTML(e.end || "offen")}</div>
-          <div class="badge">${escapeHTML(e.type || "-")}</div>
-          ${e.authority ? `<div class="badge">Polizei/Ordnungsamt informiert</div>` : ""}
+          <div class="entry-meta">
+            ${e.authority ? "Behörde informiert · " : ""}zuletzt geändert: ${escapeHTML(e.updatedAt || "-")}
+          </div>
+          ${e.note ? `<div class="note-preview">${escapeHTML(shorten(e.note, 90))}</div>` : ""}
         </div>
-        <button class="danger small-btn" onclick="deleteEntry('${e.id}')">Löschen</button>
+        <div class="entry-type">${escapeHTML(e.type || "-")}</div>
       </div>
 
-      ${e.note ? `<div class="note">${escapeHTML(e.note)}</div>` : ""}
-
-      <div class="details">
-        <div class="row">
-          <div>
+      <div class="entry-details">
+        <div class="grid-2">
+          <div class="field-group">
             <label>Datum</label>
-            <input type="date" value="${escapeAttr(e.date || "")}" onchange="updateEntry('${e.id}', 'date', this.value)">
+            <input type="date" value="${escapeAttr(e.date || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'date', this.value)">
           </div>
-          <div>
+
+          <div class="field-group">
             <label>Art</label>
-            <select onchange="updateEntry('${e.id}', 'type', this.value)">
+            <select onchange="updateEntry('${escapeAttr(e.id)}', 'type', this.value)">
               ${types.map(t => `<option value="${escapeAttr(t)}" ${t === e.type ? "selected" : ""}>${escapeHTML(t)}</option>`).join("")}
             </select>
           </div>
         </div>
 
-        <div class="row">
-          <div>
+        <div class="grid-2">
+          <div class="field-group">
             <label>Anfang</label>
-            <input type="time" value="${escapeAttr(e.start || "")}" onchange="updateEntry('${e.id}', 'start', this.value)">
+            <input type="time" value="${escapeAttr(e.start || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'start', this.value)">
           </div>
-          <div>
+
+          <div class="field-group">
             <label>Ende</label>
-            <input type="time" value="${escapeAttr(e.end || "")}" onchange="updateEntry('${e.id}', 'end', this.value)">
+            <input type="time" value="${escapeAttr(e.end || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'end', this.value)">
           </div>
         </div>
 
-        <label>Anmerkung bearbeiten</label>
-        <textarea onchange="updateEntry('${e.id}', 'note', this.value)">${escapeHTML(e.note || "")}</textarea>
+        <div class="field-group">
+          <label>Anmerkung bearbeiten</label>
+          <textarea onchange="updateEntry('${escapeAttr(e.id)}', 'note', this.value)">${escapeHTML(e.note || "")}</textarea>
+        </div>
 
         <div class="checkline">
-          <input type="checkbox" ${e.authority ? "checked" : ""} onchange="updateEntry('${e.id}', 'authority', this.checked)">
-          <label style="margin:0;">Polizei/Ordnungsamt informiert</label>
+          <input type="checkbox" ${e.authority ? "checked" : ""} onchange="updateEntry('${escapeAttr(e.id)}', 'authority', this.checked)">
+          <label>Polizei/Ordnungsamt informiert</label>
         </div>
 
         <div class="history">
           Erstellt: ${escapeHTML(e.createdAt || "-")}<br>
-          Zuletzt geändert: ${escapeHTML(e.updatedAt || "-")}<br>
+          Zuletzt geändert: ${escapeHTML(e.updatedAt || "-")}<br><br>
           Änderungsverlauf:<br>
           ${(e.history || []).map(h => `• ${escapeHTML(h)}`).join("<br>")}
+        </div>
+
+        <div class="small-actions">
+          <button class="danger" onclick="deleteEntry('${escapeAttr(e.id)}')">Eintrag löschen</button>
         </div>
       </div>
     </div>
@@ -526,6 +597,11 @@ function formatDate(value) {
   if (!value) return "-";
   const [y, m, d] = value.split("-");
   return `${d}.${m}.${y}`;
+}
+
+function shorten(text, max) {
+  if (!text) return "";
+  return text.length > max ? text.slice(0, max).trim() + "…" : text;
 }
 
 function escapeHTML(str) {
