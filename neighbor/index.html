@@ -41,7 +41,7 @@ body {
 .app {
   max-width: 680px;
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top) + 18px) 16px 42px;
+  padding: calc(env(safe-area-inset-top) + 32px) 16px 44px;
 }
 
 .header {
@@ -53,40 +53,33 @@ body {
 
 h1 {
   margin: 0;
-  font-size: 27px;
-  letter-spacing: -0.4px;
+  font-size: 29px;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
 }
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .icon-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   border: 1px solid var(--line);
-  background: rgba(31,41,55,0.9);
+  background: rgba(31,41,55,0.92);
   color: var(--text);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
-  line-height: 1;
+  padding: 0;
 }
 
-.icon-symbol {
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.icon-label {
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--muted);
-  letter-spacing: 0.3px;
+.icon-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
 }
 
 .card {
@@ -98,48 +91,56 @@ h1 {
   box-shadow: 0 12px 30px rgba(0,0,0,0.18);
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 12px;
+  row-gap: 14px;
+}
+
+.field-group {
+  min-width: 0;
+}
+
+.field-group.full {
+  grid-column: 1 / -1;
+}
+
 label {
   display: block;
   color: var(--muted);
   font-size: 14px;
-  margin: 0 0 6px;
-}
-
-.field-group {
-  margin-bottom: 12px;
+  margin: 0 0 7px;
 }
 
 input, select, textarea {
   width: 100%;
-  min-height: 46px;
   border: 1px solid var(--line);
   border-radius: 13px;
   background: var(--field);
   color: var(--text);
-  padding: 10px 12px;
-  font-size: 16px;
+  font-size: 15px;
+  padding: 0 11px;
+  min-height: 44px;
+}
+
+input[type="date"],
+input[type="time"] {
+  text-align: center;
 }
 
 textarea {
-  min-height: 82px;
+  padding: 11px 12px;
+  min-height: 78px;
   resize: vertical;
-}
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.time-field input {
-  text-align: center;
+  line-height: 1.35;
 }
 
 .button-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 4px 0 14px;
+  gap: 12px;
+  margin: 16px 0 16px;
 }
 
 button {
@@ -148,7 +149,7 @@ button {
   min-height: 48px;
   padding: 11px 14px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 750;
   color: white;
 }
 
@@ -157,21 +158,23 @@ button {
 .secondary { background: #536174; }
 .danger { background: var(--danger); }
 
-.full {
+.save-btn {
   width: 100%;
+  margin-top: 2px;
 }
 
 .checkline {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 6px 0 16px;
+  gap: 12px;
+  margin: 4px 0 18px;
 }
 
 .checkline input {
   width: 24px;
   min-height: 24px;
   height: 24px;
+  flex: 0 0 24px;
 }
 
 .checkline label {
@@ -181,11 +184,11 @@ button {
 
 .subtle-toggle {
   width: 100%;
-  min-height: 42px;
+  min-height: 44px;
   background: transparent;
   border: 1px dashed var(--line);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .hidden {
@@ -200,13 +203,13 @@ button {
 }
 
 .section-title {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 20px;
+  font-weight: 850;
 }
 
 .muted {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .entry {
@@ -224,10 +227,6 @@ button {
   gap: 10px;
   align-items: center;
   cursor: pointer;
-}
-
-.entry-main {
-  min-width: 0;
 }
 
 .entry-title {
@@ -274,13 +273,6 @@ button {
   line-height: 1.45;
 }
 
-.small-actions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-  margin-top: 12px;
-}
-
 .empty {
   text-align: center;
   color: var(--muted);
@@ -293,32 +285,32 @@ button {
     padding-right: 14px;
   }
 
-  h1 {
-    font-size: 25px;
-  }
-
-  .grid-2 {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
   .card {
-    padding: 14px;
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .form-grid {
+    column-gap: 10px;
+    row-gap: 13px;
   }
 
   input, select, textarea {
-    min-height: 44px;
     font-size: 15px;
-    padding: 9px 10px;
-  }
-
-  .button-grid {
-    gap: 10px;
+    min-height: 43px;
   }
 
   button {
-    min-height: 46px;
+    min-height: 47px;
     font-size: 15px;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
   }
 }
 </style>
@@ -327,87 +319,95 @@ button {
 <body>
 <div class="app">
 
-  <header class="header">
-    <h1>Lärmprotokoll</h1>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="exportCSV()" title="CSV exportieren" aria-label="CSV exportieren">
-        <span class="icon-symbol">⇩</span>
-        <span class="icon-label">CSV</span>
-      </button>
-      <button class="icon-btn" onclick="importCSV()" title="CSV importieren" aria-label="CSV importieren">
-        <span class="icon-symbol">⇧</span>
-        <span class="icon-label">CSV</span>
-      </button>
-    </div>
-  </header>
+<header class="header">
+  <h1>Lärmprotokoll</h1>
 
-  <section class="card">
-    <div class="grid-2">
-      <div class="field-group">
-        <label>Datum</label>
-        <input type="date" id="date">
-      </div>
+  <div class="header-actions">
+    <button class="icon-btn" onclick="exportCSV()" title="CSV exportieren" aria-label="CSV exportieren">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"></path>
+        <path d="M7 10l5 5 5-5"></path>
+        <path d="M5 21h14"></path>
+      </svg>
+    </button>
 
-      <div class="field-group">
-        <label>Art</label>
-        <select id="type"></select>
-      </div>
-    </div>
+    <button class="icon-btn" onclick="importCSV()" title="CSV importieren" aria-label="CSV importieren">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 21V9"></path>
+        <path d="M7 14l5-5 5 5"></path>
+        <path d="M5 3h14"></path>
+      </svg>
+    </button>
+  </div>
+</header>
 
-    <div class="grid-2">
-      <div class="field-group time-field">
-        <label>Anfang</label>
-        <input type="time" id="start">
-      </div>
-
-      <div class="field-group time-field">
-        <label>Ende</label>
-        <input type="time" id="end">
-      </div>
-    </div>
-
-    <div class="button-grid">
-      <button class="success" onclick="setNow('start')">Start jetzt</button>
-      <button class="secondary" onclick="setNow('end')">Ende jetzt</button>
+<section class="card">
+  <div class="form-grid">
+    <div class="field-group">
+      <label>Datum</label>
+      <input type="date" id="date">
     </div>
 
     <div class="field-group">
+      <label>Art</label>
+      <select id="type"></select>
+    </div>
+
+    <div class="field-group">
+      <label>Anfang</label>
+      <input type="time" id="start">
+    </div>
+
+    <div class="field-group">
+      <label>Ende</label>
+      <input type="time" id="end">
+    </div>
+
+    <div class="field-group full">
+      <div class="button-grid">
+        <button class="success" onclick="setNow('start')">Start jetzt</button>
+        <button class="secondary" onclick="setNow('end')">Ende jetzt</button>
+      </div>
+    </div>
+
+    <div class="field-group full">
       <label>Anmerkungen</label>
       <textarea id="note" placeholder="Was war zu hören? Wie laut? Wo wahrnehmbar? Dauer? Besonderheiten?"></textarea>
     </div>
+  </div>
 
-    <div class="checkline">
-      <input type="checkbox" id="authority">
-      <label for="authority">Polizei/Ordnungsamt informiert</label>
+  <div class="checkline">
+    <input type="checkbox" id="authority">
+    <label for="authority">Polizei/Ordnungsamt informiert</label>
+  </div>
+
+  <button class="primary save-btn" onclick="addEntry()">Eintrag speichern</button>
+</section>
+
+<section class="card">
+  <button class="subtle-toggle" onclick="toggleTypeManager()">+ Art der Belästigung verwalten</button>
+  <div id="typeManager" class="hidden" style="margin-top:12px;">
+    <div class="field-group">
+      <label>Weitere Art ergänzen</label>
+      <input type="text" id="newType" placeholder="z. B. Laute Gespräche, Maschinenlärm">
     </div>
+    <button class="secondary save-btn" onclick="addType()">Art ergänzen</button>
+  </div>
+</section>
 
-    <button class="primary full" onclick="addEntry()">Eintrag speichern</button>
-  </section>
-
-  <section class="card">
-    <button class="subtle-toggle" onclick="toggleTypeManager()">+ Art der Belästigung verwalten</button>
-    <div id="typeManager" class="hidden" style="margin-top:12px;">
-      <div class="field-group">
-        <label>Weitere Art ergänzen</label>
-        <input type="text" id="newType" placeholder="z. B. Laute Gespräche, Maschinenlärm">
-      </div>
-      <button class="secondary full" onclick="addType()">Art ergänzen</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="section-head">
-      <div class="section-title">Log-Einträge</div>
-      <div class="muted" id="count"></div>
-    </div>
-    <div id="log"></div>
-  </section>
+<section class="card">
+  <div class="section-head">
+    <div class="section-title">Log-Einträge</div>
+    <div class="muted" id="count"></div>
+  </div>
+  <div id="log"></div>
+</section>
 
 </div>
 
 <script>
-const ENTRY_KEY = "noiseLogEntries_v4";
-const TYPE_KEY = "noiseLogTypes_v4";
+const ENTRY_KEY = "noiseLogEntries_v5";
+const TYPE_KEY = "noiseLogTypes_v5";
 
 let entries = JSON.parse(localStorage.getItem(ENTRY_KEY) || "[]");
 let types = JSON.parse(localStorage.getItem(TYPE_KEY) || "[]");
@@ -439,11 +439,7 @@ function save() {
 
 function init() {
   document.getElementById("date").value = today();
-
-  if (!types.length) {
-    types = [...defaultTypes];
-  }
-
+  if (!types.length) types = [...defaultTypes];
   renderTypes();
   render();
 }
@@ -577,7 +573,7 @@ function render() {
   log.innerHTML = sorted.map(e => `
     <div class="entry" id="entry-${escapeAttr(e.id)}">
       <div class="entry-summary" onclick="toggleEntry('${escapeAttr(e.id)}')">
-        <div class="entry-main">
+        <div>
           <div class="entry-title">${escapeHTML(formatDate(e.date))} · ${escapeHTML(e.start || "-")}–${escapeHTML(e.end || "offen")}</div>
           <div class="entry-meta">
             ${e.authority ? "Behörde informiert · " : ""}zuletzt geändert: ${escapeHTML(e.updatedAt || "-")}
@@ -588,7 +584,7 @@ function render() {
       </div>
 
       <div class="entry-details">
-        <div class="grid-2">
+        <div class="form-grid">
           <div class="field-group">
             <label>Datum</label>
             <input type="date" value="${escapeAttr(e.date || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'date', this.value)">
@@ -600,23 +596,21 @@ function render() {
               ${types.map(t => `<option value="${escapeAttr(t)}" ${t === e.type ? "selected" : ""}>${escapeHTML(t)}</option>`).join("")}
             </select>
           </div>
-        </div>
 
-        <div class="grid-2">
-          <div class="field-group time-field">
+          <div class="field-group">
             <label>Anfang</label>
             <input type="time" value="${escapeAttr(e.start || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'start', this.value)">
           </div>
 
-          <div class="field-group time-field">
+          <div class="field-group">
             <label>Ende</label>
             <input type="time" value="${escapeAttr(e.end || "")}" onchange="updateEntry('${escapeAttr(e.id)}', 'end', this.value)">
           </div>
-        </div>
 
-        <div class="field-group">
-          <label>Anmerkung bearbeiten</label>
-          <textarea onchange="updateEntry('${escapeAttr(e.id)}', 'note', this.value)">${escapeHTML(e.note || "")}</textarea>
+          <div class="field-group full">
+            <label>Anmerkung bearbeiten</label>
+            <textarea onchange="updateEntry('${escapeAttr(e.id)}', 'note', this.value)">${escapeHTML(e.note || "")}</textarea>
+          </div>
         </div>
 
         <div class="checkline">
@@ -631,9 +625,7 @@ function render() {
           ${(e.history || []).map(h => `• ${escapeHTML(h)}`).join("<br>")}
         </div>
 
-        <div class="small-actions">
-          <button class="danger" onclick="deleteEntry('${escapeAttr(e.id)}')">Eintrag löschen</button>
-        </div>
+        <button class="danger save-btn" style="margin-top:12px;" onclick="deleteEntry('${escapeAttr(e.id)}')">Eintrag löschen</button>
       </div>
     </div>
   `).join("");
