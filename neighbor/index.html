@@ -1,1 +1,675 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#111827" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Lärmprotokoll" />
+<title>Lärmprotokoll</title>
 
+<style>
+:root {
+  --bg: #111827;
+  --card: #1f2937;
+  --card2: #273244;
+  --text: #f3f4f6;
+  --muted: #aeb7c5;
+  --line: #374151;
+  --accent: #4f8cff;
+  --danger: #dc2626;
+  --green: #16a34a;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #111827 0%, #172033 100%);
+  color: var(--text);
+}
+
+.app {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 18px;
+  padding-bottom: 40px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.icon-row {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  font-size: 20px;
+}
+
+.card {
+  background: rgba(31, 41, 55, 0.96);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  margin: 12px 0 6px;
+}
+
+input, select, textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card2);
+  color: var(--text);
+  padding: 12px;
+  font-size: 16px;
+}
+
+textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+button {
+  border: none;
+  border-radius: 13px;
+  padding: 13px 14px;
+  font-size: 16px;
+  font-weight: 650;
+  color: white;
+}
+
+.primary { background: var(--accent); }
+.secondary { background: #4b5563; }
+.success { background: var(--green); }
+.danger { background: var(--danger); }
+
+.button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.full {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.checkline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.checkline input {
+  width: 22px;
+  height: 22px;
+}
+
+.log-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.log-title {
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.entry {
+  background: #182233;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.entry-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.entry-title {
+  font-weight: 750;
+  font-size: 16px;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 7px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #334155;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.note {
+  white-space: pre-wrap;
+  margin-top: 10px;
+  color: #e5e7eb;
+}
+
+.details {
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.history {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.45;
+}
+
+.small-btn {
+  padding: 9px 10px;
+  font-size: 14px;
+  border-radius: 11px;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 20px 8px;
+}
+
+@media (max-width: 420px) {
+  .app { padding: 14px; }
+  h1 { font-size: 22px; }
+  .row, .button-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <h1>Lärmprotokoll</h1>
+  <div class="icon-row">
+    <button class="icon-btn" onclick="exportCSV()" title="CSV exportieren">⬇️</button>
+    <button class="icon-btn" onclick="importCSV()" title="CSV importieren">⬆️</button>
+  </div>
+</header>
+
+<section class="card">
+  <div class="row">
+    <div>
+      <label>Datum</label>
+      <input type="date" id="date">
+    </div>
+    <div>
+      <label>Art der Belästigung</label>
+      <select id="type"></select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Anfangszeit</label>
+      <input type="time" id="start">
+    </div>
+    <div>
+      <label>Endzeit</label>
+      <input type="time" id="end">
+    </div>
+  </div>
+
+  <div class="button-grid">
+    <button class="success" onclick="setNow('start')">Start jetzt</button>
+    <button class="secondary" onclick="setNow('end')">Ende jetzt</button>
+  </div>
+
+  <label>Anmerkungen</label>
+  <textarea id="note" placeholder="Was war zu hören? Wie laut? Wo wahrnehmbar? Dauer? Besonderheiten?"></textarea>
+
+  <div class="checkline">
+    <input type="checkbox" id="authority">
+    <label for="authority" style="margin:0;">Polizei/Ordnungsamt informiert</label>
+  </div>
+
+  <button class="primary full" onclick="addEntry()">Eintrag speichern</button>
+</section>
+
+<section class="card">
+  <label>Weitere Art der Belästigung ergänzen</label>
+  <input type="text" id="newType" placeholder="z. B. Laute Gespräche, Maschinenlärm">
+  <button class="secondary full" onclick="addType()">Art ergänzen</button>
+</section>
+
+<section class="card">
+  <div class="log-head">
+    <div class="log-title">Log-Einträge</div>
+    <div class="muted" id="count"></div>
+  </div>
+  <div id="log"></div>
+</section>
+
+</div>
+
+<script>
+const ENTRY_KEY = "noiseLogEntries_v2";
+const TYPE_KEY = "noiseLogTypes_v2";
+
+let entries = JSON.parse(localStorage.getItem(ENTRY_KEY) || "[]");
+let types = JSON.parse(localStorage.getItem(TYPE_KEY) || "[]");
+
+const defaultTypes = ["Gartenarbeit", "Hundelärm", "Musik", "Sonstiges"];
+
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function nowTime() {
+  const d = new Date();
+  return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+}
+
+function timestamp() {
+  const d = new Date();
+  return d.toLocaleString("de-DE", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit"
+  });
+}
+
+function save() {
+  localStorage.setItem(ENTRY_KEY, JSON.stringify(entries));
+  localStorage.setItem(TYPE_KEY, JSON.stringify(types));
+  render();
+}
+
+function init() {
+  document.getElementById("date").value = today();
+
+  if (!types.length) {
+    types = [...defaultTypes];
+  }
+
+  renderTypes();
+  render();
+}
+
+function renderTypes() {
+  const select = document.getElementById("type");
+  select.innerHTML = "";
+  types.forEach(t => {
+    const option = document.createElement("option");
+    option.value = t;
+    option.textContent = t;
+    select.appendChild(option);
+  });
+}
+
+function addType() {
+  const input = document.getElementById("newType");
+  const value = input.value.trim();
+
+  if (!value) return;
+  if (types.includes(value)) {
+    alert("Diese Art ist bereits vorhanden.");
+    return;
+  }
+
+  types.push(value);
+  input.value = "";
+  save();
+  renderTypes();
+}
+
+function setNow(field) {
+  document.getElementById("date").value ||= today();
+  document.getElementById(field).value = nowTime();
+}
+
+function addEntry() {
+  const date = document.getElementById("date").value;
+  const start = document.getElementById("start").value;
+  const end = document.getElementById("end").value;
+  const type = document.getElementById("type").value;
+  const note = document.getElementById("note").value.trim();
+  const authority = document.getElementById("authority").checked;
+
+  if (!date || !start) {
+    alert("Datum und Anfangszeit sind erforderlich.");
+    return;
+  }
+
+  const entry = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+    createdAt: timestamp(),
+    updatedAt: timestamp(),
+    date,
+    start,
+    end,
+    type,
+    note,
+    authority,
+    history: [`${timestamp()}: Eintrag erstellt`]
+  };
+
+  entries.push(entry);
+  clearForm();
+  save();
+}
+
+function clearForm() {
+  document.getElementById("date").value = today();
+  document.getElementById("start").value = "";
+  document.getElementById("end").value = "";
+  document.getElementById("note").value = "";
+  document.getElementById("authority").checked = false;
+}
+
+function updateEntry(id, field, value) {
+  const entry = entries.find(e => e.id === id);
+  if (!entry) return;
+
+  const oldValue = entry[field];
+
+  if (oldValue === value) return;
+
+  entry[field] = value;
+  entry.updatedAt = timestamp();
+
+  const label = {
+    date: "Datum",
+    start: "Anfangszeit",
+    end: "Endzeit",
+    type: "Art",
+    note: "Anmerkung",
+    authority: "Polizei/Ordnungsamt informiert"
+  }[field] || field;
+
+  entry.history = entry.history || [];
+  entry.history.push(`${timestamp()}: ${label} geändert`);
+
+  save();
+}
+
+function deleteEntry(id) {
+  if (!confirm("Eintrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.")) return;
+  entries = entries.filter(e => e.id !== id);
+  save();
+}
+
+function render() {
+  renderTypes();
+
+  const log = document.getElementById("log");
+  const count = document.getElementById("count");
+
+  const sorted = [...entries].sort((a, b) => {
+    const da = `${a.date || ""} ${a.start || ""}`;
+    const db = `${b.date || ""} ${b.start || ""}`;
+    return db.localeCompare(da);
+  });
+
+  count.textContent = sorted.length === 1 ? "1 Eintrag" : `${sorted.length} Einträge`;
+
+  if (!sorted.length) {
+    log.innerHTML = `<div class="empty">Noch keine Einträge vorhanden.</div>`;
+    return;
+  }
+
+  log.innerHTML = sorted.map(e => `
+    <div class="entry">
+      <div class="entry-top">
+        <div>
+          <div class="entry-title">${escapeHTML(formatDate(e.date))} · ${escapeHTML(e.start || "-")}–${escapeHTML(e.end || "offen")}</div>
+          <div class="badge">${escapeHTML(e.type || "-")}</div>
+          ${e.authority ? `<div class="badge">Polizei/Ordnungsamt informiert</div>` : ""}
+        </div>
+        <button class="danger small-btn" onclick="deleteEntry('${e.id}')">Löschen</button>
+      </div>
+
+      ${e.note ? `<div class="note">${escapeHTML(e.note)}</div>` : ""}
+
+      <div class="details">
+        <div class="row">
+          <div>
+            <label>Datum</label>
+            <input type="date" value="${escapeAttr(e.date || "")}" onchange="updateEntry('${e.id}', 'date', this.value)">
+          </div>
+          <div>
+            <label>Art</label>
+            <select onchange="updateEntry('${e.id}', 'type', this.value)">
+              ${types.map(t => `<option value="${escapeAttr(t)}" ${t === e.type ? "selected" : ""}>${escapeHTML(t)}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Anfang</label>
+            <input type="time" value="${escapeAttr(e.start || "")}" onchange="updateEntry('${e.id}', 'start', this.value)">
+          </div>
+          <div>
+            <label>Ende</label>
+            <input type="time" value="${escapeAttr(e.end || "")}" onchange="updateEntry('${e.id}', 'end', this.value)">
+          </div>
+        </div>
+
+        <label>Anmerkung bearbeiten</label>
+        <textarea onchange="updateEntry('${e.id}', 'note', this.value)">${escapeHTML(e.note || "")}</textarea>
+
+        <div class="checkline">
+          <input type="checkbox" ${e.authority ? "checked" : ""} onchange="updateEntry('${e.id}', 'authority', this.checked)">
+          <label style="margin:0;">Polizei/Ordnungsamt informiert</label>
+        </div>
+
+        <div class="history">
+          Erstellt: ${escapeHTML(e.createdAt || "-")}<br>
+          Zuletzt geändert: ${escapeHTML(e.updatedAt || "-")}<br>
+          Änderungsverlauf:<br>
+          ${(e.history || []).map(h => `• ${escapeHTML(h)}`).join("<br>")}
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const [y, m, d] = value.split("-");
+  return `${d}.${m}.${y}`;
+}
+
+function escapeHTML(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function escapeAttr(str) {
+  return escapeHTML(str);
+}
+
+function csvEscape(value) {
+  const v = value === undefined || value === null ? "" : String(value);
+  return `"${v.replaceAll('"', '""')}"`;
+}
+
+function exportCSV() {
+  const header = [
+    "ID",
+    "Erstellt am",
+    "Zuletzt geändert",
+    "Datum",
+    "Anfang",
+    "Ende",
+    "Art",
+    "Anmerkung",
+    "Polizei/Ordnungsamt informiert",
+    "Änderungsverlauf"
+  ];
+
+  const rows = entries.map(e => [
+    e.id,
+    e.createdAt,
+    e.updatedAt,
+    e.date,
+    e.start,
+    e.end,
+    e.type,
+    e.note,
+    e.authority ? "ja" : "nein",
+    (e.history || []).join(" | ")
+  ]);
+
+  const csv = [header, ...rows]
+    .map(row => row.map(csvEscape).join(";"))
+    .join("\n");
+
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `laermprotokoll_${today()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let quote = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const next = text[i + 1];
+
+    if (c === '"' && quote && next === '"') {
+      cell += '"';
+      i++;
+    } else if (c === '"') {
+      quote = !quote;
+    } else if (c === ";" && !quote) {
+      row.push(cell);
+      cell = "";
+    } else if ((c === "\n" || c === "\r") && !quote) {
+      if (cell || row.length) {
+        row.push(cell);
+        rows.push(row);
+        row = [];
+        cell = "";
+      }
+      if (c === "\r" && next === "\n") i++;
+    } else {
+      cell += c;
+    }
+  }
+
+  if (cell || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function importCSV() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".csv,text/csv";
+
+  input.onchange = () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (!confirm("CSV importieren? Bestehende Einträge werden ersetzt.")) return;
+
+      const rows = parseCSV(reader.result).filter(r => r.length > 1);
+      rows.shift();
+
+      entries = rows.map(r => {
+        const type = r[6] || "Sonstiges";
+        if (type && !types.includes(type)) types.push(type);
+
+        return {
+          id: r[0] || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
+          createdAt: r[1] || timestamp(),
+          updatedAt: r[2] || timestamp(),
+          date: r[3] || "",
+          start: r[4] || "",
+          end: r[5] || "",
+          type,
+          note: r[7] || "",
+          authority: (r[8] || "").toLowerCase() === "ja" || (r[8] || "").toLowerCase() === "true",
+          history: r[9] ? r[9].split(" | ") : [`${timestamp()}: aus CSV importiert`]
+        };
+      });
+
+      save();
+    };
+
+    reader.readAsText(file);
+  };
+
+  input.click();
+}
+
+init();
+</script>
+</body>
+</html>
