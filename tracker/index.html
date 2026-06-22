@@ -1,1 +1,884 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alkohol-Tracker</title>
 
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Tracker" />
+
+<style>
+:root{
+  --bg:#0f1115; --card:#151924; --text:#e8eaf0; --muted:#a6adbb;
+  --line:#262c3a; --btn:#232a3b; --btn2:#2c3550;
+  --danger:#5a1f1f; --ok:#1f4b2b; --warn:#4b3b1f;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  background:linear-gradient(180deg, #0b0d12, var(--bg));
+  color:var(--text);
+}
+.wrap{max-width:520px; margin:0 auto; padding:18px 16px 28px;}
+
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px;}
+h1{font-size:22px; margin:0;}
+
+.headerActions{display:flex; align-items:center; gap:8px;}
+.iconBtn{
+  width:42px; height:38px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.18);
+  color:var(--text);
+  cursor:pointer;
+  padding:0;
+}
+.iconBtn:active{transform:scale(0.99);}
+.iconBtn svg{width:18px; height:18px; opacity:0.95;}
+.iconBtn:focus{outline:2px solid rgba(255,255,255,0.10); outline-offset:2px;}
+
+.card{
+  background:rgba(21,25,36,0.92);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  margin-top:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+.cardSlim{
+  padding:10px 12px;
+}
+
+.btns{display:flex; flex-direction:column; gap:10px;}
+button{
+  width:100%;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, var(--btn), var(--btn2));
+  color:var(--text);
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+}
+button:active{transform:scale(0.99);}
+.b-ok{background:linear-gradient(180deg, rgba(31,75,43,0.65), rgba(31,75,43,0.95));}
+.b-danger{background:linear-gradient(180deg, rgba(90,31,31,0.65), rgba(90,31,31,0.95));}
+.b-warn{background:linear-gradient(180deg, rgba(75,59,31,0.65), rgba(75,59,31,0.95));}
+
+.todayBar{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.12);
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  cursor:default;
+}
+.todayBar .left{display:flex; flex-direction:column; gap:3px;}
+.todayBar .date{font-weight:800;}
+.todayBar .sub{color:var(--muted); font-size:12px;}
+.pill{
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+.pill.open{background:rgba(75,59,31,0.25); color:#f0e7cf;}
+.pill.no{background:rgba(31,75,43,0.25); color:#cfe9d8;}
+.pill.yes{background:rgba(90,31,31,0.25); color:#f0cfcf;}
+
+.row{display:flex; gap:10px; flex-wrap:wrap;}
+.stat{
+  flex:1 1 140px;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.12);
+}
+.stat .k{color:var(--muted); font-size:12px; margin-bottom:6px;}
+.stat .v{font-size:22px; font-weight:700;}
+.stat .sub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.25;}
+
+.list{display:flex; flex-direction:column; gap:8px;}
+.item{
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.12);
+  font-size:14px;
+  gap:10px;
+}
+.item .left{display:flex; flex-direction:column; gap:4px; min-width:120px;}
+.item .reason{font-size:12px; color:var(--muted); line-height:1.25;}
+.tag{
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+.tag.no{background:rgba(31,75,43,0.25); color:#cfe9d8;}
+.tag.yes{background:rgba(90,31,31,0.25); color:#f0cfcf;}
+.tag.open{background:rgba(75,59,31,0.25); color:#f0e7cf;}
+
+details summary{cursor:pointer; color:var(--muted); font-weight:600; font-size:14px;}
+details .inner{margin-top:10px;}
+
+.toast{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  background:rgba(0,0,0,0.75); color:#fff;
+  padding:10px 12px; border-radius:12px;
+  font-size:13px; opacity:0;
+  transition:opacity 160ms ease;
+  border:1px solid rgba(255,255,255,0.12);
+}
+.toast.show{opacity:1;}
+
+/* 10-day row */
+.tenDayWrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:22px;
+}
+.tenDayCell{
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+  user-select:none;
+}
+.tenDayCell.no{
+  background:rgba(31,75,43,0.25);
+  color:#cfe9d8;
+}
+.tenDayCell.yes{
+  background:rgba(90,31,31,0.25);
+  color:#f0cfcf;
+}
+.tenDayCell.open{
+  background:rgba(75,59,31,0.25);
+  color:#d9d9d9;
+}
+
+/* Modals */
+.modalOverlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:14px;
+}
+.modal{
+  width:min(520px, 100%);
+  background:rgba(21,25,36,0.98);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.55);
+}
+.modalTitle{font-weight:800; font-size:16px; margin:2px 0 10px;}
+.modalSub{color:var(--muted); font-size:12px; margin:0 0 10px;}
+
+.menuBtn{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:800;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.12);
+  color:var(--text);
+}
+.menuBtn:active{transform:scale(0.99);}
+
+textarea{
+  width:100%;
+  min-height:84px;
+  max-height:220px;
+  resize:vertical;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.18);
+  color:var(--text);
+  font-size:14px;
+  outline:none;
+}
+.modalRow{display:flex; gap:10px; margin-top:10px;}
+.modalRow button{
+  padding:12px; font-size:14px; border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,0.12);
+  color:var(--text);
+  font-weight:800;
+}
+.modalRow .danger{background:linear-gradient(180deg, rgba(90,31,31,0.65), rgba(90,31,31,0.95));}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <h1>Alkohol-Tracker</h1>
+
+    <div class="headerActions">
+      <button class="iconBtn" id="btnImportIcon" type="button" title="Import (CSV)" aria-label="Import (CSV)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>
+          <path d="M12 3v11"/>
+          <path d="M7 10l5 5 5-5"/>
+        </svg>
+      </button>
+
+      <button class="iconBtn" id="btnExportIcon" type="button" title="Export (CSV)" aria-label="Export (CSV)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 19h12a2 2 0 0 0 2-2v-3"/>
+          <path d="M4 14v3a2 2 0 0 0 2 2"/>
+          <path d="M12 16V4"/>
+          <path d="M8.5 7.5L12 4l3.5 3.5"/>
+        </svg>
+      </button>
+
+      <button class="iconBtn" id="btnDeleteIcon" type="button" title="Daten löschen" aria-label="Daten löschen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 6h18"/>
+          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6"/>
+          <path d="M14 11v6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="btns">
+      <button class="b-ok" id="btnNo" type="button">Kein Alkohol</button>
+      <button class="b-danger" id="btnYes" type="button">Alkohol</button>
+    </div>
+
+    <div class="todayBar" id="todayBar" aria-label="Heutiger Status">
+      <div class="left">
+        <div class="date" id="todayDate">—</div>
+        <div class="sub">Status heute</div>
+      </div>
+      <div class="pill open" id="todayPill">Offen</div>
+    </div>
+  </div>
+
+  <div class="card" id="cardStreaks" style="display:none;">
+    <div class="row">
+      <div class="stat">
+        <div class="k">Aktuelle alkoholfreie Serie</div>
+        <div class="v" id="streakNow">—</div>
+        <div class="sub" id="streakNowSince">seit: —</div>
+      </div>
+
+      <div class="stat">
+        <div class="k">Längste alkoholfreie Serie</div>
+        <div class="v" id="streakBest">—</div>
+        <div class="sub" id="streakBestRange">Zeitraum: —</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cardSlim" id="cardTenDays" style="display:none;">
+    <div class="tenDayWrap" id="tenDayWrap"></div>
+  </div>
+
+  <div class="card" id="cardStats">
+    <details id="statsOnlyOverall" open>
+      <summary>Gesamtstatistik</summary>
+      <div class="inner row">
+        <div class="stat"><div class="k">Gesamttage</div><div class="v">—</div></div>
+        <div class="stat"><div class="k">Alkohol-Tage</div><div class="v">—</div></div>
+        <div class="stat"><div class="k">Alkoholfrei</div><div class="v">—</div></div>
+        <div class="stat"><div class="k">Quote alkoholfrei</div><div class="v">—</div></div>
+      </div>
+    </details>
+
+    <div id="statsDynamic" style="display:none;"></div>
+  </div>
+
+  <div class="card" id="cardHistory" style="display:none;">
+    <details>
+      <summary>Letzte 21 Tage (tippen zum Ändern)</summary>
+      <div style="height:10px;"></div>
+      <div class="list" id="history"></div>
+    </details>
+  </div>
+
+</div>
+
+<!-- QUICK STATUS MENU -->
+<div class="modalOverlay" id="modalQuick" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="quickTitle">
+    <div class="modalTitle" id="quickTitle">Status ändern</div>
+    <div class="modalSub" id="quickSub">Datum: —</div>
+
+    <button class="menuBtn b-ok" id="quickNo" type="button">Kein Alkohol</button>
+    <div style="height:10px;"></div>
+    <button class="menuBtn b-danger" id="quickYes" type="button">Alkohol</button>
+    <div style="height:10px;"></div>
+    <button class="menuBtn b-warn" id="quickOpen" type="button">Offen</button>
+
+    <div class="modalRow">
+      <button id="quickCancel" type="button">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- REASON MODAL -->
+<div class="modalOverlay" id="modalReason" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reasonTitle">
+    <div class="modalTitle" id="reasonTitle">Alkohol – Anlass (optional)</div>
+    <div class="modalSub" id="reasonSub">Datum: —</div>
+    <textarea id="reasonInput" placeholder="z. B. Geburtstag, Stress, Konzert … (optional)"></textarea>
+
+    <div class="modalRow">
+      <button id="reasonCancel" type="button">Abbrechen</button>
+      <button id="reasonSave" class="danger" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="modalOverlay" id="modalDelete" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+    <div class="modalTitle" id="delTitle">Wirklich löschen?</div>
+    <div class="modalSub">Alle lokal gespeicherten Einträge werden entfernt. Das kann nicht rückgängig gemacht werden.</div>
+    <div class="modalRow">
+      <button id="delCancel" type="button">Abbrechen</button>
+      <button id="delConfirm" class="danger" type="button">Löschen</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input id="fileInput" type="file" accept=".csv,text/csv" style="display:none" />
+
+<script>
+const APP = Object.freeze({
+  STORAGE_KEY: "alcohol-tracker-v6",
+  META_KEY: "alcohol-tracker-v6:meta",
+  HISTORY_DAYS: 21,
+  TEN_DAYS: 10,
+  MAX_REASON_LEN: 500
+});
+
+const pad2 = (n) => String(n).padStart(2, "0");
+function keyFromDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function parseKey(k){ return new Date(k + "T00:00:00"); }
+function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function todayKey(){ return keyFromDate(new Date()); }
+
+function loadEntries(){ try { return JSON.parse(localStorage.getItem(APP.STORAGE_KEY) || "{}"); } catch { return {}; } }
+function saveEntries(entries){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(entries)); }
+function loadMeta(){ try { return JSON.parse(localStorage.getItem(APP.META_KEY) || "{}"); } catch { return {}; } }
+function saveMeta(meta){ localStorage.setItem(APP.META_KEY, JSON.stringify(meta)); }
+
+function hasRecord(entries, k){ return Object.prototype.hasOwnProperty.call(entries, k); }
+function getReason(entries, k){ return (entries[k]?.r || "").trim(); }
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 1200);
+}
+function openOverlay(el){ el.style.display = "flex"; el.setAttribute("aria-hidden", "false"); }
+function closeOverlay(el){ el.style.display = "none"; el.setAttribute("aria-hidden", "true"); }
+
+function updateMetaBounds(meta, k){
+  if (!meta.trackStart || k < meta.trackStart) meta.trackStart = k;
+  if (!meta.trackEnd || k > meta.trackEnd) meta.trackEnd = k;
+  return meta;
+}
+function recomputeMeta(entries){
+  const keys = Object.keys(entries).sort();
+  if (keys.length === 0) return {};
+  return { trackStart: keys[0], trackEnd: keys[keys.length - 1] };
+}
+function hasAnyData(){
+  const entries = loadEntries();
+  return Object.keys(entries).length > 0;
+}
+
+function computeStatsInRange(entries, startKey, endKey){
+  const start = parseKey(startKey);
+  const end = parseKey(endKey);
+  if (end < start) return { total:0, alcohol:0, free:0, rate:0 };
+
+  let total = 0, alcohol = 0, free = 0;
+  for (let dt = new Date(start); dt <= end; dt = addDays(dt, 1)){
+    const k = keyFromDate(dt);
+    if (!hasRecord(entries, k)) continue;
+    total++;
+    if (entries[k].a === 1) alcohol++;
+    else free++;
+  }
+  const rate = total ? Math.round((free / total) * 100) : 0;
+  return { total, alcohol, free, rate };
+}
+
+function computeCurrentStreak(entries, trackEnd){
+  if (!trackEnd || !hasRecord(entries, trackEnd)) return { len:0, startKey:null };
+  if (entries[trackEnd].a === 1) return { len:0, startKey:null };
+
+  let len = 0;
+  let dt = parseKey(trackEnd);
+  while (true){
+    const k = keyFromDate(dt);
+    if (!hasRecord(entries, k)) break;
+    if (entries[k].a === 1) break;
+    len++;
+    dt = addDays(dt, -1);
+  }
+  const startKey = keyFromDate(addDays(parseKey(trackEnd), -(len - 1)));
+  return { len, startKey };
+}
+
+function computeBestStreak(entries, trackStart, trackEnd){
+  if (!trackStart || !trackEnd) return { bestLen:0, bestStart:null, bestEnd:null };
+
+  const start = parseKey(trackStart);
+  const end = parseKey(trackEnd);
+
+  let bestLen = 0, bestStart = null, bestEnd = null;
+  let curLen = 0, curStart = null;
+
+  for (let dt = new Date(start); dt <= end; dt = addDays(dt, 1)){
+    const k = keyFromDate(dt);
+    if (!hasRecord(entries, k)){ curLen = 0; curStart = null; continue; }
+    if (entries[k].a === 0){
+      if (curLen === 0) curStart = k;
+      curLen++;
+      if (curLen > bestLen){ bestLen = curLen; bestStart = curStart; bestEnd = k; }
+    } else {
+      curLen = 0; curStart = null;
+    }
+  }
+  return { bestLen, bestStart, bestEnd };
+}
+
+function setText(id, v){ document.getElementById(id).textContent = String(v); }
+
+function statsBoxHTML(prefix, title, open){
+  return `
+    <details ${open ? "open" : ""}>
+      <summary>${title}</summary>
+      <div class="inner row">
+        <div class="stat"><div class="k">Gesamttage</div><div class="v" id="${prefix}Total">0</div></div>
+        <div class="stat"><div class="k">Alkohol-Tage</div><div class="v" id="${prefix}Alcohol">0</div></div>
+        <div class="stat"><div class="k">Alkoholfrei</div><div class="v" id="${prefix}Free">0</div></div>
+        <div class="stat"><div class="k">Quote alkoholfrei</div><div class="v" id="${prefix}Rate">0%</div></div>
+      </div>
+    </details>
+  `;
+}
+
+function renderDynamicStats(entries, meta){
+  const host = document.getElementById("statsDynamic");
+  host.innerHTML = "";
+
+  const start = meta.trackStart;
+  const end = meta.trackEnd;
+
+  const startYear = Number(start.slice(0,4));
+  const endYear = Number(end.slice(0,4));
+  const years = [];
+  for (let y = startYear; y <= endYear; y++) years.push(y);
+
+  const currentYear = (new Date()).getFullYear();
+  const topYear = years.includes(currentYear) ? currentYear : endYear;
+
+  host.insertAdjacentHTML("beforeend", statsBoxHTML("yTop", `Statistik ${topYear}`, true));
+  host.insertAdjacentHTML("beforeend", `<div style="height:12px;"></div>`);
+  host.insertAdjacentHTML("beforeend", statsBoxHTML("all", `Gesamtstatistik seit ${start}`, false));
+
+  const rest = years.filter(y => y !== topYear).sort((a,b)=>b-a);
+  for (const y of rest){
+    host.insertAdjacentHTML("beforeend", `<div style="height:12px;"></div>`);
+    host.insertAdjacentHTML("beforeend", statsBoxHTML(`y${y}`, `Statistik ${y}`, false));
+  }
+
+  const topStart = `${topYear}-01-01`;
+  const topEnd = (topYear === endYear) ? end : `${topYear}-12-31`;
+  const sTop = computeStatsInRange(entries, topStart < start ? start : topStart, topEnd);
+  setText("yTopTotal", sTop.total);
+  setText("yTopAlcohol", sTop.alcohol);
+  setText("yTopFree", sTop.free);
+  setText("yTopRate", sTop.rate + "%");
+
+  const sAll = computeStatsInRange(entries, start, end);
+  setText("allTotal", sAll.total);
+  setText("allAlcohol", sAll.alcohol);
+  setText("allFree", sAll.free);
+  setText("allRate", sAll.rate + "%");
+
+  for (const y of rest){
+    const yStart = `${y}-01-01`;
+    const yEnd = (y === endYear) ? end : `${y}-12-31`;
+    const sY = computeStatsInRange(entries, yStart < start ? start : yStart, yEnd);
+    setText(`y${y}Total`, sY.total);
+    setText(`y${y}Alcohol`, sY.alcohol);
+    setText(`y${y}Free`, sY.free);
+    setText(`y${y}Rate`, sY.rate + "%");
+  }
+}
+
+function renderTenDayRow(entries){
+  const host = document.getElementById("tenDayWrap");
+  host.innerHTML = "";
+
+  const today = new Date();
+  for (let i = APP.TEN_DAYS - 1; i >= 0; i--){
+    const dt = addDays(today, -i);
+    const k = keyFromDate(dt);
+
+    const cell = document.createElement("div");
+    cell.className = "tenDayCell";
+
+    if (!hasRecord(entries, k)){
+      cell.classList.add("open");
+      cell.textContent = "?";
+      cell.title = `${k}: Offen`;
+    } else if (entries[k].a === 0){
+      cell.classList.add("no");
+      cell.textContent = "✓";
+      cell.title = `${k}: Kein Alkohol`;
+    } else {
+      cell.classList.add("yes");
+      cell.textContent = "✕";
+      cell.title = `${k}: Alkohol`;
+    }
+
+    host.appendChild(cell);
+  }
+}
+
+function csvCell(s){
+  const v = (s ?? "").toString();
+  return `"${v.replace(/"/g, '""')}"`;
+}
+function exportCSV(){
+  const entries = loadEntries();
+  const keys = Object.keys(entries).sort();
+  if (keys.length === 0){ toast("Keine Daten zum Export"); return; }
+
+  const meta = loadMeta();
+  const startKey = meta.trackStart || keys[0];
+  const endKey = meta.trackEnd || keys[keys.length-1];
+
+  const lines = ["Datum;Alkohol;Anlass"];
+  for (const k of keys){
+    const yes = entries[k].a === 1 ? "Ja" : "Nein";
+    const reason = entries[k].a === 1 ? getReason(entries, k) : "";
+    lines.push([csvCell(k), csvCell(yes), csvCell(reason)].join(";"));
+  }
+
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `alkohol-tracker_${startKey}_bis_${endKey}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast("CSV exportiert");
+}
+
+function parseCsvLine(line, delimiter){
+  const out = [];
+  let cur = "", inQ = false;
+  for (let i = 0; i < line.length; i++){
+    const ch = line[i];
+    if (ch === '"'){
+      if (inQ && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (!inQ && ch === delimiter){
+      out.push(cur); cur = "";
+    } else cur += ch;
+  }
+  out.push(cur);
+  return out.map(s => s.trim());
+}
+function normalizeDateKey(s){ return /^(\d{4})-(\d{2})-(\d{2})$/.test(s) ? s : null; }
+
+function importCSVText(text){
+  const linesRaw = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (linesRaw.length < 2){ toast("CSV leer/ungültig"); return; }
+
+  const header = linesRaw[0];
+  const delimiter = header.includes(";") ? ";" : (header.includes(",") ? "," : ";");
+
+  const entries = {};
+  let meta = {};
+  let importedRows = 0, skipped = 0;
+
+  for (let i = 1; i < linesRaw.length; i++){
+    const cols = parseCsvLine(linesRaw[i], delimiter);
+    if (cols.length < 2){ skipped++; continue; }
+
+    const date = cols[0].replace(/^"|"$/g, "");
+    const alc  = cols[1].replace(/^"|"$/g, "");
+    const reason = (cols[2] || "").replace(/^"|"$/g, "");
+
+    const k = normalizeDateKey(date);
+    if (!k){ skipped++; continue; }
+
+    const isYes = /^ja$/i.test(alc);
+    const isNo  = /^nein$/i.test(alc);
+    if (!isYes && !isNo){ skipped++; continue; }
+
+    if (isYes) entries[k] = { a: 1, r: reason.trim().slice(0, APP.MAX_REASON_LEN) };
+    else entries[k] = { a: 0 };
+
+    meta = updateMetaBounds(meta, k);
+    importedRows++;
+  }
+
+  if (!meta.trackStart){ toast("Keine gültigen Datumszeilen gefunden"); return; }
+
+  saveEntries(entries);
+  saveMeta(meta);
+  render();
+  toast(`Import ok (${importedRows} Zeilen, ${skipped} übersprungen)`);
+}
+
+function updateTodayUI(entries){
+  const k = todayKey();
+  setText("todayDate", k);
+
+  const pill = document.getElementById("todayPill");
+  pill.classList.remove("open","no","yes");
+
+  if (!hasRecord(entries, k)){
+    pill.classList.add("open"); pill.textContent = "Offen";
+  } else if (entries[k].a === 0){
+    pill.classList.add("no"); pill.textContent = "Kein Alkohol";
+  } else {
+    pill.classList.add("yes"); pill.textContent = "Alkohol";
+  }
+}
+
+const quick = {
+  overlay: document.getElementById("modalQuick"),
+  sub: document.getElementById("quickSub"),
+  k: null
+};
+function openQuick(k){
+  quick.k = k;
+  quick.sub.textContent = `Datum: ${k}`;
+  openOverlay(quick.overlay);
+}
+function closeQuick(){ closeOverlay(quick.overlay); quick.k = null; }
+quick.overlay.addEventListener("click", (e)=>{ if (e.target === quick.overlay) closeQuick(); });
+document.getElementById("quickCancel").addEventListener("click", closeQuick);
+
+const reasonModal = {
+  overlay: document.getElementById("modalReason"),
+  sub: document.getElementById("reasonSub"),
+  input: document.getElementById("reasonInput"),
+  k: null
+};
+function openReason(k){
+  reasonModal.k = k;
+  reasonModal.sub.textContent = `Datum: ${k}`;
+  const entries = loadEntries();
+  reasonModal.input.value = (hasRecord(entries, k) && entries[k].a === 1) ? getReason(entries, k) : "";
+  openOverlay(reasonModal.overlay);
+  setTimeout(()=>reasonModal.input.focus(), 0);
+}
+function closeReason(){ closeOverlay(reasonModal.overlay); reasonModal.k = null; }
+reasonModal.overlay.addEventListener("click", (e)=>{ if (e.target === reasonModal.overlay) closeReason(); });
+document.getElementById("reasonCancel").addEventListener("click", closeReason);
+
+function setDayNo(k){
+  const entries = loadEntries();
+  entries[k] = { a: 0 };
+  saveEntries(entries);
+  saveMeta(updateMetaBounds(loadMeta(), k));
+}
+function saveAlcohol(k, reason){
+  const entries = loadEntries();
+  entries[k] = { a: 1, r: (reason || "").trim().slice(0, APP.MAX_REASON_LEN) };
+  saveEntries(entries);
+  saveMeta(updateMetaBounds(loadMeta(), k));
+}
+function setDayOpen(k){
+  const entries = loadEntries();
+  if (hasRecord(entries, k)){
+    delete entries[k];
+    saveEntries(entries);
+    saveMeta(recomputeMeta(entries));
+  }
+}
+
+document.getElementById("quickNo").addEventListener("click", ()=>{
+  if (!quick.k) return;
+  setDayNo(quick.k);
+  closeQuick();
+  render();
+  toast("Kein Alkohol");
+});
+document.getElementById("quickYes").addEventListener("click", ()=>{
+  if (!quick.k) return;
+  const k = quick.k;
+  closeQuick();
+  openReason(k);
+});
+document.getElementById("quickOpen").addEventListener("click", ()=>{
+  if (!quick.k) return;
+  setDayOpen(quick.k);
+  closeQuick();
+  render();
+  toast("Offen");
+});
+
+document.getElementById("reasonSave").addEventListener("click", ()=>{
+  if (!reasonModal.k) return;
+  saveAlcohol(reasonModal.k, reasonModal.input.value);
+  closeReason();
+  render();
+  toast("Alkohol");
+});
+
+const del = { overlay: document.getElementById("modalDelete") };
+function openDelete(){ openOverlay(del.overlay); }
+function closeDelete(){ closeOverlay(del.overlay); }
+del.overlay.addEventListener("click", (e)=>{ if (e.target === del.overlay) closeDelete(); });
+document.getElementById("delCancel").addEventListener("click", closeDelete);
+document.getElementById("delConfirm").addEventListener("click", ()=>{
+  localStorage.removeItem(APP.STORAGE_KEY);
+  localStorage.removeItem(APP.META_KEY);
+  closeDelete();
+  render();
+  toast("Daten gelöscht");
+});
+
+function updateVisibility(){
+  const any = hasAnyData();
+  document.getElementById("cardHistory").style.display = any ? "" : "none";
+  document.getElementById("statsOnlyOverall").style.display = any ? "none" : "";
+  document.getElementById("statsDynamic").style.display = any ? "" : "none";
+  document.getElementById("cardStreaks").style.display = any ? "" : "none";
+  document.getElementById("cardTenDays").style.display = any ? "" : "none";
+}
+
+function render(){
+  const entries = loadEntries();
+  updateTodayUI(entries);
+  updateVisibility();
+
+  const keys = Object.keys(entries).sort();
+  if (keys.length === 0){
+    document.getElementById("statsDynamic").innerHTML = "";
+    document.getElementById("tenDayWrap").innerHTML = "";
+    return;
+  }
+
+  const meta = loadMeta();
+  const trackStart = meta.trackStart || keys[0];
+  const trackEnd = meta.trackEnd || keys[keys.length - 1];
+
+  const cur = computeCurrentStreak(entries, trackEnd);
+  setText("streakNow", cur.len);
+  setText("streakNowSince", cur.len > 0 ? `seit: ${cur.startKey}` : "seit: —");
+
+  const best = computeBestStreak(entries, trackStart, trackEnd);
+  setText("streakBest", best.bestLen);
+  setText("streakBestRange", best.bestLen > 0 ? `Zeitraum: ${best.bestStart} – ${best.bestEnd}` : "Zeitraum: —");
+
+  renderTenDayRow(entries);
+  renderDynamicStats(entries, { trackStart, trackEnd });
+
+  const hist = document.getElementById("history");
+  hist.innerHTML = "";
+  for (let i = 0; i < APP.HISTORY_DAYS; i++){
+    const dt = addDays(new Date(), -i);
+    const k = keyFromDate(dt);
+
+    const div = document.createElement("div");
+    div.className = "item";
+    div.style.cursor = "pointer";
+
+    let tagClass = "open", tagText = "Offen", reason = "";
+    if (hasRecord(entries, k)){
+      if (entries[k].a === 1){ tagClass = "yes"; tagText = "Alkohol"; reason = getReason(entries, k); }
+      else { tagClass = "no"; tagText = "Kein Alkohol"; }
+    }
+
+    const left = document.createElement("div");
+    left.className = "left";
+    left.innerHTML = `<div>${k}</div>` + (tagClass === "yes" && reason ? `<div class="reason">${reason}</div>` : "");
+
+    const right = document.createElement("div");
+    right.className = "tag " + tagClass;
+    right.textContent = tagText;
+
+    div.appendChild(left);
+    div.appendChild(right);
+    div.addEventListener("click", () => openQuick(k));
+    hist.appendChild(div);
+  }
+}
+
+document.getElementById("btnNo").addEventListener("click", ()=>{
+  const k = todayKey();
+  setDayNo(k);
+  render();
+  toast("Kein Alkohol");
+});
+
+document.getElementById("btnYes").addEventListener("click", ()=>{
+  openReason(todayKey());
+});
+
+const fileInput = document.getElementById("fileInput");
+document.getElementById("btnImportIcon").addEventListener("click", ()=>{
+  fileInput.value = "";
+  fileInput.click();
+});
+fileInput.addEventListener("change", async ()=>{
+  const file = fileInput.files && fileInput.files[0];
+  if (!file) return;
+  try{ importCSVText(await file.text()); }
+  catch { toast("Import fehlgeschlagen"); }
+});
+document.getElementById("btnExportIcon").addEventListener("click", exportCSV);
+document.getElementById("btnDeleteIcon").addEventListener("click", openDelete);
+
+document.addEventListener("keydown", (e)=>{
+  if (e.key !== "Escape") return;
+  if (quick.overlay.style.display === "flex") closeQuick();
+  if (reasonModal.overlay.style.display === "flex") closeReason();
+  if (del.overlay.style.display === "flex") closeDelete();
+});
+
+render();
+</script>
+</body>
+</html>
