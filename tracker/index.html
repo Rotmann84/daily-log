@@ -50,9 +50,6 @@ h1{font-size:22px; margin:0;}
   margin-top:14px;
   box-shadow:0 10px 30px rgba(0,0,0,0.35);
 }
-.cardSlim{
-  padding:10px 12px;
-}
 
 .btns{display:flex; flex-direction:column; gap:10px;}
 button{
@@ -94,6 +91,59 @@ button:active{transform:scale(0.99);}
 .pill.no{background:rgba(31,75,43,0.25); color:#cfe9d8;}
 .pill.yes{background:rgba(90,31,31,0.25); color:#f0cfcf;}
 
+.seriesBlock{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.seriesLine{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.seriesLine strong{
+  color:var(--text);
+  font-weight:800;
+}
+.seriesDivider{
+  height:1px;
+  background:var(--line);
+  margin:4px 0 2px;
+}
+.seriesTenDays{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.seriesTenDays .label{
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap;
+}
+.tenDayWrap{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:6px;
+  min-height:22px;
+}
+.tenDayCell{
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+  user-select:none;
+}
+.tenDayCell.no{background:rgba(31,75,43,0.25); color:#cfe9d8;}
+.tenDayCell.yes{background:rgba(90,31,31,0.25); color:#f0cfcf;}
+.tenDayCell.open{background:rgba(75,59,31,0.25); color:#d9d9d9;}
+
 .row{display:flex; gap:10px; flex-wrap:wrap;}
 .stat{
   flex:1 1 140px;
@@ -104,7 +154,6 @@ button:active{transform:scale(0.99);}
 }
 .stat .k{color:var(--muted); font-size:12px; margin-bottom:6px;}
 .stat .v{font-size:22px; font-weight:700;}
-.stat .sub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.25;}
 
 .list{display:flex; flex-direction:column; gap:8px;}
 .item{
@@ -142,41 +191,6 @@ details .inner{margin-top:10px;}
 }
 .toast.show{opacity:1;}
 
-/* 10-day row */
-.tenDayWrap{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  min-height:22px;
-}
-.tenDayCell{
-  width:20px;
-  height:20px;
-  border-radius:6px;
-  border:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-  font-weight:800;
-  line-height:1;
-  user-select:none;
-}
-.tenDayCell.no{
-  background:rgba(31,75,43,0.25);
-  color:#cfe9d8;
-}
-.tenDayCell.yes{
-  background:rgba(90,31,31,0.25);
-  color:#f0cfcf;
-}
-.tenDayCell.open{
-  background:rgba(75,59,31,0.25);
-  color:#d9d9d9;
-}
-
-/* Modals */
 .modalOverlay{
   position:fixed; inset:0;
   background:rgba(0,0,0,0.55);
@@ -288,23 +302,16 @@ textarea{
   </div>
 
   <div class="card" id="cardStreaks" style="display:none;">
-    <div class="row">
-      <div class="stat">
-        <div class="k">Aktuelle alkoholfreie Serie</div>
-        <div class="v" id="streakNow">—</div>
-        <div class="sub" id="streakNowSince">seit: —</div>
-      </div>
-
-      <div class="stat">
-        <div class="k">Längste alkoholfreie Serie</div>
-        <div class="v" id="streakBest">—</div>
-        <div class="sub" id="streakBestRange">Zeitraum: —</div>
+    <div class="seriesBlock">
+      <div class="seriesLine">Aktuelle Serie: <strong id="streakNow">—</strong> Tage <span id="streakNowSince">(seit —)</span></div>
+      <div class="seriesLine">Längste Serie: <strong id="streakBest">—</strong> Tage <span id="streakBestRange">(— - —)</span></div>
+      <div class="seriesLine">Längste negativ Serie: <strong id="streakWorst">—</strong> Tage <span id="streakWorstRange">(— - —)</span></div>
+      <div class="seriesDivider"></div>
+      <div class="seriesTenDays">
+        <div class="seriesLine label">Letzte 10 Tage:</div>
+        <div class="tenDayWrap" id="tenDayWrap"></div>
       </div>
     </div>
-  </div>
-
-  <div class="card cardSlim" id="cardTenDays" style="display:none;">
-    <div class="tenDayWrap" id="tenDayWrap"></div>
   </div>
 
   <div class="card" id="cardStats">
@@ -331,7 +338,6 @@ textarea{
 
 </div>
 
-<!-- QUICK STATUS MENU -->
 <div class="modalOverlay" id="modalQuick" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="quickTitle">
     <div class="modalTitle" id="quickTitle">Status ändern</div>
@@ -349,7 +355,6 @@ textarea{
   </div>
 </div>
 
-<!-- REASON MODAL -->
 <div class="modalOverlay" id="modalReason" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reasonTitle">
     <div class="modalTitle" id="reasonTitle">Alkohol – Anlass (optional)</div>
@@ -363,7 +368,6 @@ textarea{
   </div>
 </div>
 
-<!-- DELETE CONFIRM -->
 <div class="modalOverlay" id="modalDelete" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delTitle">
     <div class="modalTitle" id="delTitle">Wirklich löschen?</div>
@@ -380,8 +384,8 @@ textarea{
 
 <script>
 const APP = Object.freeze({
-  STORAGE_KEY: "alcohol-tracker-v6",
-  META_KEY: "alcohol-tracker-v6:meta",
+  STORAGE_KEY: "alcohol-tracker-v7",
+  META_KEY: "alcohol-tracker-v7:meta",
   HISTORY_DAYS: 21,
   TEN_DAYS: 10,
   MAX_REASON_LEN: 500
@@ -392,6 +396,12 @@ function keyFromDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pa
 function parseKey(k){ return new Date(k + "T00:00:00"); }
 function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate() + n); return x; }
 function todayKey(){ return keyFromDate(new Date()); }
+
+function formatShortDate(k){
+  if (!k) return "—";
+  const [y,m,d] = k.split("-");
+  return `${d}.${m}.${y.slice(2)}`;
+}
 
 function loadEntries(){ try { return JSON.parse(localStorage.getItem(APP.STORAGE_KEY) || "{}"); } catch { return {}; } }
 function saveEntries(entries){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(entries)); }
@@ -459,8 +469,8 @@ function computeCurrentStreak(entries, trackEnd){
   return { len, startKey };
 }
 
-function computeBestStreak(entries, trackStart, trackEnd){
-  if (!trackStart || !trackEnd) return { bestLen:0, bestStart:null, bestEnd:null };
+function computeBestStreakByValue(entries, trackStart, trackEnd, value){
+  if (!trackStart || !trackEnd) return { len:0, start:null, end:null };
 
   const start = parseKey(trackStart);
   const end = parseKey(trackEnd);
@@ -470,16 +480,24 @@ function computeBestStreak(entries, trackStart, trackEnd){
 
   for (let dt = new Date(start); dt <= end; dt = addDays(dt, 1)){
     const k = keyFromDate(dt);
-    if (!hasRecord(entries, k)){ curLen = 0; curStart = null; continue; }
-    if (entries[k].a === 0){
+
+    if (!hasRecord(entries, k)){
+      curLen = 0; curStart = null;
+      continue;
+    }
+
+    if (entries[k].a === value){
       if (curLen === 0) curStart = k;
       curLen++;
-      if (curLen > bestLen){ bestLen = curLen; bestStart = curStart; bestEnd = k; }
+      if (curLen > bestLen){
+        bestLen = curLen; bestStart = curStart; bestEnd = k;
+      }
     } else {
       curLen = 0; curStart = null;
     }
   }
-  return { bestLen, bestStart, bestEnd };
+
+  return { len: bestLen, start: bestStart, end: bestEnd };
 }
 
 function setText(id, v){ document.getElementById(id).textContent = String(v); }
@@ -785,7 +803,6 @@ function updateVisibility(){
   document.getElementById("statsOnlyOverall").style.display = any ? "none" : "";
   document.getElementById("statsDynamic").style.display = any ? "" : "none";
   document.getElementById("cardStreaks").style.display = any ? "" : "none";
-  document.getElementById("cardTenDays").style.display = any ? "" : "none";
 }
 
 function render(){
@@ -806,11 +823,15 @@ function render(){
 
   const cur = computeCurrentStreak(entries, trackEnd);
   setText("streakNow", cur.len);
-  setText("streakNowSince", cur.len > 0 ? `seit: ${cur.startKey}` : "seit: —");
+  setText("streakNowSince", cur.len > 0 ? `(seit ${formatShortDate(cur.startKey)})` : "(seit —)");
 
-  const best = computeBestStreak(entries, trackStart, trackEnd);
-  setText("streakBest", best.bestLen);
-  setText("streakBestRange", best.bestLen > 0 ? `Zeitraum: ${best.bestStart} – ${best.bestEnd}` : "Zeitraum: —");
+  const bestFree = computeBestStreakByValue(entries, trackStart, trackEnd, 0);
+  setText("streakBest", bestFree.len);
+  setText("streakBestRange", bestFree.len > 0 ? `(${formatShortDate(bestFree.start)} - ${formatShortDate(bestFree.end)})` : "(— - —)");
+
+  const bestAlcohol = computeBestStreakByValue(entries, trackStart, trackEnd, 1);
+  setText("streakWorst", bestAlcohol.len);
+  setText("streakWorstRange", bestAlcohol.len > 0 ? `(${formatShortDate(bestAlcohol.start)} - ${formatShortDate(bestAlcohol.end)})` : "(— - —)");
 
   renderTenDayRow(entries);
   renderDynamicStats(entries, { trackStart, trackEnd });
