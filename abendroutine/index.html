@@ -4,21 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Fitness-Tracker</title>
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#18221d" />
   <style>
     :root {
-      --bg: #f4f5f7;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --green: #16a34a;
-      --green-dark: #15803d;
-      --red: #dc2626;
-      --red-dark: #b91c1c;
-      --gray: #9ca3af;
-      --blue: #2563eb;
-      --shadow: 0 8px 24px rgba(0,0,0,0.08);
+      --bg: #111814;
+      --bg-soft: #17221c;
+      --card: #1d2a23;
+      --card-2: #24342b;
+      --text: #f2f0e8;
+      --muted: #aeb8ad;
+      --border: rgba(223, 214, 185, 0.16);
+      --border-strong: rgba(223, 214, 185, 0.28);
+      --green: #4f8f63;
+      --green-dark: #3f7952;
+      --red: #9b4d4d;
+      --red-dark: #813f3f;
+      --gray: #6f776f;
+      --gold: #c7a96b;
+      --gold-dark: #a78c54;
+      --blue: #577c8e;
+      --shadow: 0 14px 34px rgba(0,0,0,0.26);
       --radius: 18px;
     }
 
@@ -28,8 +33,9 @@
       margin: 0;
       padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
+      background: radial-gradient(circle at top, #26382d 0, var(--bg) 42%, #0d120f 100%);
       color: var(--text);
+      min-height: 100vh;
     }
 
     .app {
@@ -42,7 +48,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       padding-top: 6px;
     }
 
@@ -50,89 +56,110 @@
       font-size: 1.45rem;
       margin: 0;
       letter-spacing: -0.02em;
+      color: #f8f2de;
     }
 
     .icon-row {
       display: flex;
-      gap: 8px;
+      gap: 7px;
     }
 
     .icon-btn {
-      border: 1px solid var(--border);
-      background: var(--card);
-      width: 38px;
-      height: 38px;
+      border: 1px solid var(--border-strong);
+      background: rgba(29, 42, 35, 0.88);
+      color: var(--text);
+      width: 37px;
+      height: 37px;
       border-radius: 12px;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 5px 14px rgba(0,0,0,0.18);
       cursor: pointer;
     }
 
+    .icon-btn:active { transform: translateY(1px); }
+
     .card {
-      background: var(--card);
+      background: rgba(29, 42, 35, 0.94);
       border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 14px;
+      padding: 15px;
+      margin-bottom: 13px;
       box-shadow: var(--shadow);
-      border: 1px solid rgba(229,231,235,0.9);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
     }
+
+    .today-card { padding: 12px; }
 
     .main-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
     .main-btn {
-      border: 0;
+      border: 1px solid rgba(255,255,255,0.08);
       color: white;
-      border-radius: 16px;
-      padding: 18px 10px;
-      font-size: 1.05rem;
-      font-weight: 700;
+      border-radius: 14px;
+      padding: 14px 8px;
+      font-size: 1.02rem;
+      font-weight: 780;
       cursor: pointer;
-      min-height: 76px;
+      min-height: 58px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 7px 16px rgba(0,0,0,0.18);
     }
 
-    .green { background: var(--green); }
-    .green:active { background: var(--green-dark); }
-    .red { background: var(--red); }
-    .red:active { background: var(--red-dark); }
+    .green { background: linear-gradient(180deg, var(--green), var(--green-dark)); }
+    .red { background: linear-gradient(180deg, var(--red), var(--red-dark)); }
 
     .today {
-      text-align: center;
-      margin-top: 14px;
+      margin-top: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.45;
+      font-size: 0.92rem;
+      line-height: 1.35;
     }
 
     .today strong { color: var(--text); }
+    .today-status { text-align: right; }
 
     .section-title {
       font-size: 1rem;
       margin: 0 0 10px;
-      font-weight: 750;
+      font-weight: 760;
+      color: #f7efd6;
     }
 
     .series-line {
-      font-size: 0.95rem;
-      margin: 6px 0;
-      color: var(--text);
+      font-size: 0.86rem;
+      margin: 5px 0;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+      white-space: nowrap;
     }
 
     .series-line span {
-      font-weight: 800;
+      font-weight: 780;
+      color: var(--text);
+      font-size: 0.83rem;
+      text-align: right;
     }
 
     .ten-days-label {
       margin-top: 12px;
       margin-bottom: 8px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.88rem;
     }
 
     .ten-days {
@@ -147,55 +174,69 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: white;
-      font-weight: 800;
+      font-weight: 820;
     }
 
     .day-training { background: var(--green); }
     .day-none { background: var(--red); }
     .day-open { background: var(--gray); }
 
+    details summary {
+      cursor: pointer;
+      font-weight: 760;
+      list-style: none;
+      color: #f7efd6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    details summary::after {
+      content: "▾";
+      color: var(--gold);
+      font-size: 0.9rem;
+      transition: transform 0.15s ease;
+    }
+
+    details[open] summary::after { transform: rotate(180deg); }
+    details summary::-webkit-details-marker { display: none; }
+
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 9px;
+      margin-top: 12px;
     }
 
     .stat-box {
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 12px;
-      background: #fafafa;
+      padding: 11px;
+      background: rgba(36, 52, 43, 0.85);
     }
 
     .stat-label {
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       margin-bottom: 4px;
     }
 
     .stat-value {
-      font-size: 1.15rem;
-      font-weight: 800;
+      font-size: 1.1rem;
+      font-weight: 820;
+      color: var(--text);
     }
 
-    details summary {
-      cursor: pointer;
-      font-weight: 750;
-      list-style: none;
-    }
-
-    details summary::-webkit-details-marker { display: none; }
-
-    .history-list {
+    .history-list, .unit-list, .settings-list {
       margin-top: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    .history-row {
+    .history-row, .unit-row, .exercise-row {
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 10px;
@@ -203,70 +244,39 @@
       grid-template-columns: 1fr auto;
       align-items: center;
       gap: 8px;
-      background: #fafafa;
+      background: rgba(36, 52, 43, 0.78);
     }
 
-    .history-date {
-      font-weight: 700;
-      font-size: 0.95rem;
+    .history-date, .unit-title, .exercise-name {
+      font-weight: 760;
+      font-size: 0.94rem;
+      color: var(--text);
     }
 
-    .history-status {
+    .history-status, .unit-meta, .empty-note {
       color: var(--muted);
-      font-size: 0.86rem;
-      margin-top: 2px;
+      font-size: 0.84rem;
+      margin-top: 3px;
       line-height: 1.35;
+      white-space: pre-wrap;
     }
 
     .small-btn {
-      border: 1px solid var(--border);
-      background: white;
+      border: 1px solid var(--border-strong);
+      background: rgba(17, 24, 20, 0.72);
       border-radius: 11px;
       padding: 8px 10px;
-      font-weight: 700;
+      font-weight: 760;
       cursor: pointer;
       color: var(--text);
     }
 
-    .unit-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .unit-row {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 10px;
-      background: #fafafa;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .unit-title {
-      font-weight: 750;
-      font-size: 0.95rem;
-    }
-
-    .unit-meta {
-      font-size: 0.84rem;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-
-    .empty-note {
-      color: var(--muted);
-      font-size: 0.92rem;
-      margin: 8px 0 0;
-    }
+    .small-btn.danger-text { color: #f1b7b7; }
 
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.58);
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -277,35 +287,48 @@
     .modal {
       width: 100%;
       max-width: 520px;
-      background: white;
+      background: #1d2a23;
+      color: var(--text);
+      border: 1px solid var(--border-strong);
       border-radius: 22px;
       padding: 16px;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.46);
+      max-height: 92vh;
+      overflow: auto;
     }
 
     .modal h2 {
       margin: 0 0 10px;
-      font-size: 1.1rem;
+      font-size: 1.08rem;
+      color: #f7efd6;
     }
 
     .modal label {
       display: block;
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       color: var(--muted);
       margin: 10px 0 5px;
-      font-weight: 650;
+      font-weight: 670;
     }
 
     .modal input, .modal textarea, .modal select {
       width: 100%;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-strong);
       border-radius: 12px;
       padding: 10px;
       font: inherit;
-      background: #fafafa;
+      background: #121b16;
+      color: var(--text);
     }
 
-    .modal textarea { min-height: 72px; resize: vertical; }
+    .modal textarea { min-height: 86px; resize: vertical; }
+
+    .exercise-add-row {
+      display: grid;
+      grid-template-columns: 1fr 0.55fr auto;
+      gap: 8px;
+      align-items: end;
+    }
 
     .modal-actions {
       display: grid;
@@ -314,27 +337,28 @@
       margin-top: 14px;
     }
 
-    .modal-actions.three {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
+    .modal-actions.three { grid-template-columns: 1fr 1fr 1fr; }
 
     .modal-btn {
       border: 0;
       border-radius: 14px;
       padding: 12px 8px;
-      font-weight: 800;
+      font-weight: 820;
       cursor: pointer;
     }
 
-    .secondary { background: #e5e7eb; color: var(--text); }
+    .secondary { background: #36443b; color: var(--text); }
     .danger { background: var(--red); color: white; }
-    .primary { background: var(--blue); color: white; }
+    .primary { background: var(--gold); color: #1a1409; }
+    .blue { background: var(--blue); color: white; }
 
     input[type="file"] { display: none; }
 
-    @media (max-width: 360px) {
-      .main-buttons { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr; }
+    @media (max-width: 380px) {
+      .series-line { font-size: 0.8rem; }
+      .series-line span { font-size: 0.76rem; }
+      .exercise-add-row { grid-template-columns: 1fr; }
+      .modal-actions.three { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -343,6 +367,7 @@
     <header>
       <h1>Fitness-Tracker</h1>
       <div class="icon-row">
+        <button class="icon-btn" title="Einstellungen" onclick="openSettingsModal()">⚙</button>
         <button class="icon-btn" title="Import" onclick="document.getElementById('fileInput').click()">⤴</button>
         <button class="icon-btn" title="Export" onclick="exportCsv()">⤵</button>
         <button class="icon-btn" title="Daten löschen" onclick="clearAllData()">🗑</button>
@@ -351,7 +376,7 @@
 
     <input id="fileInput" type="file" accept=".csv,text/csv" onchange="importCsv(event)" />
 
-    <section class="card">
+    <section class="card today-card">
       <div class="main-buttons">
         <button class="main-btn green" onclick="openTrainingModal(todayKey())">Training</button>
         <button class="main-btn red" onclick="setEntry(todayKey(), 'none')">Kein Training</button>
@@ -360,9 +385,9 @@
     </section>
 
     <section class="card" id="seriesCard" style="display:none;">
-      <div class="series-line">Aktuelle Serie: <span id="currentSeries">0</span></div>
-      <div class="series-line">Längste Serie: <span id="longestTrainingSeries">0</span></div>
-      <div class="series-line">Längste negativ Serie: <span id="longestNegativeSeries">0</span></div>
+      <div class="series-line"><div>Aktuelle Serie:</div><span id="currentSeries">0</span></div>
+      <div class="series-line"><div>Längste Serie:</div><span id="longestTrainingSeries">0</span></div>
+      <div class="series-line"><div>Längste negativ Serie:</div><span id="longestNegativeSeries">0</span></div>
       <div class="ten-days-label">Letzte 10 Tage:</div>
       <div class="ten-days" id="tenDays"></div>
     </section>
@@ -374,7 +399,7 @@
 
     <section class="card" id="statsContainer"></section>
 
-    <section class="card" id="historyCard" style="display:none;">
+    <section class="card" id="historyCard">
       <details>
         <summary>Letzte 21 Tage bearbeiten</summary>
         <div class="history-list" id="historyList"></div>
@@ -384,46 +409,120 @@
 
   <div class="modal-backdrop" id="trainingModal">
     <div class="modal">
-      <h2 id="modalTitle">Training erfassen</h2>
-      <input type="hidden" id="modalDate" />
+      <h2 id="trainingModalTitle">Training erfassen</h2>
+      <input type="hidden" id="trainingDate" />
 
-      <label for="trainingType">Trainingseinheit</label>
-      <select id="trainingType">
-        <option value="Full Routine">Full Routine</option>
-        <option value="Light Routine">Light Routine</option>
-        <option value="Peloton">Peloton</option>
-        <option value="Spaziergang">Spaziergang</option>
-        <option value="Sonstiges">Sonstiges</option>
-      </select>
+      <div class="exercise-add-row">
+        <div>
+          <label for="exerciseSelect">Übung</label>
+          <select id="exerciseSelect"></select>
+        </div>
+        <div>
+          <label for="exerciseAmount">Anzahl</label>
+          <input id="exerciseAmount" type="text" inputmode="text" placeholder="z. B. 90" />
+        </div>
+        <button class="small-btn" style="height:42px" onclick="addExerciseToNote()">Hinzufügen</button>
+      </div>
 
-      <label for="trainingNote">Notiz / Details optional</label>
-      <textarea id="trainingNote" placeholder="z. B. 90 Swings, 23 Liegestütze, 60 Sek. Plank"></textarea>
+      <label for="trainingNote">Trainingsinhalt</label>
+      <textarea id="trainingNote" placeholder="Hier werden die ausgewählten Übungen fortlaufend gesammelt."></textarea>
 
       <div class="modal-actions three">
         <button class="modal-btn secondary" onclick="closeTrainingModal()">Abbrechen</button>
-        <button class="modal-btn danger" onclick="setModalNone()">Kein Training</button>
+        <button class="modal-btn danger" onclick="setTrainingModalNone()">Kein Training</button>
         <button class="modal-btn primary" onclick="saveTrainingFromModal()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="historyModal">
+    <div class="modal">
+      <h2 id="historyModalTitle">Tag bearbeiten</h2>
+      <input type="hidden" id="historyDate" />
+
+      <label for="historyStatus">Status</label>
+      <select id="historyStatus" onchange="toggleHistoryTrainingFields()">
+        <option value="open">Offen</option>
+        <option value="training">Training</option>
+        <option value="none">Kein Training</option>
+      </select>
+
+      <div id="historyTrainingFields" style="display:none;">
+        <label for="historyNote">Trainingsinhalt</label>
+        <textarea id="historyNote" placeholder="z. B. 90 Swings\n23 Liegestütze"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeHistoryModal()">Abbrechen</button>
+        <button class="modal-btn primary" onclick="saveHistoryModal()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <h2>Übungen verwalten</h2>
+      <p class="empty-note">Diese Liste füllt das Dropdown im Menü „Training erfassen“.</p>
+
+      <label for="newExerciseInput">Neue Übung</label>
+      <div style="display:grid; grid-template-columns:1fr auto; gap:8px;">
+        <input id="newExerciseInput" type="text" placeholder="z. B. Plank" />
+        <button class="small-btn" onclick="addExerciseSetting()">Hinzufügen</button>
+      </div>
+
+      <div class="settings-list" id="exerciseSettingsList"></div>
+
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeSettingsModal()">Schließen</button>
+        <button class="modal-btn blue" onclick="resetExercises()">Standardliste</button>
       </div>
     </div>
   </div>
 
   <script>
     const STORAGE_KEY = 'fitnessTrackerV2';
+    const EXERCISE_KEY = 'fitnessTrackerV2Exercises';
     const START_DATE = '2026-06-23';
+    const DEFAULT_EXERCISES = [
+      'Kettlebell Swings',
+      'Squats',
+      'Rows',
+      'Liegestütze',
+      'Plank',
+      'Peloton',
+      'Spaziergang',
+      'Mobility',
+      'Sonstiges'
+    ];
 
     let data = loadData();
+    let exercises = loadExercises();
 
     function loadData() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+
+    function loadExercises() {
       try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        const saved = JSON.parse(localStorage.getItem(EXERCISE_KEY));
+        return Array.isArray(saved) && saved.length ? saved : DEFAULT_EXERCISES.slice();
       } catch (e) {
-        return {};
+        return DEFAULT_EXERCISES.slice();
       }
     }
 
     function saveData() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       render();
+    }
+
+    function saveExercises() {
+      exercises = exercises.map(x => x.trim()).filter(Boolean);
+      exercises = [...new Set(exercises)];
+      localStorage.setItem(EXERCISE_KEY, JSON.stringify(exercises));
+      renderExerciseSelect();
+      renderExerciseSettings();
     }
 
     function todayKey() {
@@ -468,10 +567,15 @@
     }
 
     function getEntry(key) {
-      return data[key] || { status: 'open', type: '', note: '' };
+      return data[key] || { status: 'open', note: '' };
     }
 
-    function setEntry(key, status, type = '', note = '') {
+    function normalizeEntry(entry) {
+      if (!entry) return { status: 'open', note: '' };
+      return { status: entry.status || 'open', note: entry.note || '' };
+    }
+
+    function setEntry(key, status, note = '') {
       if (key < START_DATE) {
         alert('Die Statistik beginnt am 23.06.2026. Frühere Tage werden nicht erfasst.');
         return;
@@ -479,7 +583,7 @@
       if (status === 'open') {
         delete data[key];
       } else {
-        data[key] = { status, type, note };
+        data[key] = { status, note: note || '' };
       }
       saveData();
     }
@@ -489,11 +593,12 @@
         alert('Die Statistik beginnt am 23.06.2026. Frühere Tage werden nicht erfasst.');
         return;
       }
-      const entry = getEntry(key);
-      document.getElementById('modalDate').value = key;
-      document.getElementById('modalTitle').textContent = `Training erfassen – ${formatLongDate(key)}`;
-      document.getElementById('trainingType').value = entry.type || 'Full Routine';
-      document.getElementById('trainingNote').value = entry.note || '';
+      const entry = normalizeEntry(getEntry(key));
+      document.getElementById('trainingDate').value = key;
+      document.getElementById('trainingModalTitle').textContent = `Training erfassen – ${formatLongDate(key)}`;
+      document.getElementById('trainingNote').value = entry.status === 'training' ? entry.note : '';
+      document.getElementById('exerciseAmount').value = '';
+      renderExerciseSelect();
       document.getElementById('trainingModal').style.display = 'flex';
     }
 
@@ -501,22 +606,128 @@
       document.getElementById('trainingModal').style.display = 'none';
     }
 
+    function addExerciseToNote() {
+      const exercise = document.getElementById('exerciseSelect').value;
+      const amount = document.getElementById('exerciseAmount').value.trim();
+      if (!exercise) {
+        alert('Bitte zuerst eine Übung auswählen.');
+        return;
+      }
+      const line = amount ? `${amount} ${exercise}` : exercise;
+      const note = document.getElementById('trainingNote');
+      note.value = note.value.trim() ? `${note.value.trim()}\n${line}` : line;
+      document.getElementById('exerciseAmount').value = '';
+      document.getElementById('exerciseAmount').focus();
+    }
+
     function saveTrainingFromModal() {
-      const key = document.getElementById('modalDate').value;
-      const type = document.getElementById('trainingType').value;
+      const key = document.getElementById('trainingDate').value;
       const note = document.getElementById('trainingNote').value.trim();
-      setEntry(key, 'training', type, note);
+      setEntry(key, 'training', note);
       closeTrainingModal();
     }
 
-    function setModalNone() {
-      const key = document.getElementById('modalDate').value;
+    function setTrainingModalNone() {
+      const key = document.getElementById('trainingDate').value;
       setEntry(key, 'none');
       closeTrainingModal();
     }
 
+    function openHistoryModal(key) {
+      const entry = normalizeEntry(getEntry(key));
+      document.getElementById('historyDate').value = key;
+      document.getElementById('historyModalTitle').textContent = `Tag bearbeiten – ${formatLongDate(key)}`;
+      document.getElementById('historyStatus').value = entry.status || 'open';
+      document.getElementById('historyNote').value = entry.status === 'training' ? entry.note : '';
+      toggleHistoryTrainingFields();
+      document.getElementById('historyModal').style.display = 'flex';
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').style.display = 'none';
+    }
+
+    function toggleHistoryTrainingFields() {
+      const isTraining = document.getElementById('historyStatus').value === 'training';
+      document.getElementById('historyTrainingFields').style.display = isTraining ? 'block' : 'none';
+    }
+
+    function saveHistoryModal() {
+      const key = document.getElementById('historyDate').value;
+      const status = document.getElementById('historyStatus').value;
+      const note = document.getElementById('historyNote').value.trim();
+      setEntry(key, status, status === 'training' ? note : '');
+      closeHistoryModal();
+    }
+
+    function openSettingsModal() {
+      document.getElementById('newExerciseInput').value = '';
+      renderExerciseSettings();
+      document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function renderExerciseSelect() {
+      const select = document.getElementById('exerciseSelect');
+      if (!select) return;
+      select.innerHTML = '';
+      exercises.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+    }
+
+    function renderExerciseSettings() {
+      const list = document.getElementById('exerciseSettingsList');
+      if (!list) return;
+      list.innerHTML = '';
+      if (!exercises.length) {
+        list.innerHTML = '<p class="empty-note">Noch keine Übungen hinterlegt.</p>';
+        return;
+      }
+      exercises.forEach((name, index) => {
+        const row = document.createElement('div');
+        row.className = 'exercise-row';
+        row.innerHTML = `
+          <div class="exercise-name">${escapeHtml(name)}</div>
+          <button class="small-btn danger-text" onclick="removeExercise(${index})">Entfernen</button>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function addExerciseSetting() {
+      const input = document.getElementById('newExerciseInput');
+      const value = input.value.trim();
+      if (!value) return;
+      exercises.push(value);
+      input.value = '';
+      saveExercises();
+    }
+
+    function removeExercise(index) {
+      if (exercises.length <= 1) {
+        alert('Mindestens eine Übung muss vorhanden bleiben.');
+        return;
+      }
+      exercises.splice(index, 1);
+      saveExercises();
+    }
+
+    function resetExercises() {
+      if (confirm('Übungsliste auf Standard zurücksetzen?')) {
+        exercises = DEFAULT_EXERCISES.slice();
+        saveExercises();
+      }
+    }
+
     function clearAllData() {
-      if (confirm('Wirklich alle Fitness-Tracker-Daten löschen?')) {
+      if (confirm('Wirklich alle Fitness-Tracker-Daten löschen? Die Übungsliste bleibt erhalten.')) {
         data = {};
         saveData();
       }
@@ -558,7 +769,6 @@
       const keys = getDateRangeKeys(START_DATE, todayKey());
       let best = { count: 0, start: null, end: null };
       let current = { count: 0, start: null, end: null };
-
       keys.forEach(key => {
         const entry = data[key];
         if (entry && entry.status === targetStatus) {
@@ -570,7 +780,6 @@
           current = { count: 0, start: null, end: null };
         }
       });
-
       return best;
     }
 
@@ -586,35 +795,30 @@
 
     function renderToday() {
       const today = todayKey();
-      const entry = getEntry(today);
-      let detail = '';
-      if (entry.status === 'training' && entry.type) {
-        detail = `<br><strong>${escapeHtml(entry.type)}</strong>${entry.note ? ' – ' + escapeHtml(entry.note) : ''}`;
-      }
-      document.getElementById('todayInfo').innerHTML = `${formatLongDate(today)}<br>Status: <strong>${statusLabel(entry)}</strong>${detail}`;
+      const entry = normalizeEntry(getEntry(today));
+      document.getElementById('todayInfo').innerHTML = `
+        <div>${formatLongDate(today)}</div>
+        <div class="today-status">Status:<br><strong>${statusLabel(entry)}</strong></div>
+      `;
     }
 
     function renderSeries() {
       const card = document.getElementById('seriesCard');
-      if (!hasAnyData()) {
-        card.style.display = 'none';
-        return;
-      }
+      if (!hasAnyData()) { card.style.display = 'none'; return; }
       card.style.display = 'block';
 
       const current = calculateStreak('training');
       const longestTraining = calculateLongest('training');
       const longestNegative = calculateLongest('none');
-
       document.getElementById('currentSeries').textContent = current.count ? `${current.count} Tage (seit ${formatDate(current.start)})` : '0 Tage';
-      document.getElementById('longestTrainingSeries').textContent = longestTraining.count ? `${longestTraining.count} Tage (${formatDate(longestTraining.start)} - ${formatDate(longestTraining.end)})` : '0 Tage';
-      document.getElementById('longestNegativeSeries').textContent = longestNegative.count ? `${longestNegative.count} Tage (${formatDate(longestNegative.start)} - ${formatDate(longestNegative.end)})` : '0 Tage';
+      document.getElementById('longestTrainingSeries').textContent = longestTraining.count ? `${longestTraining.count} Tage (${formatDate(longestTraining.start)}–${formatDate(longestTraining.end)})` : '0 Tage';
+      document.getElementById('longestNegativeSeries').textContent = longestNegative.count ? `${longestNegative.count} Tage (${formatDate(longestNegative.start)}–${formatDate(longestNegative.end)})` : '0 Tage';
 
       const tenDays = document.getElementById('tenDays');
       tenDays.innerHTML = '';
       for (let i = 9; i >= 0; i--) {
         const key = addDays(todayKey(), -i);
-        const entry = getEntry(key);
+        const entry = normalizeEntry(getEntry(key));
         const div = document.createElement('div');
         div.className = 'day-box ' + (entry.status === 'training' ? 'day-training' : entry.status === 'none' ? 'day-none' : 'day-open');
         div.textContent = entry.status === 'training' ? '✓' : entry.status === 'none' ? '×' : '?';
@@ -629,22 +833,17 @@
         .filter(k => k >= START_DATE && data[k] && data[k].status === 'training')
         .sort((a,b) => b.localeCompare(a))
         .slice(0, 10);
-
-      if (!entries.length) {
-        card.style.display = 'none';
-        return;
-      }
-
+      if (!entries.length) { card.style.display = 'none'; return; }
       card.style.display = 'block';
       list.innerHTML = '';
       entries.forEach(key => {
-        const entry = data[key];
+        const entry = normalizeEntry(data[key]);
         const row = document.createElement('div');
         row.className = 'unit-row';
         row.innerHTML = `
           <div>
-            <div class="unit-title">${formatLongDate(key)} · ${escapeHtml(entry.type || 'Training')}</div>
-            <div class="unit-meta">${entry.note ? escapeHtml(entry.note) : 'Keine Details hinterlegt'}</div>
+            <div class="unit-title">${formatLongDate(key)}</div>
+            <div class="unit-meta">${entry.note ? escapeHtml(entry.note) : 'Keine Übungen hinterlegt'}</div>
           </div>
           <button class="small-btn" onclick="openTrainingModal('${key}')">Bearbeiten</button>
         `;
@@ -655,80 +854,62 @@
     function renderStats() {
       const container = document.getElementById('statsContainer');
       const currentYear = new Date().getFullYear();
-      let html = '';
+      let html = '<p class="section-title">Statistiken</p>';
 
-      function statsBlock(title, stats) {
+      function statsDetails(title, stats, open = false) {
         return `
-          <p class="section-title">${title}</p>
-          <div class="stats-grid">
-            <div class="stat-box"><div class="stat-label">Erfasste Tage</div><div class="stat-value">${stats.total}</div></div>
-            <div class="stat-box"><div class="stat-label">Training</div><div class="stat-value">${stats.training}</div></div>
-            <div class="stat-box"><div class="stat-label">Kein Training</div><div class="stat-value">${stats.none}</div></div>
-            <div class="stat-box"><div class="stat-label">Trainingsquote</div><div class="stat-value">${stats.quote}%</div></div>
-          </div>
+          <details ${open ? 'open' : ''}>
+            <summary>${title}</summary>
+            <div class="stats-grid">
+              <div class="stat-box"><div class="stat-label">Erfasste Tage</div><div class="stat-value">${stats.total}</div></div>
+              <div class="stat-box"><div class="stat-label">Training</div><div class="stat-value">${stats.training}</div></div>
+              <div class="stat-box"><div class="stat-label">Kein Training</div><div class="stat-value">${stats.none}</div></div>
+              <div class="stat-box"><div class="stat-label">Trainingsquote</div><div class="stat-value">${stats.quote}%</div></div>
+            </div>
+          </details>
         `;
       }
 
       const currentStart = `${currentYear}-01-01` < START_DATE ? START_DATE : `${currentYear}-01-01`;
-      html += statsBlock(`Statistik ${currentYear}`, calculateStatsForRange(currentStart, `${currentYear}-12-31`));
-
+      html += statsDetails(`Statistik ${currentYear}`, calculateStatsForRange(currentStart, `${currentYear}-12-31`), true);
       html += '<div style="height:12px"></div>';
-      html += statsBlock('Gesamtstatistik', calculateStatsForRange(START_DATE, '9999-12-31'));
+      html += statsDetails('Gesamtstatistik', calculateStatsForRange(START_DATE, '9999-12-31'));
 
       const years = [...new Set(Object.keys(data).map(k => k.slice(0,4)).filter(y => Number(y) < currentYear && Number(y) >= 2026))].sort((a,b) => b.localeCompare(a));
       years.forEach(year => {
         html += '<div style="height:12px"></div>';
-        html += statsBlock(`Statistik ${year}`, calculateStatsForRange(`${year}-01-01` < START_DATE ? START_DATE : `${year}-01-01`, `${year}-12-31`));
+        html += statsDetails(`Statistik ${year}`, calculateStatsForRange(`${year}-01-01` < START_DATE ? START_DATE : `${year}-01-01`, `${year}-12-31`));
       });
-
       container.innerHTML = html;
     }
 
     function renderHistory() {
-      const card = document.getElementById('historyCard');
-      if (!hasAnyData()) {
-        card.style.display = 'none';
-        return;
-      }
-      card.style.display = 'block';
       const list = document.getElementById('historyList');
       list.innerHTML = '';
-
       for (let i = 0; i < 21; i++) {
         const key = addDays(todayKey(), -i);
         if (key < START_DATE) continue;
-        const entry = getEntry(key);
+        const entry = normalizeEntry(getEntry(key));
         const row = document.createElement('div');
         row.className = 'history-row';
-        let detail = statusLabel(entry);
-        if (entry.status === 'training' && entry.type) detail += ` · ${entry.type}`;
-        if (entry.status === 'training' && entry.note) detail += ` · ${entry.note}`;
+        const detail = entry.status === 'training' && entry.note ? `${statusLabel(entry)}\n${entry.note}` : statusLabel(entry);
         row.innerHTML = `
           <div>
             <div class="history-date">${formatLongDate(key)}</div>
             <div class="history-status">${escapeHtml(detail)}</div>
           </div>
-          <button class="small-btn" onclick="editHistory('${key}')">Ändern</button>
+          <button class="small-btn" onclick="openHistoryModal('${key}')">Ändern</button>
         `;
         list.appendChild(row);
       }
     }
 
-    function editHistory(key) {
-      const choice = prompt('Status wählen:\n1 = Training\n2 = Kein Training\n3 = Offen', '1');
-      if (choice === null) return;
-      if (choice === '1') openTrainingModal(key);
-      else if (choice === '2') setEntry(key, 'none');
-      else if (choice === '3') setEntry(key, 'open');
-      else alert('Ungültige Eingabe.');
-    }
-
     function exportCsv() {
-      const rows = [['date','status','type','note']];
+      const rows = [['date','status','note']];
       Object.keys(data).sort().forEach(key => {
-        const e = data[key];
+        const e = normalizeEntry(data[key]);
         if (!e || e.status === 'open') return;
-        rows.push([key, e.status || '', e.type || '', e.note || '']);
+        rows.push([key, e.status || '', e.note || '']);
       });
       const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"','""')}"`).join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -747,14 +928,18 @@
       reader.onload = function(e) {
         const text = e.target.result;
         const lines = text.split(/\r?\n/).filter(Boolean);
+        const header = parseCsvLine(lines[0] || '').map(x => x.toLowerCase());
         const imported = {};
         lines.slice(1).forEach(line => {
           const cols = parseCsvLine(line);
-          const [date, status, type, note] = cols;
+          const date = cols[header.indexOf('date')] || cols[0];
+          const status = cols[header.indexOf('status')] || cols[1];
+          const noteIndex = header.indexOf('note');
+          const oldTypeIndex = header.indexOf('type');
+          let note = noteIndex >= 0 ? cols[noteIndex] : (cols[2] || '');
+          if (!note && oldTypeIndex >= 0) note = cols[oldTypeIndex] || '';
           if (!date || date < START_DATE) return;
-          if (status === 'training' || status === 'none') {
-            imported[date] = { status, type: type || '', note: note || '' };
-          }
+          if (status === 'training' || status === 'none') imported[date] = { status, note: note || '' };
         });
         data = { ...data, ...imported };
         saveData();
@@ -771,18 +956,11 @@
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
         if (char === '"') {
-          if (inQuotes && line[i + 1] === '"') {
-            cur += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
+          if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+          else { inQuotes = !inQuotes; }
         } else if (char === ',' && !inQuotes) {
-          result.push(cur);
-          cur = '';
-        } else {
-          cur += char;
-        }
+          result.push(cur); cur = '';
+        } else { cur += char; }
       }
       result.push(cur);
       return result;
@@ -803,6 +981,7 @@
       renderUnits();
       renderStats();
       renderHistory();
+      renderExerciseSelect();
     }
 
     render();
