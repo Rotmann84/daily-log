@@ -35,7 +35,7 @@
     }
     .app{max-width:520px;margin:0 auto;}
     header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;}
-    h1{font-size:22px;line-height:1.15;margin:0;font-weight:800;letter-spacing:0;}
+    h1{font-size:22px;line-height:1.15;margin:0;font-weight:700;letter-spacing:0;}
     .iconbar{display:flex;gap:8px;align-items:center;}
     .iconbtn{
       width:42px;height:38px;
@@ -54,10 +54,10 @@
       border:1px solid var(--line);
       border-radius:16px;
       box-shadow:var(--shadow);
-      padding:14px;
-      margin-top:14px;
+      padding:12px;
+      margin-top:12px;
     }
-    .slim{padding:14px;}
+    .slim{padding:12px;}
     .row{display:flex;gap:10px;align-items:center;}
     .between{justify-content:space-between;}
     .small{font-size:12px;color:var(--muted);line-height:1.35;}
@@ -102,8 +102,8 @@
     }
     button.smallbtn{font-size:12px;padding:7px 9px;border-radius:12px;width:auto;white-space:nowrap;}
 
-    h2{font-size:16px;margin:0 0 10px;font-weight:800;}
-    h3{font-size:14px;margin:14px 0 8px;color:var(--text);font-weight:800;}
+    h2{font-size:15px;margin:0 0 8px;font-weight:700;}
+    h3{font-size:13px;margin:12px 0 8px;color:var(--text);font-weight:700;}
     .seriesgrid{display:flex;flex-direction:column;gap:8px;}
     .seriesitem{
       display:flex;
@@ -142,7 +142,7 @@
 
     .statgrid{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
     .stat{flex:1 1 140px;background:rgba(0,0,0,0.12);border:1px solid var(--line);border-radius:14px;padding:12px;}
-    .stat .num{font-size:22px;font-weight:700;margin-bottom:2px;}
+    .stat .num{font-size:20px;font-weight:600;margin-bottom:2px;}
     .stat .lbl{font-size:12px;color:var(--muted);}
     .list{display:flex;flex-direction:column;gap:8px;}
     .entry{background:rgba(0,0,0,0.12);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:14px;}
@@ -208,7 +208,7 @@
     <section class="card"><details><summary>Statistiken</summary><div id="statsBox" style="margin-top:10px"></div></details></section>
     <section class="card"><details><summary>Monatsübersichten</summary><div id="monthlyBox" style="margin-top:10px"></div></details></section>
     <section class="card"><details><summary>Letzte 21 Tage</summary><div id="historyBox" style="margin-top:10px"></div></details></section>
-    <div class="version">Fitness-Tracker 3.0.1 · Statistik ab 01.01.2026</div>
+    <div class="version">Fitness-Tracker 3.1 · Statistik ab 01.01.2026</div>
   </div>
 
   <dialog id="trainingDialog"><div class="modal"><div class="modalhead"><h2 id="trainingDialogTitle">Training erfassen</h2><button class="ghost smallbtn" onclick="closeDialog(trainingDialog)">Schließen</button></div><div class="small" id="trainingDialogDate"></div><p class="tiny">Das aktuelle Kettlebell-Set ist vorausgefüllt. Du kannst Einträge für den Tag ergänzen, ändern oder löschen.</p><div class="formrow"><div><label for="exerciseSelect">Übung</label><select id="exerciseSelect"></select></div><div><label for="exerciseAmount" id="exerciseAmountLabel">Anzahl / Dauer</label><input id="exerciseAmount" inputmode="decimal" placeholder="z. B. 90" /></div><button class="secondary" id="addExerciseBtn">Hinzufügen</button></div><div class="tiny" id="exerciseModeHint" style="margin-top:8px"></div><label>Training des Tages</label><div class="exercisePreview" id="exercisePreview">Noch keine Übung erfasst.</div><div class="modalactions"><button class="ghost" id="clearExercisesBtn">Leeren</button><button class="secondary" onclick="closeDialog(trainingDialog)">Abbrechen</button><button class="primary" id="saveTrainingBtn">Speichern</button></div></div></dialog>
@@ -217,11 +217,11 @@
 
   <dialog id="historyDialog"><div class="modal"><div class="modalhead"><h2>Tag ändern</h2><button class="ghost smallbtn" onclick="closeDialog(historyDialog)">Schließen</button></div><div class="small" id="historyDialogDate"></div><label for="historyStatusSelect">Status</label><select id="historyStatusSelect"><option value="open">Offen</option><option value="training">Training</option><option value="no_training">Kein Training</option></select><div id="historyTrainingFields"><div class="formrow"><div><label for="historyExerciseSelect">Übung</label><select id="historyExerciseSelect"></select></div><div><label for="historyExerciseAmount" id="historyExerciseAmountLabel">Anzahl / Dauer</label><input id="historyExerciseAmount" inputmode="decimal" placeholder="z. B. 90" /></div><button class="secondary" id="historyAddExerciseBtn">Hinzufügen</button></div><div class="tiny" id="historyExerciseModeHint" style="margin-top:8px"></div><label>Training</label><div class="exercisePreview" id="historyExercisePreview">Noch keine Übung erfasst.</div><button class="ghost smallbtn" id="historyClearExercisesBtn" style="margin-top:8px">Training leeren</button></div><div class="modalactions"><button class="secondary" onclick="closeDialog(historyDialog)">Abbrechen</button><button class="primary" id="saveHistoryBtn">Speichern</button></div></div></dialog>
 
-  <dialog id="settingsDialog"><div class="modal"><div class="modalhead"><h2>Einstellungen</h2><button class="ghost smallbtn" onclick="closeDialog(settingsDialog)">Schließen</button></div><h3>Übungskatalog</h3><p class="tiny">Die Reihenfolge bestimmt die Reihenfolge in den Dropdown-Menüs.</p><div class="catalogrow"><div><label for="newExerciseName">Neue Übung</label><input id="newExerciseName" placeholder="z. B. Kettlebell Swings" /></div><div><label for="newExerciseUnit">Einheit</label><input id="newExerciseUnit" placeholder="Wdh., Sek., Min." /></div><div><label for="newExerciseMode">Modus</label><select id="newExerciseMode"><option value="normal">normal</option><option value="unilateral">einseitig</option><option value="bilateral">beidseitig</option></select></div><button class="secondary" id="addCatalogExerciseBtn">Ergänzen</button></div><div class="catalogList" id="catalogList"></div><div class="settings-gap"><h3>Backup und Daten</h3><div class="row" style="flex-wrap:wrap"><button class="secondary" id="settingsExportStructuredBtn">CSV Übungsdaten exportieren</button><button class="secondary" id="settingsExportDailyBtn">CSV Tagesdaten exportieren</button><label class="fileLabel" for="fileInput">CSV importieren</label><input type="file" id="fileInput" class="visuallyFile" accept=".csv,.txt,text/csv,text/plain,application/csv,application/vnd.ms-excel" /><button class="danger" id="settingsResetBtn">Alle Daten löschen</button></div><p class="tiny">Der strukturierte Export schreibt jede Übung als eigene CSV-Zeile. Der Import kann diese Struktur sowie ältere Exporte mit JSON-Feld lesen.</p></div><div style="margin-top:18px"><h3>Startdatum</h3><p class="tiny">Für die Statistiklogik bleibt 2026 bewusst ab 01.01.2026 relevant. Dieses Feld steuert nur den frühesten Datenbereich der App.</p><div class="row"><input id="startDateInput" type="date" /><button class="secondary" id="saveStartDateBtn">Speichern</button></div></div><div class="version">Fitness-Tracker 3.0.1</div></div></dialog>
+  <dialog id="settingsDialog"><div class="modal"><div class="modalhead"><h2>Einstellungen</h2><button class="ghost smallbtn" onclick="closeDialog(settingsDialog)">Schließen</button></div><h3>Übungskatalog</h3><p class="tiny">Die Reihenfolge bestimmt die Reihenfolge in den Dropdown-Menüs.</p><div class="catalogrow"><div><label for="newExerciseName">Neue Übung</label><input id="newExerciseName" placeholder="z. B. Kettlebell Swings" /></div><div><label for="newExerciseUnit">Einheit</label><input id="newExerciseUnit" placeholder="Wdh., Sek., Min." /></div><div><label for="newExerciseMode">Modus</label><select id="newExerciseMode"><option value="normal">normal</option><option value="unilateral">einseitig</option><option value="bilateral">beidseitig</option></select></div><button class="secondary" id="addCatalogExerciseBtn">Ergänzen</button></div><div class="catalogList" id="catalogList"></div><div class="settings-gap"><h3>Backup und Daten</h3><div class="row" style="flex-wrap:wrap"><button class="secondary" id="settingsExportStructuredBtn">CSV Übungsdaten exportieren</button><button class="secondary" id="settingsExportDailyBtn">CSV Tagesdaten exportieren</button><label class="fileLabel" for="fileInput">CSV importieren</label><input type="file" id="fileInput" class="visuallyFile" accept=".csv,.txt,text/csv,text/plain,application/csv,application/vnd.ms-excel" /><button class="danger" id="settingsResetBtn">Alle Daten löschen</button></div><p class="tiny">Der strukturierte Export schreibt jede Übung als eigene CSV-Zeile. Der Import kann diese Struktur sowie ältere Exporte mit JSON-Feld lesen.</p></div><div style="margin-top:18px"><h3>Startdatum</h3><p class="tiny">Für die Statistiklogik bleibt 2026 bewusst ab 01.01.2026 relevant. Dieses Feld steuert nur den frühesten Datenbereich der App.</p><div class="row"><input id="startDateInput" type="date" /><button class="secondary" id="saveStartDateBtn">Speichern</button></div></div><div class="version">Fitness-Tracker 3.1</div></div></dialog>
 
 <script>
 (function(){
-  const APP_VERSION='3.0';
+  const APP_VERSION='3.1';
   const DEFAULT_START='2026-06-23';
   const STAT_START='2026-01-01';
   const STORAGE_ENTRIES='fitnessTrackerEntriesV2';
