@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cinesneak Archiv</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Cinesneak" />
+<meta name="theme-color" content="#0f1115" />
+
+<style>
+:root{
+  --bg:#0f1115; --card:#151924; --text:#e8eaf0; --muted:#a6adbb;
+  --line:#262c3a; --btn:#232a3b; --btn2:#2c3550;
+  --danger:#5a1f1f; --ok:#1f4b2b; --warn:#4b3b1f; --star:#f5c542;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  background:linear-gradient(180deg, #0b0d12, var(--bg));
+  color:var(--text);
+  min-height:100vh;
+}
+.wrap{max-width:520px; margin:0 auto; padding:18px 16px 28px;}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px;}
+h1{font-size:22px; margin:0;}
+.headerActions{display:flex; align-items:center; gap:8px;}
+.iconBtn{
+  width:42px; height:38px; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,0.18);
+  color:var(--text); cursor:pointer; padding:0;
+}
+.iconBtn:active, button:active{transform:scale(0.99);}
+.iconBtn svg{width:18px; height:18px; opacity:0.95;}
+.iconBtn:focus, button:focus, input:focus{outline:2px solid rgba(255,255,255,0.10); outline-offset:2px;}
+.card{
+  background:rgba(21,25,36,0.92); border:1px solid var(--line); border-radius:16px;
+  padding:14px; margin-top:14px; box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+button{
+  width:100%; padding:16px; border-radius:16px; border:1px solid var(--line);
+  background:linear-gradient(180deg, var(--btn), var(--btn2)); color:var(--text);
+  font-size:18px; font-weight:700; cursor:pointer;
+}
+.b-ok{background:linear-gradient(180deg, rgba(31,75,43,0.65), rgba(31,75,43,0.95));}
+.b-danger{background:linear-gradient(180deg, rgba(90,31,31,0.65), rgba(90,31,31,0.95));}
+.b-warn{background:linear-gradient(180deg, rgba(75,59,31,0.65), rgba(75,59,31,0.95));}
+.list{display:flex; flex-direction:column; gap:8px; margin-top:14px;}
+.item{
+  display:flex; justify-content:space-between; align-items:flex-start; padding:12px;
+  border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,0.12);
+  font-size:14px; gap:10px; cursor:pointer;
+}
+.item .left{display:flex; flex-direction:column; gap:6px; min-width:0;}
+.item .date{font-weight:800;}
+.item .movies{color:var(--muted); font-size:12px; line-height:1.35; overflow-wrap:anywhere;}
+.item .right{font-size:12px; color:var(--muted); white-space:nowrap;}
+.empty{color:var(--muted); font-size:13px; line-height:1.45; text-align:center; padding:8px 0;}
+.modalOverlay{position:fixed; inset:0; background:rgba(0,0,0,0.55); display:none; align-items:flex-end; justify-content:center; padding:14px; z-index:20;}
+.modal{width:min(520px, 100%); max-height:92vh; overflow:auto; background:rgba(21,25,36,0.98); border:1px solid var(--line); border-radius:18px; padding:14px; box-shadow:0 20px 60px rgba(0,0,0,0.55);}
+.modalTitle{font-weight:800; font-size:16px; margin:2px 0 10px;}
+.modalSub{color:var(--muted); font-size:12px; margin:0 0 10px; line-height:1.4;}
+.modalRow{display:flex; gap:10px; margin-top:10px;}
+.modalRow button{padding:12px; font-size:14px; border-radius:14px; background:rgba(0,0,0,0.12);}
+.modalRow .danger{background:linear-gradient(180deg, rgba(90,31,31,0.65), rgba(90,31,31,0.95));}
+.fieldLabel{font-size:12px; color:var(--muted); margin:0 0 6px; font-weight:700;}
+input{
+  width:100%; padding:13px 12px; border-radius:14px; border:1px solid var(--line);
+  background:rgba(0,0,0,0.18); color:var(--text); font-size:16px; outline:none;
+}
+input[type="date"]{color-scheme:dark;}
+.smallBtn{padding:12px; font-size:14px; border-radius:14px; background:rgba(0,0,0,0.12);}
+.movieCard{border:1px solid var(--line); border-radius:16px; padding:12px; background:rgba(0,0,0,0.12); margin-top:12px;}
+.movieHead{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;}
+.movieTitle{font-weight:800; line-height:1.25; overflow-wrap:anywhere;}
+.movieMeta{font-size:12px; color:var(--muted); margin-top:3px;}
+.linkBtn{font-size:12px; color:#cfe9ff; text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:6px 9px; white-space:nowrap; background:rgba(0,0,0,0.12);}
+.ratingLine{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px;}
+.ratingValue{font-size:12px; color:var(--muted); min-width:44px; text-align:right;}
+.stars{position:relative; display:inline-block; font-size:32px; line-height:1; letter-spacing:1px; user-select:none; touch-action:none; cursor:pointer;}
+.starsBase{color:rgba(255,255,255,0.18);}
+.starsFill{position:absolute; left:0; top:0; white-space:nowrap; overflow:hidden; color:var(--star); pointer-events:none;}
+.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(0,0,0,0.75); color:#fff; padding:10px 12px; border-radius:12px; font-size:13px; opacity:0; transition:opacity 160ms ease; border:1px solid rgba(255,255,255,0.12); z-index:50;}
+.toast.show{opacity:1;}
+.hide{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>Cinesneak Archiv</h1>
+    <div class="headerActions">
+      <button class="iconBtn" id="btnImport" type="button" title="Import (CSV)" aria-label="Import (CSV)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M12 3v11"/><path d="M7 10l5 5 5-5"/></svg></button>
+      <button class="iconBtn" id="btnExport" type="button" title="Export (CSV)" aria-label="Export (CSV)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 19h12a2 2 0 0 0 2-2v-3"/><path d="M4 14v3a2 2 0 0 0 2 2"/><path d="M12 16V4"/><path d="M8.5 7.5L12 4l3.5 3.5"/></svg></button>
+      <button class="iconBtn" id="btnDeleteAll" type="button" title="Daten löschen" aria-label="Daten löschen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <button class="b-ok" id="btnNew" type="button">Neuer Filmabend</button>
+  </div>
+
+  <div id="archive" class="list"></div>
+</div>
+
+<div class="modalOverlay" id="modalEdit" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modalTitle" id="editTitle">Filmabend</div>
+    <div class="modalSub">Daten werden nur lokal im Browser gespeichert. Die IMDb-Verlinkung erfolgt als Suchlink, ohne automatische Datenabfrage.</div>
+
+    <div class="card" style="margin-top:0; box-shadow:none;">
+      <div class="fieldLabel">Datum</div>
+      <input id="eventDate" type="date" />
+      <div style="height:12px"></div>
+      <div class="fieldLabel">Suchfeld / Filmtitel</div>
+      <input id="searchInput" type="search" placeholder="Filmtitel eingeben …" autocomplete="off" />
+      <div class="modalRow">
+        <button class="smallBtn" id="copyToNext" type="button">In nächsten freien Film übernehmen</button>
+        <button class="smallBtn" id="openImdbSearch" type="button">IMDb-Suche öffnen</button>
+      </div>
+    </div>
+
+    <div id="movieSlots"></div>
+
+    <div class="modalRow">
+      <button class="smallBtn" id="btnAddThird" type="button">3. Film hinzufügen</button>
+    </div>
+
+    <div class="modalRow">
+      <button id="btnCloseEdit" type="button">Schließen</button>
+      <button id="btnSaveEdit" class="b-ok" type="button">Speichern</button>
+    </div>
+    <div class="modalRow">
+      <button id="btnDeleteEvent" class="danger" type="button">Filmabend löschen</button>
+    </div>
+  </div>
+</div>
+
+<div class="modalOverlay" id="modalDelete" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modalTitle">Wirklich löschen?</div>
+    <div class="modalSub" id="deleteText">Diese Aktion kann nicht rückgängig gemacht werden.</div>
+    <div class="modalRow">
+      <button id="delCancel" type="button">Abbrechen</button>
+      <button id="delConfirm" class="danger" type="button">Löschen</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input id="fileInput" type="file" accept=".csv,text/csv" style="display:none" />
+
+<script>
+const APP = Object.freeze({ STORAGE_KEY:"cinesneak-archiv-v1", MAX_TITLE_LEN:160 });
+const STAR_TEXT = "★★★★★";
+let currentId = null;
+let pendingDelete = null;
+let showThird = false;
+
+const pad2 = n => String(n).padStart(2,"0");
+function keyFromDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function todayKey(){ return keyFromDate(new Date()); }
+function formatShortDate(k){ if(!k) return "—"; const [y,m,d]=k.split("-"); return `${d}.${m}.${y.slice(2)}`; }
+function uid(){ return "fa_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8); }
+function loadEvents(){ try { return JSON.parse(localStorage.getItem(APP.STORAGE_KEY) || "[]"); } catch { return []; } }
+function saveEvents(events){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(events)); }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); }
+function openOverlay(el){ el.style.display="flex"; el.setAttribute("aria-hidden","false"); }
+function closeOverlay(el){ el.style.display="none"; el.setAttribute("aria-hidden","true"); }
+function esc(s){ return String(s ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
+function imdbSearchUrl(title){ return "https://www.imdb.com/de/find/?q=" + encodeURIComponent(title || ""); }
+function normalizeRating(v){ v = Number(v || 0); v = Math.round(v * 4) / 4; return Math.max(0, Math.min(5, v)); }
+function ratingLabel(v){ return normalizeRating(v).toFixed(2).replace(".00", ".0"); }
+
+function blankMovie(){ return { title:"", rating:0, imdbUrl:"" }; }
+function blankEvent(){ return { id:uid(), date:todayKey(), movies:[blankMovie(), blankMovie()] }; }
+
+function render(){
+  const host = document.getElementById("archive");
+  const events = loadEvents().slice().sort((a,b)=>(b.date || "").localeCompare(a.date || "") || b.id.localeCompare(a.id));
+  host.innerHTML = "";
+  if(events.length === 0){
+    host.innerHTML = `<div class="card"><div class="empty">Noch keine Filmabende angelegt.</div></div>`;
+    return;
+  }
+  for(const ev of events){
+    const filled = (ev.movies || []).filter(m => (m.title || "").trim());
+    const movies = filled.length ? filled.map((m,i)=>`${i+1}. ${esc(m.title)} · ${ratingLabel(m.rating || 0)}★`).join("<br>") : "Noch keine Filme eingetragen";
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `<div class="left"><div class="date">${formatShortDate(ev.date)}</div><div class="movies">${movies}</div></div><div class="right">Öffnen</div>`;
+    div.addEventListener("click", ()=>openEdit(ev.id));
+    host.appendChild(div);
+  }
+}
+
+function renderMovieSlots(){
+  const host = document.getElementById("movieSlots");
+  const ev = getCurrentDraft();
+  host.innerHTML = "";
+  const count = showThird ? 3 : 2;
+  while(ev.movies.length < count) ev.movies.push(blankMovie());
+  for(let i=0; i<count; i++){
+    const m = ev.movies[i] || blankMovie();
+    const title = (m.title || "").trim();
+    const imdb = m.imdbUrl || imdbSearchUrl(title);
+    host.insertAdjacentHTML("beforeend", `
+      <div class="movieCard" data-slot="${i}">
+        <div class="movieHead">
+          <div>
+            <div class="movieTitle">${i+1}. Film</div>
+            <div class="movieMeta">${title ? esc(title) : "Noch kein Titel"}</div>
+          </div>
+          <a class="linkBtn" href="${esc(imdb)}" target="_blank" rel="noopener">IMDb</a>
+        </div>
+        <div class="fieldLabel">Titel</div>
+        <input class="movieInput" data-slot="${i}" value="${esc(title)}" placeholder="Filmtitel" maxlength="${APP.MAX_TITLE_LEN}" />
+        <div class="ratingLine">
+          <div class="stars" data-slot="${i}" aria-label="Bewertung ${ratingLabel(m.rating || 0)} von 5">
+            <span class="starsBase">${STAR_TEXT}</span>
+            <span class="starsFill" style="width:${normalizeRating(m.rating || 0) / 5 * 100}%">${STAR_TEXT}</span>
+          </div>
+          <div class="ratingValue" data-rating-slot="${i}">${ratingLabel(m.rating || 0)} / 5</div>
+        </div>
+      </div>`);
+  }
+  document.getElementById("btnAddThird").classList.toggle("hide", showThird);
+  bindSlotEvents();
+}
+
+function getCurrentDraft(){
+  const events = loadEvents();
+  let ev = events.find(e => e.id === currentId);
+  if(!ev){ ev = blankEvent(); currentId = ev.id; events.push(ev); saveEvents(events); }
+  if(!Array.isArray(ev.movies)) ev.movies = [blankMovie(), blankMovie()];
+  return ev;
+}
+function updateCurrent(mutator){
+  const events = loadEvents();
+  const ev = events.find(e => e.id === currentId);
+  if(!ev) return;
+  mutator(ev);
+  saveEvents(events);
+}
+
+function bindSlotEvents(){
+  document.querySelectorAll(".movieInput").forEach(input=>{
+    input.addEventListener("input", ()=>{
+      const slot = Number(input.dataset.slot);
+      updateCurrent(ev=>{ while(ev.movies.length <= slot) ev.movies.push(blankMovie()); ev.movies[slot].title = input.value.trim().slice(0, APP.MAX_TITLE_LEN); ev.movies[slot].imdbUrl = imdbSearchUrl(ev.movies[slot].title); });
+      renderMovieSlots();
+    });
+  });
+  document.querySelectorAll(".stars").forEach(stars=>{
+    const setFromPointer = (clientX)=>{
+      const slot = Number(stars.dataset.slot);
+      const rect = stars.getBoundingClientRect();
+      const raw = ((clientX - rect.left) / rect.width) * 5;
+      const val = normalizeRating(raw);
+      updateCurrent(ev=>{ while(ev.movies.length <= slot) ev.movies.push(blankMovie()); ev.movies[slot].rating = val; });
+      stars.querySelector(".starsFill").style.width = (val / 5 * 100) + "%";
+      const label = document.querySelector(`[data-rating-slot="${slot}"]`);
+      if(label) label.textContent = ratingLabel(val) + " / 5";
+    };
+    stars.addEventListener("pointerdown", e=>{ stars.setPointerCapture(e.pointerId); setFromPointer(e.clientX); });
+    stars.addEventListener("pointermove", e=>{ if(e.buttons) setFromPointer(e.clientX); });
+  });
+}
+
+function openEdit(id){
+  currentId = id;
+  const ev = getCurrentDraft();
+  showThird = (ev.movies || []).length > 2;
+  document.getElementById("editTitle").textContent = `Filmabend ${formatShortDate(ev.date)}`;
+  document.getElementById("eventDate").value = ev.date || todayKey();
+  document.getElementById("searchInput").value = "";
+  renderMovieSlots();
+  openOverlay(document.getElementById("modalEdit"));
+}
+function closeEdit(){ closeOverlay(document.getElementById("modalEdit")); currentId = null; render(); }
+
+function csvCell(s){ const v=(s ?? "").toString(); return `"${v.replace(/"/g,'""')}"`; }
+function exportCSV(){
+  const events = loadEvents().slice().sort((a,b)=>(a.date || "").localeCompare(b.date || ""));
+  if(events.length === 0){ toast("Keine Daten zum Export"); return; }
+  const lines = ["Datum;FilmNr;Titel;Bewertung;IMDbLink"];
+  for(const ev of events){
+    (ev.movies || []).forEach((m,i)=>{
+      if(!(m.title || "").trim()) return;
+      lines.push([csvCell(ev.date), csvCell(i+1), csvCell(m.title), csvCell(ratingLabel(m.rating || 0)), csvCell(m.imdbUrl || imdbSearchUrl(m.title))].join(";"));
+    });
+  }
+  const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `cinesneak_archiv_${todayKey()}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  toast("CSV exportiert");
+}
+function parseCsvLine(line, delimiter){
+  const out=[]; let cur="", inQ=false;
+  for(let i=0;i<line.length;i++){ const ch=line[i]; if(ch==='"'){ if(inQ && line[i+1]==='"'){cur+='"'; i++;} else inQ=!inQ; } else if(!inQ && ch===delimiter){ out.push(cur); cur=""; } else cur+=ch; }
+  out.push(cur); return out.map(s=>s.trim().replace(/^"|"$/g,""));
+}
+function importCSVText(text){
+  const rows = text.split(/\r?\n/).filter(l=>l.trim());
+  if(rows.length < 2){ toast("CSV leer/ungültig"); return; }
+  const delimiter = rows[0].includes(";") ? ";" : ",";
+  const map = new Map();
+  for(let i=1;i<rows.length;i++){
+    const c = parseCsvLine(rows[i], delimiter);
+    if(c.length < 4 || !/^\d{4}-\d{2}-\d{2}$/.test(c[0])) continue;
+    const date = c[0], nr = Math.max(1, Math.min(3, Number(c[1]) || 1));
+    if(!map.has(date)) map.set(date, { id:uid(), date, movies:[blankMovie(), blankMovie()] });
+    const ev = map.get(date);
+    while(ev.movies.length < nr) ev.movies.push(blankMovie());
+    ev.movies[nr-1] = { title:(c[2] || "").slice(0,APP.MAX_TITLE_LEN), rating:normalizeRating(c[3]), imdbUrl:c[4] || imdbSearchUrl(c[2] || "") };
+  }
+  const imported = Array.from(map.values());
+  if(!imported.length){ toast("Keine gültigen Datensätze gefunden"); return; }
+  saveEvents(imported); render(); toast(`Import ok (${imported.length} Filmabende)`);
+}
+
+const editOverlay = document.getElementById("modalEdit");
+editOverlay.addEventListener("click", e=>{ if(e.target === editOverlay) closeEdit(); });
+document.getElementById("btnNew").addEventListener("click", ()=>{ const events=loadEvents(); const ev=blankEvent(); events.push(ev); saveEvents(events); openEdit(ev.id); });
+document.getElementById("btnCloseEdit").addEventListener("click", closeEdit);
+document.getElementById("btnSaveEdit").addEventListener("click", ()=>{ closeEdit(); toast("Gespeichert"); });
+document.getElementById("eventDate").addEventListener("change", e=>{ updateCurrent(ev=>{ ev.date = e.target.value || todayKey(); }); document.getElementById("editTitle").textContent = `Filmabend ${formatShortDate(e.target.value)}`; });
+document.getElementById("btnAddThird").addEventListener("click", ()=>{ showThird=true; updateCurrent(ev=>{ while(ev.movies.length < 3) ev.movies.push(blankMovie()); }); renderMovieSlots(); });
+document.getElementById("copyToNext").addEventListener("click", ()=>{
+  const title = document.getElementById("searchInput").value.trim().slice(0, APP.MAX_TITLE_LEN);
+  if(!title){ toast("Bitte Titel eingeben"); return; }
+  updateCurrent(ev=>{ const limit = showThird ? 3 : 2; while(ev.movies.length < limit) ev.movies.push(blankMovie()); const idx = ev.movies.slice(0,limit).findIndex(m=>!(m.title || "").trim()); const slot = idx >= 0 ? idx : 0; ev.movies[slot].title = title; ev.movies[slot].imdbUrl = imdbSearchUrl(title); });
+  renderMovieSlots(); toast("Titel übernommen");
+});
+document.getElementById("openImdbSearch").addEventListener("click", ()=>{ const q=document.getElementById("searchInput").value.trim(); if(!q){ toast("Bitte Titel eingeben"); return; } window.open(imdbSearchUrl(q), "_blank", "noopener"); });
+document.getElementById("btnDeleteEvent").addEventListener("click", ()=>{ pendingDelete = {type:"event", id:currentId}; document.getElementById("deleteText").textContent="Diesen Filmabend löschen?"; openOverlay(document.getElementById("modalDelete")); });
+document.getElementById("btnDeleteAll").addEventListener("click", ()=>{ pendingDelete = {type:"all"}; document.getElementById("deleteText").textContent="Alle lokal gespeicherten Filmabende werden entfernt."; openOverlay(document.getElementById("modalDelete")); });
+document.getElementById("delCancel").addEventListener("click", ()=>{ pendingDelete=null; closeOverlay(document.getElementById("modalDelete")); });
+document.getElementById("delConfirm").addEventListener("click", ()=>{
+  if(!pendingDelete) return;
+  if(pendingDelete.type === "all"){ localStorage.removeItem(APP.STORAGE_KEY); closeEdit(); }
+  if(pendingDelete.type === "event"){ saveEvents(loadEvents().filter(e=>e.id !== pendingDelete.id)); closeEdit(); }
+  pendingDelete=null; closeOverlay(document.getElementById("modalDelete")); render(); toast("Gelöscht");
+});
+document.getElementById("btnExport").addEventListener("click", exportCSV);
+document.getElementById("btnImport").addEventListener("click", ()=>{ const f=document.getElementById("fileInput"); f.value=""; f.click(); });
+document.getElementById("fileInput").addEventListener("change", async ()=>{ const f=document.getElementById("fileInput").files?.[0]; if(!f) return; try{ importCSVText(await f.text()); } catch { toast("Import fehlgeschlagen"); } });
+document.addEventListener("keydown", e=>{ if(e.key !== "Escape") return; closeOverlay(document.getElementById("modalDelete")); if(editOverlay.style.display === "flex") closeEdit(); });
+render();
+</script>
+</body>
+</html>
