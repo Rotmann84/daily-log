@@ -3,27 +3,27 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cinesneak Archiv</title>
+<title>Filmarchiv</title>
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Cinesneak" />
+<meta name="apple-mobile-web-app-title" content="Filmarchiv" />
 <meta name="theme-color" content="#12070a" />
 <style>
 :root{
-  --bg:#12070a; --bg2:#1b0b10; --card:#211017; --text:#f4edf0; --muted:#b9a5ad;
-  --line:#472633; --btn:#3a1722; --btn2:#5a2030; --danger:#641d25; --ok:#74283b; --warn:#4b2b1f;
+  --bg:#12070a; --card:#211017; --text:#f4edf0; --muted:#b9a5ad;
+  --line:#472633; --btn:#3a1722; --btn2:#5a2030; --danger:#641d25; --ok:#74283b;
   --gold:#f2c96b;
 }
 *{box-sizing:border-box;}
 body{margin:0; font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#080406,var(--bg)); color:var(--text);}
 .wrap{max-width:520px; margin:0 auto; padding:18px 16px 28px;}
 .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px;}
-h1{font-size:22px; margin:0; letter-spacing:.2px;}
+h1{font-size:22px; margin:0;}
 .headerActions{display:flex; align-items:center; gap:8px;}
-.iconBtn{width:42px; height:38px; display:inline-flex; align-items:center; justify-content:center; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text); cursor:pointer; padding:0;}
-.iconBtn:active, button:active{transform:scale(.99);} .iconBtn svg{width:18px; height:18px; opacity:.95;}
+.iconBtn{width:42px; height:38px; display:inline-flex; align-items:center; justify-content:center; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text); cursor:pointer; padding:0; font-size:18px; font-weight:800;}
+.iconBtn:active, button:active{transform:scale(.99);}
 .card{background:rgba(33,16,23,.94); border:1px solid var(--line); border-radius:16px; padding:14px; margin-top:14px; box-shadow:0 10px 30px rgba(0,0,0,.35);}
-button{width:100%; padding:16px; border-radius:16px; border:1px solid var(--line); background:linear-gradient(180deg,var(--btn),var(--btn2)); color:var(--text); font-size:18px; font-weight:800; cursor:pointer;}
+button{width:100%; padding:16px; border-radius:16px; border:1px solid var(--line); background:linear-gradient(180deg,var(--btn),var(--btn2)); color:var(--text); font-size:18px; font-weight:700; cursor:pointer;}
 .b-main{background:linear-gradient(180deg,rgba(116,40,59,.72),rgba(116,40,59,1));}
 .b-soft{background:rgba(0,0,0,.14); font-size:14px; padding:12px;}
 .b-danger{background:linear-gradient(180deg,rgba(100,29,37,.7),rgba(100,29,37,1));}
@@ -31,38 +31,37 @@ button{width:100%; padding:16px; border-radius:16px; border:1px solid var(--line
 .list{display:flex; flex-direction:column; gap:10px;}
 .eventItem{display:block; text-align:left; padding:14px; border-radius:16px; border:1px solid var(--line); background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.20)); color:var(--text); cursor:pointer;}
 .eventHead{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;}
-.eventTitle{font-weight:900; font-size:16px;} .eventDate{font-size:12px; color:var(--muted); white-space:nowrap;}
+.eventTitle{font-weight:800; font-size:16px;} .eventDate{font-size:12px; color:var(--muted); white-space:nowrap;}
 .movieLine{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:7px 0; border-top:1px solid rgba(255,255,255,.06);}
-.movieName{font-size:14px; line-height:1.25;} .movieMeta{font-size:12px; color:var(--muted); margin-top:3px;} .ratingSmall{white-space:nowrap; color:var(--gold); font-weight:900; font-size:13px;}
+.movieName{font-size:14px; line-height:1.25;} .movieMeta{font-size:12px; color:var(--muted); margin-top:3px;} .ratingSmall{white-space:nowrap; color:var(--gold); font-weight:800; font-size:13px;}
 .empty{color:var(--muted); font-size:13px; line-height:1.4; padding:4px 0;}
 .modalOverlay{position:fixed; inset:0; background:rgba(0,0,0,.62); display:none; align-items:flex-end; justify-content:center; padding:14px; z-index:10;}
 .modal{width:min(520px,100%); max-height:92vh; overflow:auto; background:rgba(33,16,23,.99); border:1px solid var(--line); border-radius:18px; padding:14px; box-shadow:0 20px 60px rgba(0,0,0,.6);}
-.modalTitle{font-weight:900; font-size:17px; margin:2px 0 10px;} .modalSub{color:var(--muted); font-size:12px; margin:0 0 10px; line-height:1.35;}
+.modalTitle{font-weight:800; font-size:16px; margin:2px 0 10px;} .modalSub{color:var(--muted); font-size:12px; margin:0 0 10px; line-height:1.35;}
 .modalRow{display:flex; gap:10px; margin-top:10px;} .modalRow button{padding:12px; font-size:14px; border-radius:14px;}
-label{display:block; color:var(--muted); font-size:12px; font-weight:800; margin:10px 0 6px;}
-input, select{width:100%; padding:12px; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.20); color:var(--text); font-size:15px; outline:none;}
-.filmCard{padding:12px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,0,.13); margin-top:12px;}
-.filmHeader{display:flex; justify-content:space-between; align-items:center; gap:10px; font-weight:900;}
-.twoCols{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.stars{display:flex; align-items:center; gap:3px; user-select:none; touch-action:none; padding:8px 0 2px;}
-.star{font-size:30px; line-height:1; color:rgba(242,201,107,.25); width:31px; text-align:center; position:relative;}
-.star::before{content:'★';} .starFill{position:absolute; left:0; top:0; overflow:hidden; color:var(--gold); width:0; pointer-events:none;}
-.starFill::before{content:'★';}
-.ratingValue{font-weight:900; color:var(--gold); margin-left:8px; font-size:14px;}
-.archiveControls{display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:12px;}
-.archiveItem{padding:12px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,0,.13); margin-bottom:8px;}
-.archiveTitle{font-weight:900;} .archiveInfo{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.35;}
+label{display:block; color:var(--muted); font-size:12px; font-weight:700; margin:10px 0 6px;}
+input,select{width:100%; padding:12px; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text); font-size:14px; outline:none;}
+.dateCard,.filmCard{border:1px solid var(--line); border-radius:16px; padding:12px; background:rgba(0,0,0,.12); margin-top:12px;}
+.filmHeader{display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:15px; margin-bottom:4px;}
+.stars{display:flex; align-items:center; gap:3px; touch-action:none; user-select:none; padding:8px 0 2px;}
+.star{position:relative; display:inline-block; width:30px; height:30px; font-size:30px; line-height:30px; color:rgba(242,201,107,.22);}
+.star::before{content:"★";} .starFill{position:absolute; left:0; top:0; overflow:hidden; height:100%; color:var(--gold);} .starFill::before{content:"★";}
+.ratingValue{margin-left:8px; color:var(--muted); font-size:13px; font-weight:800; min-width:38px;}
+.archiveControls{display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:12px;}
+.archiveItem{padding:11px 0; border-top:1px solid rgba(255,255,255,.07);} .archiveTitle{font-size:14px; font-weight:800;} .archiveInfo{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.35;}
+.filterRow{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
 .toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(0,0,0,.78); color:#fff; padding:10px 12px; border-radius:12px; font-size:13px; opacity:0; transition:opacity 160ms ease; border:1px solid rgba(255,255,255,.12); z-index:20;}
 .toast.show{opacity:1;}
-@media (max-width:420px){.twoCols{grid-template-columns:1fr}.star{font-size:28px;width:29px}.modalRow{flex-direction:column}}
+@media (max-width:420px){.modalRow,.filterRow{grid-template-columns:1fr; flex-direction:column}.star{font-size:28px;width:29px}.headerActions{gap:6px}.iconBtn{width:38px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="topbar">
-    <h1>🎬 Cinesneak Archiv</h1>
+    <h1>Filmarchiv</h1>
     <div class="headerActions">
       <button class="iconBtn" id="btnArchive" type="button" title="Filmarchiv" aria-label="Filmarchiv">★</button>
+      <button class="iconBtn" id="btnSingle" type="button" title="Einzelfilm anlegen" aria-label="Einzelfilm anlegen">＋</button>
       <button class="iconBtn" id="btnImport" type="button" title="Import CSV" aria-label="Import CSV">↧</button>
       <button class="iconBtn" id="btnExport" type="button" title="Export CSV" aria-label="Export CSV">↥</button>
       <button class="iconBtn" id="btnDelete" type="button" title="Daten löschen" aria-label="Daten löschen">⌫</button>
@@ -71,7 +70,7 @@ input, select{width:100%; padding:12px; border-radius:14px; border:1px solid var
 
   <div class="card">
     <button class="b-main" id="btnNew" type="button">Neuer Filmabend</button>
-    <div class="subline">Persönliches Archiv für eure eigene Cinesneak. Alles bleibt lokal im Browser.</div>
+    <div class="subline">Archiv für Cinesneaks und einzelne Filme. Alles bleibt lokal im Browser.</div>
   </div>
 
   <div class="card" id="eventsCard">
@@ -83,17 +82,26 @@ input, select{width:100%; padding:12px; border-radius:14px; border:1px solid var
   <div class="modal" role="dialog" aria-modal="true">
     <div class="modalTitle" id="eventTitle">Filmabend</div>
     <div class="modalSub">Filme manuell eintragen, Vorschlagende festhalten und bewerten.</div>
-    <label for="eventDate">Datum</label>
-    <input id="eventDate" type="date" />
+    <div class="dateCard"><label for="eventDate">Datum</label><input id="eventDate" type="date" /></div>
     <div id="filmSlots"></div>
     <button class="b-soft" id="btnAddThird" type="button" style="margin-top:12px;">3. Film hinzufügen</button>
-    <div class="modalRow">
-      <button id="btnEventCancel" type="button">Schließen</button>
-      <button id="btnEventSave" class="b-main" type="button">Speichern</button>
+    <div class="modalRow"><button id="btnEventCancel" type="button">Schließen</button><button id="btnEventSave" class="b-main" type="button">Speichern</button></div>
+    <div class="modalRow"><button id="btnEventDelete" class="b-danger" type="button">Filmabend löschen</button></div>
+  </div>
+</div>
+
+<div class="modalOverlay" id="modalSingle" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modalTitle" id="singleTitle">Einzelfilm</div>
+    <div class="modalSub">Für Filme außerhalb eines Filmabends.</div>
+    <div class="dateCard"><label for="singleDate">Datum</label><input id="singleDate" type="date" /></div>
+    <div class="filmCard">
+      <div class="filmHeader">Einzelfilm</div>
+      <label for="singleMovieTitle">Titel</label><input id="singleMovieTitle" placeholder="Filmtitel" />
+      <label>Bewertung</label><div class="stars" id="singleStars"></div>
     </div>
-    <div class="modalRow">
-      <button id="btnEventDelete" class="b-danger" type="button">Filmabend löschen</button>
-    </div>
+    <div class="modalRow"><button id="btnSingleCancel" type="button">Schließen</button><button id="btnSingleSave" class="b-main" type="button">Speichern</button></div>
+    <div class="modalRow"><button id="btnSingleDelete" class="b-danger" type="button">Einzelfilm löschen</button></div>
   </div>
 </div>
 
@@ -102,13 +110,10 @@ input, select{width:100%; padding:12px; border-radius:14px; border:1px solid var
     <div class="modalTitle">Alle Filme</div>
     <div class="archiveControls">
       <input id="archiveFilter" type="search" placeholder="Filme filtern …" />
-      <select id="archiveSort">
-        <option value="dateDesc">Neueste Filmabende zuerst</option>
-        <option value="dateAsc">Älteste Filmabende zuerst</option>
-        <option value="ratingDesc">Beste Bewertung zuerst</option>
-        <option value="ratingAsc">Schwächste Bewertung zuerst</option>
-        <option value="titleAsc">Titel A–Z</option>
-      </select>
+      <div class="filterRow">
+        <select id="archiveType"><option value="all">Alle</option><option value="event">Filmabend</option><option value="single">Einzelfilm</option></select>
+        <select id="archiveSort"><option value="dateDesc">Neueste zuerst</option><option value="dateAsc">Älteste zuerst</option><option value="ratingDesc">Beste Bewertung zuerst</option><option value="ratingAsc">Schwächste Bewertung zuerst</option><option value="titleAsc">Titel A–Z</option></select>
+      </div>
     </div>
     <div id="archiveList"></div>
     <div class="modalRow"><button id="btnArchiveClose" type="button">Schließen</button></div>
@@ -118,19 +123,17 @@ input, select{width:100%; padding:12px; border-radius:14px; border:1px solid var
 <div class="modalOverlay" id="modalDelete" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true">
     <div class="modalTitle">Wirklich löschen?</div>
-    <div class="modalSub">Alle lokal gespeicherten Filmabende werden entfernt. Das kann nicht rückgängig gemacht werden.</div>
-    <div class="modalRow">
-      <button id="delCancel" type="button">Abbrechen</button>
-      <button id="delConfirm" class="b-danger" type="button">Löschen</button>
-    </div>
+    <div class="modalSub">Alle lokal gespeicherten Einträge werden entfernt. Das kann nicht rückgängig gemacht werden.</div>
+    <div class="modalRow"><button id="delCancel" type="button">Abbrechen</button><button id="delConfirm" class="b-danger" type="button">Löschen</button></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 <input id="fileInput" type="file" accept=".csv,text/csv" style="display:none" />
+<datalist id="peopleList"><option value="Sebastian"><option value="Person 2"><option value="Person 3"><option value="Person 4"></datalist>
 
 <script>
-const APP=Object.freeze({STORAGE_KEY:"cinesneak-archiv-v3", MAX_FILMS:3});
+const APP=Object.freeze({STORAGE_KEY:"filmarchiv-v1", OLD_KEYS:["cinesneak-archiv-v3"]});
 const $=id=>document.getElementById(id);
 const pad2=n=>String(n).padStart(2,"0");
 const todayKey=()=>{const d=new Date(); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;};
@@ -138,112 +141,76 @@ function formatDate(k){ if(!k) return "—"; const [y,m,d]=k.split("-"); return 
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
 function clean(v){ return (v||"").toString().trim(); }
 function escapeHtml(s){ return (s||"").toString().replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
-function loadEvents(){ try{return JSON.parse(localStorage.getItem(APP.STORAGE_KEY)||"[]");}catch{return [];} }
-function saveEvents(events){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(events)); }
-function blankFilm(){ return {title:"", year:"", suggestedBy:"", rating:0}; }
-function blankEvent(){ return {id:uid(), date:todayKey(), films:[blankFilm(), blankFilm()]}; }
+function normalizeEntry(e){ if(!e) return null; return {id:e.id||uid(), type:e.type||"event", date:e.date||todayKey(), films:(e.films||[]).map(f=>({title:clean(f.title), suggestedBy:clean(f.suggestedBy), rating:Number(f.rating||0)}))}; }
+function loadEntries(){ try{ const raw=localStorage.getItem(APP.STORAGE_KEY); if(raw) return JSON.parse(raw).map(normalizeEntry).filter(Boolean); for(const k of APP.OLD_KEYS){ const old=localStorage.getItem(k); if(old){ const migrated=JSON.parse(old).map(normalizeEntry).filter(Boolean); saveEntries(migrated); return migrated; } } return []; }catch{return [];} }
+function saveEntries(entries){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(entries)); }
+function blankFilm(){ return {title:"", suggestedBy:"", rating:0}; }
+function blankEvent(){ return {id:uid(), type:"event", date:todayKey(), films:[blankFilm(), blankFilm()]}; }
+function blankSingle(){ return {id:uid(), type:"single", date:todayKey(), films:[blankFilm()]}; }
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); }
 function openOverlay(el){ el.style.display="flex"; el.setAttribute("aria-hidden","false"); }
 function closeOverlay(el){ el.style.display="none"; el.setAttribute("aria-hidden","true"); }
 function ratingText(r){ return Number(r||0).toFixed(2).replace(".",","); }
 function renderStarsSmall(r){ const full=Math.floor(Number(r||0)); return "★".repeat(full)+"☆".repeat(5-full); }
-function filledStarPct(r, i){ const v=Math.max(0,Math.min(5,Number(r||0))); return Math.max(0,Math.min(1,v-i))*100; }
-
-let currentEventId=null;
-let draft=null;
+function filledStarPct(r,i){ const v=Math.max(0,Math.min(5,Number(r||0))); return Math.max(0,Math.min(1,v-i))*100; }
+let currentId=null, draft=null, singleDraft=null;
 
 function render(){
-  const events=loadEvents().sort((a,b)=>String(b.date).localeCompare(String(a.date)) || String(b.id).localeCompare(String(a.id)));
+  const entries=loadEntries().sort((a,b)=>String(b.date).localeCompare(String(a.date)) || String(b.id).localeCompare(String(a.id)));
   const host=$("eventsList"); host.innerHTML="";
-  if(events.length===0){ host.innerHTML='<div class="empty">Noch keine Filmabende angelegt.</div>'; return; }
-  events.forEach((ev,idx)=>{
+  if(entries.length===0){ host.innerHTML='<div class="empty">Noch keine Filme oder Filmabende angelegt.</div>'; return; }
+  const eventCount=entries.filter(e=>e.type==="event").length; let seenEvents=0;
+  entries.forEach(entry=>{
     const btn=document.createElement("button"); btn.className="eventItem"; btn.type="button";
-    const films=(ev.films||[]).filter(f=>clean(f.title));
-    btn.innerHTML=`
-      <div class="eventHead"><div><div class="eventTitle">🎬 Filmabend #${events.length-idx}</div><div class="movieMeta">${formatDate(ev.date)}</div></div><div class="eventDate">Öffnen</div></div>
-      ${films.length?films.map((f,i)=>`<div class="movieLine"><div><div class="movieName">🎞 ${escapeHtml(f.title)}${clean(f.year)?` <span class="movieMeta">(${escapeHtml(f.year)})</span>`:""}</div><div class="movieMeta">${i+1}. Film · Vorschlag: ${escapeHtml(f.suggestedBy||"—")}</div></div><div class="ratingSmall">${renderStarsSmall(f.rating)} ${ratingText(f.rating)}</div></div>`).join(""):'<div class="empty">Noch keine Filme eingetragen.</div>'}
-    `;
-    btn.addEventListener("click",()=>openEvent(ev.id)); host.appendChild(btn);
+    const films=(entry.films||[]).filter(f=>clean(f.title));
+    const isSingle=entry.type==="single"; if(!isSingle) seenEvents++;
+    const title=isSingle ? "🎥 Einzelfilm" : `🎬 Filmabend #${eventCount-seenEvents+1}`;
+    btn.innerHTML=`<div class="eventHead"><div><div class="eventTitle">${title}</div><div class="movieMeta">${formatDate(entry.date)}</div></div><div class="eventDate">Öffnen</div></div>${films.length?films.map((f,i)=>`<div class="movieLine"><div><div class="movieName">🎞 ${escapeHtml(f.title)}</div><div class="movieMeta">${isSingle?"Einzelfilm":`${i+1}. Film · Vorschlag: ${escapeHtml(f.suggestedBy||"—")}`}</div></div><div class="ratingSmall">${renderStarsSmall(f.rating)} ${ratingText(f.rating)}</div></div>`).join(""):'<div class="empty">Noch kein Titel eingetragen.</div>'}`;
+    btn.addEventListener("click",()=> isSingle ? openSingle(entry.id) : openEvent(entry.id)); host.appendChild(btn);
   });
 }
 
-function openEvent(id){
-  const events=loadEvents(); const ev=events.find(e=>e.id===id) || blankEvent();
-  currentEventId=ev.id; draft=JSON.parse(JSON.stringify(ev));
-  renderEventModal(); openOverlay($("modalEvent"));
-}
+function openEvent(id){ const ev=loadEntries().find(e=>e.id===id) || blankEvent(); currentId=ev.id; draft=JSON.parse(JSON.stringify(ev)); renderEventModal(); openOverlay($("modalEvent")); }
 function renderEventModal(){
-  $("eventTitle").textContent = "Filmabend bearbeiten";
-  $("eventDate").value = draft.date || todayKey();
-  const host=$("filmSlots"); host.innerHTML="";
-  draft.films.forEach((f,idx)=>{
-    const card=document.createElement("div"); card.className="filmCard";
-    card.innerHTML=`
-      <div class="filmHeader"><div>${idx+1}. Film</div>${idx>1?`<button class="b-soft" type="button" data-remove="${idx}" style="width:auto;padding:8px 10px;font-size:12px;">Entfernen</button>`:""}</div>
-      <label>Titel</label><input data-field="title" data-idx="${idx}" value="${escapeHtml(f.title)}" placeholder="Filmtitel" />
-      <div class="twoCols">
-        <div><label>Jahr optional</label><input data-field="year" data-idx="${idx}" value="${escapeHtml(f.year)}" placeholder="z. B. 1999" inputmode="numeric" /></div>
-        <div><label>Vorgeschlagen von</label><input data-field="suggestedBy" data-idx="${idx}" value="${escapeHtml(f.suggestedBy)}" placeholder="Name" list="peopleList" /></div>
-      </div>
-      <label>Bewertung</label>
-      <div class="stars" data-rating="${idx}">${[0,1,2,3,4].map(i=>`<span class="star"><span class="starFill" style="width:${filledStarPct(f.rating,i)}%"></span></span>`).join("")}<span class="ratingValue">${ratingText(f.rating)}</span></div>
-    `;
-    host.appendChild(card);
-  });
-  if(!$("peopleList")){
-    const dl=document.createElement("datalist"); dl.id="peopleList"; dl.innerHTML='<option value="Sebastian"><option value="Person 2"><option value="Person 3"><option value="Person 4">'; document.body.appendChild(dl);
-  }
-  $("btnAddThird").style.display = draft.films.length>=3 ? "none" : "";
+  $("eventTitle").textContent="Filmabend bearbeiten"; $("eventDate").value=draft.date||todayKey(); const host=$("filmSlots"); host.innerHTML="";
+  draft.films.forEach((f,idx)=>{ const card=document.createElement("div"); card.className="filmCard"; card.innerHTML=`<div class="filmHeader"><div>${idx+1}. Film</div>${idx>1?`<button class="b-soft" type="button" data-remove="${idx}" style="width:auto;padding:8px 10px;font-size:12px;">Entfernen</button>`:""}</div><label>Titel</label><input data-field="title" data-idx="${idx}" value="${escapeHtml(f.title)}" placeholder="Filmtitel" /><label>Vorgeschlagen von</label><input data-field="suggestedBy" data-idx="${idx}" value="${escapeHtml(f.suggestedBy)}" placeholder="Name" list="peopleList" /><label>Bewertung</label><div class="stars" data-rating="${idx}">${[0,1,2,3,4].map(i=>`<span class="star"><span class="starFill" style="width:${filledStarPct(f.rating,i)}%"></span></span>`).join("")}<span class="ratingValue">${ratingText(f.rating)}</span></div>`; host.appendChild(card); });
+  $("btnAddThird").style.display=draft.films.length>=3?"none":"";
 }
-function updateDraftFromInputs(){
-  draft.date = $("eventDate").value || todayKey();
-  document.querySelectorAll("#filmSlots input[data-field]").forEach(inp=>{ const idx=Number(inp.dataset.idx); const field=inp.dataset.field; draft.films[idx][field]=clean(inp.value); });
-}
-function setRatingFromPointer(el, clientX){
-  const idx=Number(el.dataset.rating); const rect=el.getBoundingClientRect();
-  const x=Math.max(0,Math.min(rect.width-55,clientX-rect.left));
-  const starsWidth=Math.max(1,rect.width-55); let r=(x/starsWidth)*5;
-  r=Math.max(0,Math.min(5,Math.round(r*4)/4)); draft.films[idx].rating=r; renderEventModal();
-}
-
-$("filmSlots").addEventListener("input", e=>{ if(e.target.matches("input[data-field]")) updateDraftFromInputs(); });
-$("filmSlots").addEventListener("click", e=>{ const rem=e.target.closest("[data-remove]"); if(rem){ updateDraftFromInputs(); draft.films.splice(Number(rem.dataset.remove),1); renderEventModal(); } });
-$("filmSlots").addEventListener("pointerdown", e=>{ const el=e.target.closest(".stars"); if(!el) return; updateDraftFromInputs(); el.setPointerCapture?.(e.pointerId); setRatingFromPointer(el,e.clientX); });
-$("filmSlots").addEventListener("pointermove", e=>{ if(e.buttons!==1) return; const el=e.target.closest(".stars"); if(!el) return; updateDraftFromInputs(); setRatingFromPointer(el,e.clientX); });
-
-$("btnNew").addEventListener("click",()=>{ const ev=blankEvent(); currentEventId=ev.id; draft=ev; renderEventModal(); openOverlay($("modalEvent")); });
+function updateDraftFromInputs(){ draft.date=$("eventDate").value||todayKey(); document.querySelectorAll("#filmSlots input[data-field]").forEach(inp=>{ const idx=Number(inp.dataset.idx); draft.films[idx][inp.dataset.field]=clean(inp.value); }); }
+function setRatingFromPointer(el,clientX,target){ const idx=Number(el.dataset.rating); const rect=el.getBoundingClientRect(); const starsWidth=Math.max(1,rect.width-55); const x=Math.max(0,Math.min(starsWidth,clientX-rect.left)); const r=Math.max(0,Math.min(5,Math.round(((x/starsWidth)*5)*4)/4)); target.films[idx].rating=r; }
+$("filmSlots").addEventListener("input",e=>{ if(e.target.matches("input[data-field]")) updateDraftFromInputs(); });
+$("filmSlots").addEventListener("click",e=>{ const rem=e.target.closest("[data-remove]"); if(rem){ updateDraftFromInputs(); draft.films.splice(Number(rem.dataset.remove),1); renderEventModal(); } });
+$("filmSlots").addEventListener("pointerdown",e=>{ const el=e.target.closest(".stars"); if(!el)return; updateDraftFromInputs(); setRatingFromPointer(el,e.clientX,draft); renderEventModal(); });
+$("filmSlots").addEventListener("pointermove",e=>{ if(e.buttons!==1)return; const el=e.target.closest(".stars"); if(!el)return; updateDraftFromInputs(); setRatingFromPointer(el,e.clientX,draft); renderEventModal(); });
+$("btnNew").addEventListener("click",()=>{ draft=blankEvent(); currentId=draft.id; renderEventModal(); openOverlay($("modalEvent")); });
 $("btnAddThird").addEventListener("click",()=>{ updateDraftFromInputs(); if(draft.films.length<3){ draft.films.push(blankFilm()); renderEventModal(); } });
-$("btnEventCancel").addEventListener("click",()=>{ closeOverlay($("modalEvent")); currentEventId=null; draft=null; });
-$("btnEventSave").addEventListener("click",()=>{ updateDraftFromInputs(); draft.films=draft.films.map(f=>Object.assign(blankFilm(),f)).slice(0,3); const events=loadEvents(); const i=events.findIndex(e=>e.id===draft.id); if(i>=0) events[i]=draft; else events.push(draft); saveEvents(events); closeOverlay($("modalEvent")); currentEventId=null; draft=null; render(); toast("Filmabend gespeichert"); });
-$("btnEventDelete").addEventListener("click",()=>{ if(!draft) return; if(!confirm("Diesen Filmabend löschen?")) return; saveEvents(loadEvents().filter(e=>e.id!==draft.id)); closeOverlay($("modalEvent")); currentEventId=null; draft=null; render(); toast("Filmabend gelöscht"); });
+$("btnEventCancel").addEventListener("click",()=>{ closeOverlay($("modalEvent")); currentId=null; draft=null; });
+$("btnEventSave").addEventListener("click",()=>{ updateDraftFromInputs(); draft.type="event"; draft.films=draft.films.map(f=>({title:clean(f.title),suggestedBy:clean(f.suggestedBy),rating:Number(f.rating||0)})).slice(0,3); const entries=loadEntries(); const i=entries.findIndex(e=>e.id===draft.id); if(i>=0) entries[i]=draft; else entries.push(draft); saveEntries(entries); closeOverlay($("modalEvent")); currentId=null; draft=null; render(); toast("Filmabend gespeichert"); });
+$("btnEventDelete").addEventListener("click",()=>{ if(!draft)return; if(!confirm("Diesen Filmabend löschen?"))return; saveEntries(loadEntries().filter(e=>e.id!==draft.id)); closeOverlay($("modalEvent")); currentId=null; draft=null; render(); toast("Filmabend gelöscht"); });
 
-function allFilms(){ const out=[]; loadEvents().forEach(ev=>(ev.films||[]).forEach((f,i)=>{ if(clean(f.title)) out.push(Object.assign({},f,{date:ev.date,eventId:ev.id,slot:i+1})); })); return out; }
-function renderArchive(){
-  const q=clean($("archiveFilter").value).toLowerCase(); const sort=$("archiveSort").value; let films=allFilms();
-  if(q) films=films.filter(f=>[f.title,f.year,f.suggestedBy].some(v=>String(v||"").toLowerCase().includes(q)));
-  films.sort((a,b)=>{
-    if(sort==="dateAsc") return String(a.date).localeCompare(String(b.date));
-    if(sort==="ratingDesc") return Number(b.rating||0)-Number(a.rating||0) || String(a.title).localeCompare(String(b.title));
-    if(sort==="ratingAsc") return Number(a.rating||0)-Number(b.rating||0) || String(a.title).localeCompare(String(b.title));
-    if(sort==="titleAsc") return String(a.title).localeCompare(String(b.title));
-    return String(b.date).localeCompare(String(a.date));
-  });
-  const host=$("archiveList"); host.innerHTML="";
-  if(films.length===0){ host.innerHTML='<div class="empty">Keine Filme gefunden.</div>'; return; }
-  films.forEach(f=>{ const div=document.createElement("div"); div.className="archiveItem"; div.innerHTML=`<div class="archiveTitle">${escapeHtml(f.title)}${clean(f.year)?` <span class="movieMeta">(${escapeHtml(f.year)})</span>`:""}</div><div class="archiveInfo">${renderStarsSmall(f.rating)} ${ratingText(f.rating)} · Filmabend: ${formatDate(f.date)} · ${f.slot}. Film · Vorschlag: ${escapeHtml(f.suggestedBy||"—")}</div>`; host.appendChild(div); });
-}
-$("btnArchive").addEventListener("click",()=>{ renderArchive(); openOverlay($("modalArchive")); });
-$("btnArchiveClose").addEventListener("click",()=>closeOverlay($("modalArchive")));
-$("archiveFilter").addEventListener("input",renderArchive); $("archiveSort").addEventListener("change",renderArchive);
+function openSingle(id){ const ev=loadEntries().find(e=>e.id===id) || blankSingle(); singleDraft=JSON.parse(JSON.stringify(ev)); renderSingleModal(); openOverlay($("modalSingle")); }
+function renderSingleModal(){ const f=singleDraft.films[0]||blankFilm(); $("singleTitle").textContent=singleDraft.id&&loadEntries().some(e=>e.id===singleDraft.id)?"Einzelfilm bearbeiten":"Einzelfilm anlegen"; $("singleDate").value=singleDraft.date||todayKey(); $("singleMovieTitle").value=f.title||""; $("singleStars").innerHTML=`${[0,1,2,3,4].map(i=>`<span class="star"><span class="starFill" style="width:${filledStarPct(f.rating,i)}%"></span></span>`).join("")}<span class="ratingValue">${ratingText(f.rating)}</span>`; }
+function updateSingleFromInputs(){ singleDraft.date=$("singleDate").value||todayKey(); singleDraft.type="single"; singleDraft.films=[{title:clean($("singleMovieTitle").value), suggestedBy:"", rating:Number((singleDraft.films[0]||blankFilm()).rating||0)}]; }
+$("btnSingle").addEventListener("click",()=>{ singleDraft=blankSingle(); renderSingleModal(); openOverlay($("modalSingle")); });
+$("singleMovieTitle").addEventListener("input",updateSingleFromInputs); $("singleDate").addEventListener("input",updateSingleFromInputs);
+$("singleStars").addEventListener("pointerdown",e=>{ if(!singleDraft)return; updateSingleFromInputs(); const fake={films:singleDraft.films}; setRatingFromPointer({dataset:{rating:0},getBoundingClientRect:()=>$("singleStars").getBoundingClientRect()},e.clientX,fake); singleDraft.films=fake.films; renderSingleModal(); });
+$("singleStars").addEventListener("pointermove",e=>{ if(e.buttons!==1||!singleDraft)return; updateSingleFromInputs(); const fake={films:singleDraft.films}; setRatingFromPointer({dataset:{rating:0},getBoundingClientRect:()=>$("singleStars").getBoundingClientRect()},e.clientX,fake); singleDraft.films=fake.films; renderSingleModal(); });
+$("btnSingleCancel").addEventListener("click",()=>{ closeOverlay($("modalSingle")); singleDraft=null; });
+$("btnSingleSave").addEventListener("click",()=>{ updateSingleFromInputs(); const entries=loadEntries(); const i=entries.findIndex(e=>e.id===singleDraft.id); if(i>=0) entries[i]=singleDraft; else entries.push(singleDraft); saveEntries(entries); closeOverlay($("modalSingle")); singleDraft=null; render(); toast("Einzelfilm gespeichert"); });
+$("btnSingleDelete").addEventListener("click",()=>{ if(!singleDraft)return; if(!confirm("Diesen Einzelfilm löschen?"))return; saveEntries(loadEntries().filter(e=>e.id!==singleDraft.id)); closeOverlay($("modalSingle")); singleDraft=null; render(); toast("Einzelfilm gelöscht"); });
+
+function allFilms(){ const out=[]; loadEntries().forEach(e=>(e.films||[]).forEach((f,i)=>{ if(clean(f.title)) out.push({...f,date:e.date,entryId:e.id,type:e.type||"event",slot:i+1}); })); return out; }
+function renderArchive(){ const q=clean($("archiveFilter").value).toLowerCase(); const sort=$("archiveSort").value; const type=$("archiveType").value; let films=allFilms(); if(type!=="all") films=films.filter(f=>f.type===type); if(q) films=films.filter(f=>[f.title,f.suggestedBy].some(v=>String(v||"").toLowerCase().includes(q))); films.sort((a,b)=>{ if(sort==="dateAsc")return String(a.date).localeCompare(String(b.date)); if(sort==="ratingDesc")return Number(b.rating||0)-Number(a.rating||0)||String(a.title).localeCompare(String(b.title)); if(sort==="ratingAsc")return Number(a.rating||0)-Number(b.rating||0)||String(a.title).localeCompare(String(b.title)); if(sort==="titleAsc")return String(a.title).localeCompare(String(b.title)); return String(b.date).localeCompare(String(a.date)); }); const host=$("archiveList"); host.innerHTML=""; if(!films.length){host.innerHTML='<div class="empty">Keine Filme gefunden.</div>';return;} films.forEach(f=>{ const div=document.createElement("div"); div.className="archiveItem"; const label=f.type==="single"?"Einzelfilm":`Filmabend · ${f.slot}. Film · Vorschlag: ${escapeHtml(f.suggestedBy||"—")}`; div.innerHTML=`<div class="archiveTitle">${escapeHtml(f.title)}</div><div class="archiveInfo">${renderStarsSmall(f.rating)} ${ratingText(f.rating)} · ${label} · ${formatDate(f.date)}</div>`; host.appendChild(div); }); }
+$("btnArchive").addEventListener("click",()=>{ renderArchive(); openOverlay($("modalArchive")); }); $("btnArchiveClose").addEventListener("click",()=>closeOverlay($("modalArchive"))); $("archiveFilter").addEventListener("input",renderArchive); $("archiveSort").addEventListener("change",renderArchive); $("archiveType").addEventListener("change",renderArchive);
 
 function csvCell(s){ const v=(s??"").toString(); return '"'+v.replace(/"/g,'""')+'"'; }
-function exportCSV(){ const events=loadEvents(); if(!events.length){toast("Keine Daten zum Export");return;} const lines=["FilmabendID;Datum;FilmNr;Titel;Jahr;VorgeschlagenVon;Bewertung"]; events.sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(ev=>(ev.films||[]).forEach((f,i)=>lines.push([ev.id,ev.date,i+1,f.title,f.year,f.suggestedBy,Number(f.rating||0).toFixed(2)].map(csvCell).join(";")))); const blob=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="cinesneak_archiv.csv"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); toast("CSV exportiert"); }
+function exportCSV(){ const entries=loadEntries(); if(!entries.length){toast("Keine Daten zum Export");return;} const lines=["ID;Typ;Datum;FilmNr;Titel;VorgeschlagenVon;Bewertung"]; entries.sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(e=>(e.films||[]).forEach((f,i)=>lines.push([e.id,e.type||"event",e.date,i+1,f.title,f.suggestedBy,Number(f.rating||0).toFixed(2)].map(csvCell).join(";")))); const blob=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="filmarchiv.csv"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); toast("CSV exportiert"); }
 function parseCsvLine(line,delimiter){ const out=[]; let cur="",q=false; for(let i=0;i<line.length;i++){ const ch=line[i]; if(ch==='"'){ if(q&&line[i+1]==='"'){cur+='"';i++;} else q=!q; } else if(!q&&ch===delimiter){ out.push(cur); cur=""; } else cur+=ch; } out.push(cur); return out.map(s=>s.trim()); }
-function importCSVText(text){ const rows=text.split(/\r?\n/).filter(l=>l.trim()); if(rows.length<2){toast("CSV leer/ungültig");return;} const delim=rows[0].includes(";")?";":","; const map=new Map(); for(let i=1;i<rows.length;i++){ const c=parseCsvLine(rows[i],delim); if(c.length<4) continue; const [id,date,filmNr,title,year,suggestedBy,rating]=c; if(!id||!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue; if(!map.has(id)) map.set(id,{id,date,films:[blankFilm(),blankFilm()]}); const ev=map.get(id); const idx=Math.max(0,Math.min(2,Number(filmNr||1)-1)); while(ev.films.length<=idx) ev.films.push(blankFilm()); ev.films[idx]={title:clean(title),year:clean(year),suggestedBy:clean(suggestedBy),rating:Number(String(rating||0).replace(",","."))||0}; } const events=[...map.values()]; saveEvents(events); render(); toast(`Import ok (${events.length} Filmabende)`); }
+function importCSVText(text){ const rows=text.split(/\r?\n/).filter(l=>l.trim()); if(rows.length<2){toast("CSV leer/ungültig");return;} const delim=rows[0].includes(";")?";":","; const modern=/\bTyp\b/i.test(rows[0]); const map=new Map(); for(let i=1;i<rows.length;i++){ const c=parseCsvLine(rows[i],delim); if(c.length<6)continue; const id=c[0]; const type=modern?c[1]:"event"; const date=modern?c[2]:c[1]; const filmNr=modern?c[3]:c[2]; const title=modern?c[4]:c[3]; const suggestedBy=modern?c[5]:c[4]; const rating=modern?c[6]:c[5]; if(!id||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date))continue; if(!map.has(id)) map.set(id,{id,type:type==="single"?"single":"event",date,films:[]}); const e=map.get(id); const idx=Math.max(0,Math.min(2,Number(filmNr||1)-1)); while(e.films.length<=idx)e.films.push(blankFilm()); e.films[idx]={title:clean(title),suggestedBy:clean(suggestedBy),rating:Number(String(rating||0).replace(",","."))||0}; } const entries=[...map.values()]; saveEntries(entries); render(); toast(`Import ok (${entries.length} Einträge)`); }
 $("btnExport").addEventListener("click",exportCSV); $("btnImport").addEventListener("click",()=>{$("fileInput").value=""; $("fileInput").click();}); $("fileInput").addEventListener("change",async()=>{ const f=$("fileInput").files&&$("fileInput").files[0]; if(!f)return; try{importCSVText(await f.text());}catch{toast("Import fehlgeschlagen");} });
 $("btnDelete").addEventListener("click",()=>openOverlay($("modalDelete"))); $("delCancel").addEventListener("click",()=>closeOverlay($("modalDelete"))); $("delConfirm").addEventListener("click",()=>{ localStorage.removeItem(APP.STORAGE_KEY); closeOverlay($("modalDelete")); render(); toast("Daten gelöscht"); });
-["modalEvent","modalArchive","modalDelete"].forEach(id=>$(id).addEventListener("click",e=>{ if(e.target===$(id)){ closeOverlay($(id)); if(id==="modalEvent"){ currentEventId=null; draft=null; render(); } } }));
-document.addEventListener("keydown",e=>{ if(e.key!=="Escape")return; ["modalEvent","modalArchive","modalDelete"].forEach(id=>closeOverlay($(id))); currentEventId=null; draft=null; render(); });
+["modalEvent","modalSingle","modalArchive","modalDelete"].forEach(id=>$(id).addEventListener("click",e=>{ if(e.target===$(id)){ closeOverlay($(id)); if(id==="modalEvent"){currentId=null;draft=null;} if(id==="modalSingle")singleDraft=null; render(); } }));
+document.addEventListener("keydown",e=>{ if(e.key!=="Escape")return; ["modalEvent","modalSingle","modalArchive","modalDelete"].forEach(id=>closeOverlay($(id))); currentId=null; draft=null; singleDraft=null; render(); });
 render();
 </script>
 </body>
