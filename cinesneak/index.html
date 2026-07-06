@@ -4,315 +4,114 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Cinesneak Archiv</title>
-
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Cinesneak" />
-<meta name="theme-color" content="#17070a" />
-
+<meta name="theme-color" content="#12070a" />
 <style>
 :root{
-  --bg:#17070a;
-  --bg2:#09070a;
-  --card:#1c1014;
-  --card2:#241218;
-  --text:#f4edf0;
-  --muted:#b9a7ad;
-  --line:#3a2028;
-  --btn:#3a1520;
-  --btn2:#651f31;
-  --accent:#9e263f;
-  --accent2:#c43a55;
-  --gold:#f2c86b;
-  --danger:#5a1f1f;
-  --ok:#264126;
-  --warn:#4b351f;
+  --bg:#12070a; --bg2:#1b0b10; --card:#211017; --text:#f4edf0; --muted:#b9a5ad;
+  --line:#472633; --btn:#3a1722; --btn2:#5a2030; --danger:#641d25; --ok:#74283b; --warn:#4b2b1f;
+  --gold:#f2c96b;
 }
 *{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-  background:
-    radial-gradient(circle at top, rgba(158,38,63,0.22), transparent 34%),
-    linear-gradient(180deg, var(--bg2), var(--bg));
-  color:var(--text);
-}
-.wrap{max-width:560px; margin:0 auto; padding:18px 16px 28px;}
+body{margin:0; font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#080406,var(--bg)); color:var(--text);}
+.wrap{max-width:520px; margin:0 auto; padding:18px 16px 28px;}
 .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px;}
 h1{font-size:22px; margin:0; letter-spacing:.2px;}
 .headerActions{display:flex; align-items:center; gap:8px;}
-.iconBtn{
-  width:42px; height:38px;
-  display:inline-flex; align-items:center; justify-content:center;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(0,0,0,0.22);
-  color:var(--text);
-  cursor:pointer;
-  padding:0;
-}
-.iconBtn:active, button:active{transform:scale(0.99);}
-.iconBtn svg{width:18px; height:18px; opacity:0.95;}
-.iconBtn:focus, button:focus, input:focus, select:focus{outline:2px solid rgba(196,58,85,.28); outline-offset:2px;}
-.card{
-  background:linear-gradient(180deg, rgba(36,18,24,.94), rgba(28,16,20,.94));
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
-  margin-top:14px;
-  box-shadow:0 14px 34px rgba(0,0,0,0.42);
-}
-button{
-  width:100%;
-  padding:16px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  background:linear-gradient(180deg, var(--btn), var(--btn2));
-  color:var(--text);
-  font-size:17px;
-  font-weight:800;
-  cursor:pointer;
-}
-.b-primary{background:linear-gradient(180deg, rgba(158,38,63,0.72), rgba(106,31,49,0.98));}
-.b-muted{background:rgba(0,0,0,.18);}
-.b-danger{background:linear-gradient(180deg, rgba(90,31,31,0.68), rgba(90,31,31,0.95));}
+.iconBtn{width:42px; height:38px; display:inline-flex; align-items:center; justify-content:center; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.18); color:var(--text); cursor:pointer; padding:0;}
+.iconBtn:active, button:active{transform:scale(.99);} .iconBtn svg{width:18px; height:18px; opacity:.95;}
+.card{background:rgba(33,16,23,.94); border:1px solid var(--line); border-radius:16px; padding:14px; margin-top:14px; box-shadow:0 10px 30px rgba(0,0,0,.35);}
+button{width:100%; padding:16px; border-radius:16px; border:1px solid var(--line); background:linear-gradient(180deg,var(--btn),var(--btn2)); color:var(--text); font-size:18px; font-weight:800; cursor:pointer;}
+.b-main{background:linear-gradient(180deg,rgba(116,40,59,.72),rgba(116,40,59,1));}
+.b-soft{background:rgba(0,0,0,.14); font-size:14px; padding:12px;}
+.b-danger{background:linear-gradient(180deg,rgba(100,29,37,.7),rgba(100,29,37,1));}
 .subline{color:var(--muted); font-size:12px; line-height:1.35; margin-top:8px;}
-.smallTitle{font-weight:900; font-size:15px; margin:0 0 10px; color:#fff;}
-.events{display:flex; flex-direction:column; gap:10px; margin-top:14px;}
-.empty{
-  color:var(--muted); font-size:14px; line-height:1.45;
-  padding:12px; border:1px dashed var(--line); border-radius:14px;
-  background:rgba(0,0,0,.12);
-}
-.eventCard{
-  text-align:left;
-  width:100%;
-  padding:14px;
-  border-radius:18px;
-  border:1px solid var(--line);
-  background:
-    linear-gradient(90deg, rgba(158,38,63,.22), transparent 42%),
-    rgba(0,0,0,.18);
-  color:var(--text);
-  cursor:pointer;
-}
+.list{display:flex; flex-direction:column; gap:10px;}
+.eventItem{display:block; text-align:left; padding:14px; border-radius:16px; border:1px solid var(--line); background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.20)); color:var(--text); cursor:pointer;}
 .eventHead{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;}
-.eventNo{font-weight:900; font-size:15px;}
-.eventDate{font-size:12px; color:var(--muted); white-space:nowrap;}
-.movieLine{display:grid; grid-template-columns:22px 1fr auto; gap:8px; align-items:center; padding:6px 0; border-top:1px solid rgba(255,255,255,.05);}
-.movieLine:first-of-type{border-top:0;}
-.movieTitle{font-weight:750; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.movieMeta{font-size:11px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.ratingMini{color:var(--gold); font-size:12px; white-space:nowrap;}
-.modalOverlay{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,0.62);
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  padding:14px;
-  z-index:10;
-}
-.modal{
-  width:min(560px, 100%);
-  max-height:92vh;
-  overflow:auto;
-  background:linear-gradient(180deg, rgba(36,18,24,.99), rgba(20,10,14,.99));
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:14px;
-  box-shadow:0 24px 70px rgba(0,0,0,0.64);
-}
-.modalTitle{font-weight:900; font-size:17px; margin:2px 0 10px;}
-.modalSub{color:var(--muted); font-size:12px; margin:0 0 10px; line-height:1.35;}
-.modalRow{display:flex; gap:10px; margin-top:10px;}
-.modalRow button{padding:12px; font-size:14px; border-radius:14px;}
-.frame{
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  background:rgba(0,0,0,.14);
-  margin-top:12px;
-}
-label{display:block; color:var(--muted); font-size:12px; margin:0 0 6px; font-weight:700;}
-input, select{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(0,0,0,0.22);
-  color:var(--text);
-  font-size:15px;
-  outline:none;
-}
-.fieldRow{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.movieSlotHead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;}
-.slotName{font-size:15px; font-weight:900;}
-.slotActions{display:flex; gap:8px; align-items:center;}
-.miniBtn{
-  width:auto; padding:8px 10px; font-size:12px; border-radius:999px;
-  background:rgba(0,0,0,.18); font-weight:800;
-}
-.tmdbResult{
-  display:grid; grid-template-columns:46px 1fr; gap:10px;
-  align-items:center;
-  width:100%; text-align:left;
-  padding:10px;
-  background:rgba(0,0,0,.16);
-  margin-top:8px;
-  border-radius:14px;
-}
-.tmdbPoster{width:46px; height:68px; border-radius:8px; background:rgba(255,255,255,.06); object-fit:cover;}
-.tmdbTitle{font-size:14px; font-weight:850;}
-.tmdbMeta{font-size:12px; color:var(--muted); margin-top:3px; line-height:1.3;}
-.starsWrap{display:flex; align-items:center; gap:10px; margin-top:10px;}
-.stars{
-  position:relative;
-  display:inline-block;
-  font-size:31px;
-  line-height:1;
-  letter-spacing:1px;
-  user-select:none;
-  touch-action:none;
-  cursor:pointer;
-  color:rgba(255,255,255,.18);
-}
-.starsBase, .starsFill{display:block; white-space:nowrap;}
-.starsFill{
-  position:absolute; left:0; top:0;
-  overflow:hidden;
-  width:0%;
-  color:var(--gold);
-  pointer-events:none;
-}
-.ratingValue{font-weight:900; color:var(--gold); min-width:48px; text-align:right;}
-.toast{
-  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
-  background:rgba(0,0,0,0.78); color:#fff;
-  padding:10px 12px; border-radius:12px;
-  font-size:13px; opacity:0;
-  transition:opacity 160ms ease;
-  border:1px solid rgba(255,255,255,0.12);
-  z-index:20;
-}
+.eventTitle{font-weight:900; font-size:16px;} .eventDate{font-size:12px; color:var(--muted); white-space:nowrap;}
+.movieLine{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:7px 0; border-top:1px solid rgba(255,255,255,.06);}
+.movieName{font-size:14px; line-height:1.25;} .movieMeta{font-size:12px; color:var(--muted); margin-top:3px;} .ratingSmall{white-space:nowrap; color:var(--gold); font-weight:900; font-size:13px;}
+.empty{color:var(--muted); font-size:13px; line-height:1.4; padding:4px 0;}
+.modalOverlay{position:fixed; inset:0; background:rgba(0,0,0,.62); display:none; align-items:flex-end; justify-content:center; padding:14px; z-index:10;}
+.modal{width:min(520px,100%); max-height:92vh; overflow:auto; background:rgba(33,16,23,.99); border:1px solid var(--line); border-radius:18px; padding:14px; box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.modalTitle{font-weight:900; font-size:17px; margin:2px 0 10px;} .modalSub{color:var(--muted); font-size:12px; margin:0 0 10px; line-height:1.35;}
+.modalRow{display:flex; gap:10px; margin-top:10px;} .modalRow button{padding:12px; font-size:14px; border-radius:14px;}
+label{display:block; color:var(--muted); font-size:12px; font-weight:800; margin:10px 0 6px;}
+input, select{width:100%; padding:12px; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.20); color:var(--text); font-size:15px; outline:none;}
+.filmCard{padding:12px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,0,.13); margin-top:12px;}
+.filmHeader{display:flex; justify-content:space-between; align-items:center; gap:10px; font-weight:900;}
+.twoCols{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.stars{display:flex; align-items:center; gap:3px; user-select:none; touch-action:none; padding:8px 0 2px;}
+.star{font-size:30px; line-height:1; color:rgba(242,201,107,.25); width:31px; text-align:center; position:relative;}
+.star::before{content:'★';} .starFill{position:absolute; left:0; top:0; overflow:hidden; color:var(--gold); width:0; pointer-events:none;}
+.starFill::before{content:'★';}
+.ratingValue{font-weight:900; color:var(--gold); margin-left:8px; font-size:14px;}
+.archiveControls{display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:12px;}
+.archiveItem{padding:12px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,0,.13); margin-bottom:8px;}
+.archiveTitle{font-weight:900;} .archiveInfo{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.35;}
+.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(0,0,0,.78); color:#fff; padding:10px 12px; border-radius:12px; font-size:13px; opacity:0; transition:opacity 160ms ease; border:1px solid rgba(255,255,255,.12); z-index:20;}
 .toast.show{opacity:1;}
-.archiveControls{display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:10px;}
-.archiveList{display:flex; flex-direction:column; gap:8px;}
-.archiveItem{
-  padding:12px; border:1px solid var(--line); border-radius:14px;
-  background:rgba(0,0,0,.14);
-}
-.archiveTop{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}
-.archiveTitle{font-weight:850; font-size:14px;}
-.archiveInfo{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.35;}
-a{color:#ffd3dc; text-decoration:none;}
-@media (max-width:420px){
-  .fieldRow{grid-template-columns:1fr;}
-  .stars{font-size:29px;}
-}
+@media (max-width:420px){.twoCols{grid-template-columns:1fr}.star{font-size:28px;width:29px}.modalRow{flex-direction:column}}
 </style>
 </head>
-
 <body>
 <div class="wrap">
   <div class="topbar">
     <h1>🎬 Cinesneak Archiv</h1>
     <div class="headerActions">
-      <button class="iconBtn" id="btnArchive" type="button" title="Filmarchiv" aria-label="Filmarchiv">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
-      </button>
-      <button class="iconBtn" id="btnSettings" type="button" title="TMDb API-Key" aria-label="TMDb API-Key">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.33 1V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-.33-1 1.65 1.65 0 0 0-1-.6 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1 1.65 1.65 0 0 0-1-.33H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1-.33 1.65 1.65 0 0 0 .6-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.13 3.6l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-.6 1.65 1.65 0 0 0 .33-1V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 .33 1 1.65 1.65 0 0 0 1 .6 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.33.34.64.6.9.26.26.57.46.9.6H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1 .33 1.65 1.65 0 0 0-.51.17z"/></svg>
-      </button>
-      <button class="iconBtn" id="btnImport" type="button" title="Import CSV" aria-label="Import CSV">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M12 3v11"/><path d="M7 10l5 5 5-5"/></svg>
-      </button>
-      <button class="iconBtn" id="btnExport" type="button" title="Export CSV" aria-label="Export CSV">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 19h12a2 2 0 0 0 2-2v-3"/><path d="M4 14v3a2 2 0 0 0 2 2"/><path d="M12 16V4"/><path d="M8.5 7.5L12 4l3.5 3.5"/></svg>
-      </button>
-      <button class="iconBtn" id="btnDelete" type="button" title="Daten löschen" aria-label="Daten löschen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-      </button>
+      <button class="iconBtn" id="btnArchive" type="button" title="Filmarchiv" aria-label="Filmarchiv">★</button>
+      <button class="iconBtn" id="btnImport" type="button" title="Import CSV" aria-label="Import CSV">↧</button>
+      <button class="iconBtn" id="btnExport" type="button" title="Export CSV" aria-label="Export CSV">↥</button>
+      <button class="iconBtn" id="btnDelete" type="button" title="Daten löschen" aria-label="Daten löschen">⌫</button>
     </div>
   </div>
 
   <div class="card">
-    <button class="b-primary" id="btnNew" type="button">Neuer Filmabend</button>
-    <div class="subline">Archiv für eure eigene Cinesneak. Alle Daten bleiben lokal im Browser. TMDb ist optional und nur für die Filmsuche gedacht.</div>
+    <button class="b-main" id="btnNew" type="button">Neuer Filmabend</button>
+    <div class="subline">Persönliches Archiv für eure eigene Cinesneak. Alles bleibt lokal im Browser.</div>
   </div>
 
-  <div class="events" id="events"></div>
+  <div class="card" id="eventsCard">
+    <div class="list" id="eventsList"></div>
+  </div>
 </div>
 
 <div class="modalOverlay" id="modalEvent" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true">
     <div class="modalTitle" id="eventTitle">Filmabend</div>
-    <div class="modalSub">Filme eintragen, Vorschlagende auswählen und Bewertung vergeben.</div>
-
-    <div class="frame">
-      <div class="fieldRow">
-        <div>
-          <label for="eventDate">Datum</label>
-          <input id="eventDate" type="date" />
-        </div>
-        <div>
-          <label for="searchTarget">Suchergebnis übernehmen in</label>
-          <select id="searchTarget">
-            <option value="0">1. Film</option>
-            <option value="1">2. Film</option>
-            <option value="2">3. Film</option>
-          </select>
-        </div>
-      </div>
-      <div style="height:10px"></div>
-      <label for="tmdbSearch">TMDb-Suche</label>
-      <input id="tmdbSearch" type="search" autocomplete="off" placeholder="Filmtitel suchen …" />
-      <div class="modalSub" id="tmdbHint" style="margin-top:8px;">Ohne gespeicherten TMDb API-Key ist nur manuelle Eingabe möglich.</div>
-      <div id="tmdbResults"></div>
-    </div>
-
-    <div id="slots"></div>
-
-    <div class="modalRow">
-      <button id="btnAddThird" type="button" class="b-muted">3. Film hinzufügen</button>
-    </div>
-
+    <div class="modalSub">Filme manuell eintragen, Vorschlagende festhalten und bewerten.</div>
+    <label for="eventDate">Datum</label>
+    <input id="eventDate" type="date" />
+    <div id="filmSlots"></div>
+    <button class="b-soft" id="btnAddThird" type="button" style="margin-top:12px;">3. Film hinzufügen</button>
     <div class="modalRow">
       <button id="btnEventCancel" type="button">Schließen</button>
-      <button id="btnEventSave" class="b-primary" type="button">Speichern</button>
+      <button id="btnEventSave" class="b-main" type="button">Speichern</button>
+    </div>
+    <div class="modalRow">
+      <button id="btnEventDelete" class="b-danger" type="button">Filmabend löschen</button>
     </div>
   </div>
 </div>
 
 <div class="modalOverlay" id="modalArchive" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true">
-    <div class="modalTitle">Filmarchiv</div>
-    <div class="modalSub">Alle gesehenen Filme. Filterung nach Titel oder Vorschlagender Person, Sortierung nach Bewertung, Titel oder Datum.</div>
+    <div class="modalTitle">Alle Filme</div>
     <div class="archiveControls">
       <input id="archiveFilter" type="search" placeholder="Filme filtern …" />
       <select id="archiveSort">
-        <option value="ratingDesc">Bewertung absteigend</option>
-        <option value="ratingAsc">Bewertung aufsteigend</option>
-        <option value="dateDesc">Datum neueste zuerst</option>
-        <option value="dateAsc">Datum älteste zuerst</option>
+        <option value="dateDesc">Neueste Filmabende zuerst</option>
+        <option value="dateAsc">Älteste Filmabende zuerst</option>
+        <option value="ratingDesc">Beste Bewertung zuerst</option>
+        <option value="ratingAsc">Schwächste Bewertung zuerst</option>
         <option value="titleAsc">Titel A–Z</option>
       </select>
     </div>
-    <div class="archiveList" id="archiveList"></div>
+    <div id="archiveList"></div>
     <div class="modalRow"><button id="btnArchiveClose" type="button">Schließen</button></div>
-  </div>
-</div>
-
-<div class="modalOverlay" id="modalSettings" aria-hidden="true">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modalTitle">TMDb API-Key</div>
-    <div class="modalSub">Für die Filmsuche brauchst du einen eigenen TMDb API-Key. Er wird nur lokal in dieser PWA gespeichert.</div>
-    <label for="tmdbKey">API-Key</label>
-    <input id="tmdbKey" type="password" placeholder="TMDb API-Key einfügen" />
-    <div class="modalRow">
-      <button id="btnSettingsCancel" type="button">Abbrechen</button>
-      <button id="btnSettingsSave" class="b-primary" type="button">Speichern</button>
-    </div>
   </div>
 </div>
 
@@ -321,8 +120,8 @@ a{color:#ffd3dc; text-decoration:none;}
     <div class="modalTitle">Wirklich löschen?</div>
     <div class="modalSub">Alle lokal gespeicherten Filmabende werden entfernt. Das kann nicht rückgängig gemacht werden.</div>
     <div class="modalRow">
-      <button id="btnDelCancel" type="button">Abbrechen</button>
-      <button id="btnDelConfirm" class="b-danger" type="button">Löschen</button>
+      <button id="delCancel" type="button">Abbrechen</button>
+      <button id="delConfirm" class="b-danger" type="button">Löschen</button>
     </div>
   </div>
 </div>
@@ -331,358 +130,120 @@ a{color:#ffd3dc; text-decoration:none;}
 <input id="fileInput" type="file" accept=".csv,text/csv" style="display:none" />
 
 <script>
-const APP = Object.freeze({
-  STORAGE_KEY: "cinesneak-archiv-v2",
-  SETTINGS_KEY: "cinesneak-archiv-v2:settings",
-  PERSONS: ["Sebastian", "Person 2", "Person 3", "Person 4"],
-  MAX_FILMS: 3
-});
-
-let currentEventId = null;
-let searchTimer = null;
-
-const $ = (id) => document.getElementById(id);
-const pad2 = (n) => String(n).padStart(2,"0");
-function todayKey(){ const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+const APP=Object.freeze({STORAGE_KEY:"cinesneak-archiv-v3", MAX_FILMS:3});
+const $=id=>document.getElementById(id);
+const pad2=n=>String(n).padStart(2,"0");
+const todayKey=()=>{const d=new Date(); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;};
 function formatDate(k){ if(!k) return "—"; const [y,m,d]=k.split("-"); return `${d}.${m}.${y}`; }
-function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-function loadEvents(){ try { return JSON.parse(localStorage.getItem(APP.STORAGE_KEY) || "[]"); } catch { return []; } }
-function saveEvents(v){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(v)); }
-function loadSettings(){ try { return JSON.parse(localStorage.getItem(APP.SETTINGS_KEY) || "{}"); } catch { return {}; } }
-function saveSettings(v){ localStorage.setItem(APP.SETTINGS_KEY, JSON.stringify(v)); }
-function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1300); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function clean(v){ return (v||"").toString().trim(); }
+function escapeHtml(s){ return (s||"").toString().replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
+function loadEvents(){ try{return JSON.parse(localStorage.getItem(APP.STORAGE_KEY)||"[]");}catch{return [];} }
+function saveEvents(events){ localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(events)); }
+function blankFilm(){ return {title:"", year:"", suggestedBy:"", rating:0}; }
+function blankEvent(){ return {id:uid(), date:todayKey(), films:[blankFilm(), blankFilm()]}; }
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); }
 function openOverlay(el){ el.style.display="flex"; el.setAttribute("aria-hidden","false"); }
 function closeOverlay(el){ el.style.display="none"; el.setAttribute("aria-hidden","true"); }
-function ratingText(v){ return Number(v || 0).toFixed(2).replace(".",","); }
-function miniStars(v){ const full = Math.round((Number(v)||0)); return "★".repeat(full) + "☆".repeat(5-full) + " " + ratingText(v); }
-function clean(s){ return (s || "").toString().trim(); }
-function csvCell(s){ const v=(s??"").toString(); return `"${v.replace(/"/g,'""')}"`; }
+function ratingText(r){ return Number(r||0).toFixed(2).replace(".",","); }
+function renderStarsSmall(r){ const full=Math.floor(Number(r||0)); return "★".repeat(full)+"☆".repeat(5-full); }
+function filledStarPct(r, i){ const v=Math.max(0,Math.min(5,Number(r||0))); return Math.max(0,Math.min(1,v-i))*100; }
 
-function blankFilm(){ return { title:"", year:"", suggestedBy:"", rating:0, tmdbId:"", tmdbUrl:"", poster:"" }; }
-function normalizeEvent(e){
-  const films = Array.isArray(e.films) ? e.films : [];
-  while(films.length < 2) films.push(blankFilm());
-  return { id:e.id || uid(), date:e.date || todayKey(), films:films.slice(0,APP.MAX_FILMS).map(f=>Object.assign(blankFilm(), f)) };
-}
+let currentEventId=null;
+let draft=null;
 
 function render(){
-  const host=$("events");
-  const events=loadEvents().map(normalizeEvent).sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
-  host.innerHTML="";
-  if(events.length===0){
-    host.innerHTML = `<div class="empty">Noch kein Filmabend angelegt. Der neueste Filmabend erscheint später direkt unter dem Button, ältere Einträge wandern nach unten.</div>`;
-    return;
-  }
-  const asc = [...events].sort((a,b)=> a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
-  const numberMap = new Map(asc.map((e,i)=>[e.id, i+1]));
-  for(const ev of events){
-    const card=document.createElement("button");
-    card.className="eventCard";
-    card.type="button";
-    const films = ev.films.filter(f=>clean(f.title));
-    const lines = films.length ? films.map((f,i)=>`
-      <div class="movieLine">
-        <div>🎞</div>
-        <div>
-          <div class="movieTitle">${escapeHtml(f.title)}${f.year ? ` <span class="movieMeta">(${escapeHtml(f.year)})</span>` : ""}</div>
-          <div class="movieMeta">${escapeHtml(f.suggestedBy || "ohne Vorschlagende Person")}</div>
-        </div>
-        <div class="ratingMini">${miniStars(f.rating)}</div>
-      </div>`).join("") : `<div class="movieMeta">Noch keine Filme eingetragen.</div>`;
-    card.innerHTML = `
-      <div class="eventHead">
-        <div class="eventNo">🎬 Filmabend #${numberMap.get(ev.id)}</div>
-        <div class="eventDate">${formatDate(ev.date)}</div>
-      </div>
-      ${lines}`;
-    card.addEventListener("click",()=>openEvent(ev.id));
-    host.appendChild(card);
-  }
+  const events=loadEvents().sort((a,b)=>String(b.date).localeCompare(String(a.date)) || String(b.id).localeCompare(String(a.id)));
+  const host=$("eventsList"); host.innerHTML="";
+  if(events.length===0){ host.innerHTML='<div class="empty">Noch keine Filmabende angelegt.</div>'; return; }
+  events.forEach((ev,idx)=>{
+    const btn=document.createElement("button"); btn.className="eventItem"; btn.type="button";
+    const films=(ev.films||[]).filter(f=>clean(f.title));
+    btn.innerHTML=`
+      <div class="eventHead"><div><div class="eventTitle">🎬 Filmabend #${events.length-idx}</div><div class="movieMeta">${formatDate(ev.date)}</div></div><div class="eventDate">Öffnen</div></div>
+      ${films.length?films.map((f,i)=>`<div class="movieLine"><div><div class="movieName">🎞 ${escapeHtml(f.title)}${clean(f.year)?` <span class="movieMeta">(${escapeHtml(f.year)})</span>`:""}</div><div class="movieMeta">${i+1}. Film · Vorschlag: ${escapeHtml(f.suggestedBy||"—")}</div></div><div class="ratingSmall">${renderStarsSmall(f.rating)} ${ratingText(f.rating)}</div></div>`).join(""):'<div class="empty">Noch keine Filme eingetragen.</div>'}
+    `;
+    btn.addEventListener("click",()=>openEvent(ev.id)); host.appendChild(btn);
+  });
 }
-
-function escapeHtml(s){ return (s??"").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
 
 function openEvent(id){
-  const events=loadEvents().map(normalizeEvent);
-  const ev=events.find(e=>e.id===id);
-  if(!ev) return;
-  currentEventId=id;
-  $("eventTitle").textContent = `Filmabend vom ${formatDate(ev.date)}`;
-  $("eventDate").value = ev.date;
-  $("tmdbSearch").value = "";
-  $("tmdbResults").innerHTML = "";
-  renderSlots(ev);
-  updateTmdbHint();
-  openOverlay($("modalEvent"));
+  const events=loadEvents(); const ev=events.find(e=>e.id===id) || blankEvent();
+  currentEventId=ev.id; draft=JSON.parse(JSON.stringify(ev));
+  renderEventModal(); openOverlay($("modalEvent"));
 }
-
-function renderSlots(ev){
-  const host=$("slots");
-  host.innerHTML="";
-  ev.films.forEach((film, idx)=>{
-    if(idx===2 && !clean(film.title) && ev.films.length < 3) return;
-    const frame=document.createElement("div");
-    frame.className="frame";
-    frame.innerHTML=`
-      <div class="movieSlotHead">
-        <div class="slotName">${idx+1}. Film</div>
-        <div class="slotActions">${idx===2 ? `<button class="miniBtn" type="button" data-remove-third="1">Entfernen</button>` : ""}</div>
+function renderEventModal(){
+  $("eventTitle").textContent = "Filmabend bearbeiten";
+  $("eventDate").value = draft.date || todayKey();
+  const host=$("filmSlots"); host.innerHTML="";
+  draft.films.forEach((f,idx)=>{
+    const card=document.createElement("div"); card.className="filmCard";
+    card.innerHTML=`
+      <div class="filmHeader"><div>${idx+1}. Film</div>${idx>1?`<button class="b-soft" type="button" data-remove="${idx}" style="width:auto;padding:8px 10px;font-size:12px;">Entfernen</button>`:""}</div>
+      <label>Titel</label><input data-field="title" data-idx="${idx}" value="${escapeHtml(f.title)}" placeholder="Filmtitel" />
+      <div class="twoCols">
+        <div><label>Jahr optional</label><input data-field="year" data-idx="${idx}" value="${escapeHtml(f.year)}" placeholder="z. B. 1999" inputmode="numeric" /></div>
+        <div><label>Vorgeschlagen von</label><input data-field="suggestedBy" data-idx="${idx}" value="${escapeHtml(f.suggestedBy)}" placeholder="Name" list="peopleList" /></div>
       </div>
-      <label>Titel</label>
-      <input data-field="title" data-idx="${idx}" value="${escapeHtml(film.title)}" placeholder="Filmtitel manuell eintragen" />
-      <div style="height:10px"></div>
-      <div class="fieldRow">
-        <div>
-          <label>Jahr</label>
-          <input data-field="year" data-idx="${idx}" value="${escapeHtml(film.year)}" placeholder="z. B. 1999" />
-        </div>
-        <div>
-          <label>Vorgeschlagen von</label>
-          <select data-field="suggestedBy" data-idx="${idx}">
-            <option value="">— auswählen —</option>
-            ${APP.PERSONS.map(p=>`<option value="${escapeHtml(p)}" ${film.suggestedBy===p?"selected":""}>${escapeHtml(p)}</option>`).join("")}
-          </select>
-        </div>
-      </div>
-      <div class="starsWrap">
-        <div class="stars" data-idx="${idx}" role="slider" aria-label="Bewertung Film ${idx+1}" aria-valuemin="0" aria-valuemax="5" aria-valuenow="${film.rating}">
-          <span class="starsBase">★★★★★</span>
-          <span class="starsFill" style="width:${(Number(film.rating||0)/5)*100}%">★★★★★</span>
-        </div>
-        <div class="ratingValue" data-rating-value="${idx}">${ratingText(film.rating)}</div>
-      </div>
-      ${film.tmdbUrl ? `<div class="subline"><a href="${escapeHtml(film.tmdbUrl)}" target="_blank" rel="noopener">TMDb öffnen</a></div>` : ""}
+      <label>Bewertung</label>
+      <div class="stars" data-rating="${idx}">${[0,1,2,3,4].map(i=>`<span class="star"><span class="starFill" style="width:${filledStarPct(f.rating,i)}%"></span></span>`).join("")}<span class="ratingValue">${ratingText(f.rating)}</span></div>
     `;
-    host.appendChild(frame);
+    host.appendChild(card);
   });
-
-  host.querySelectorAll("input[data-field], select[data-field]").forEach(el=>{
-    el.addEventListener("input",()=>updateFilmField(Number(el.dataset.idx), el.dataset.field, el.value));
-    el.addEventListener("change",()=>updateFilmField(Number(el.dataset.idx), el.dataset.field, el.value));
-  });
-  host.querySelectorAll(".stars").forEach(star=>{
-    const setFromPointer=(e)=>{
-      const idx=Number(star.dataset.idx);
-      const rect=star.getBoundingClientRect();
-      const x=Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-      const raw=(x/rect.width)*5;
-      const rating=Math.max(0, Math.min(5, Math.round(raw*4)/4));
-      updateFilmField(idx, "rating", rating);
-      star.querySelector(".starsFill").style.width = `${(rating/5)*100}%`;
-      star.setAttribute("aria-valuenow", rating);
-      const val = document.querySelector(`[data-rating-value="${idx}"]`);
-      if(val) val.textContent = ratingText(rating);
-    };
-    star.addEventListener("pointerdown", e=>{ star.setPointerCapture(e.pointerId); setFromPointer(e); });
-    star.addEventListener("pointermove", e=>{ if(e.buttons) setFromPointer(e); });
-  });
-  const remove = host.querySelector("[data-remove-third]");
-  if(remove) remove.addEventListener("click",()=>{ removeThirdFilm(); });
-}
-
-function currentEvent(){
-  return loadEvents().map(normalizeEvent).find(e=>e.id===currentEventId);
-}
-function saveCurrentEvent(ev){
-  const events=loadEvents().map(normalizeEvent);
-  const i=events.findIndex(e=>e.id===ev.id);
-  if(i>=0) events[i]=ev;
-  saveEvents(events);
-}
-function updateFilmField(idx, field, value){
-  const ev=currentEvent(); if(!ev) return;
-  while(ev.films.length <= idx) ev.films.push(blankFilm());
-  ev.films[idx][field] = field === "rating" ? Number(value || 0) : value;
-  saveCurrentEvent(ev);
-}
-function removeThirdFilm(){
-  const ev=currentEvent(); if(!ev) return;
-  ev.films = ev.films.slice(0,2);
-  saveCurrentEvent(ev);
-  renderSlots(ev);
-}
-
-function addNewEvent(){
-  const events=loadEvents().map(normalizeEvent);
-  const ev={ id:uid(), date:todayKey(), films:[blankFilm(), blankFilm()] };
-  events.push(ev);
-  saveEvents(events);
-  render();
-  openEvent(ev.id);
-}
-
-function saveEventFromModal(){
-  const ev=currentEvent(); if(!ev) return;
-  ev.date = $("eventDate").value || todayKey();
-  saveCurrentEvent(ev);
-  closeOverlay($("modalEvent"));
-  currentEventId=null;
-  render();
-  toast("Filmabend gespeichert");
-}
-
-function updateTmdbHint(){
-  const key=clean(loadSettings().tmdbKey);
-  $("tmdbHint").textContent = key ? "TMDb-Suche aktiv. Ergebnisse antippen, um sie in den ausgewählten Film-Slot zu übernehmen." : "Ohne gespeicherten TMDb API-Key ist nur manuelle Eingabe möglich.";
-}
-
-async function searchTmdb(q){
-  const key=clean(loadSettings().tmdbKey);
-  const host=$("tmdbResults");
-  if(!key){ host.innerHTML=""; updateTmdbHint(); return; }
-  if(clean(q).length < 2){ host.innerHTML=""; return; }
-  host.innerHTML = `<div class="modalSub" style="margin-top:8px;">Suche läuft …</div>`;
-  try{
-    const url = `https://api.themoviedb.org/3/search/movie?api_key=${encodeURIComponent(key)}&language=de-DE&query=${encodeURIComponent(q)}&include_adult=false&page=1`;
-    const res = await fetch(url);
-    if(!res.ok) throw new Error("TMDb Fehler");
-    const data = await res.json();
-    const results = (data.results || []).slice(0,6);
-    if(results.length===0){ host.innerHTML = `<div class="modalSub" style="margin-top:8px;">Keine Treffer gefunden.</div>`; return; }
-    host.innerHTML = "";
-    results.forEach(m=>{
-      const btn=document.createElement("button");
-      btn.type="button";
-      btn.className="tmdbResult";
-      const year=(m.release_date || "").slice(0,4);
-      const poster=m.poster_path ? `https://image.tmdb.org/t/p/w92${m.poster_path}` : "";
-      btn.innerHTML = `
-        ${poster ? `<img class="tmdbPoster" src="${poster}" alt="">` : `<div class="tmdbPoster"></div>`}
-        <div>
-          <div class="tmdbTitle">${escapeHtml(m.title || m.original_title || "Unbekannter Titel")}${year ? ` (${escapeHtml(year)})` : ""}</div>
-          <div class="tmdbMeta">${escapeHtml((m.overview || "").slice(0,130))}${(m.overview || "").length>130 ? "…" : ""}</div>
-        </div>`;
-      btn.addEventListener("click",()=>applyTmdbMovie(m));
-      host.appendChild(btn);
-    });
-  }catch(e){
-    host.innerHTML = `<div class="modalSub" style="margin-top:8px;">TMDb-Suche fehlgeschlagen. API-Key prüfen oder später erneut versuchen.</div>`;
+  if(!$("peopleList")){
+    const dl=document.createElement("datalist"); dl.id="peopleList"; dl.innerHTML='<option value="Sebastian"><option value="Person 2"><option value="Person 3"><option value="Person 4">'; document.body.appendChild(dl);
   }
+  $("btnAddThird").style.display = draft.films.length>=3 ? "none" : "";
+}
+function updateDraftFromInputs(){
+  draft.date = $("eventDate").value || todayKey();
+  document.querySelectorAll("#filmSlots input[data-field]").forEach(inp=>{ const idx=Number(inp.dataset.idx); const field=inp.dataset.field; draft.films[idx][field]=clean(inp.value); });
+}
+function setRatingFromPointer(el, clientX){
+  const idx=Number(el.dataset.rating); const rect=el.getBoundingClientRect();
+  const x=Math.max(0,Math.min(rect.width-55,clientX-rect.left));
+  const starsWidth=Math.max(1,rect.width-55); let r=(x/starsWidth)*5;
+  r=Math.max(0,Math.min(5,Math.round(r*4)/4)); draft.films[idx].rating=r; renderEventModal();
 }
 
-function applyTmdbMovie(m){
-  const idx=Number($("searchTarget").value || 0);
-  const ev=currentEvent(); if(!ev) return;
-  while(ev.films.length <= idx) ev.films.push(blankFilm());
-  ev.films[idx].title = m.title || m.original_title || "";
-  ev.films[idx].year = (m.release_date || "").slice(0,4);
-  ev.films[idx].tmdbId = m.id ? String(m.id) : "";
-  ev.films[idx].tmdbUrl = m.id ? `https://www.themoviedb.org/movie/${m.id}` : "";
-  ev.films[idx].poster = m.poster_path ? `https://image.tmdb.org/t/p/w92${m.poster_path}` : "";
-  saveCurrentEvent(ev);
-  renderSlots(ev);
-  toast(`In ${idx+1}. Film übernommen`);
-}
+$("filmSlots").addEventListener("input", e=>{ if(e.target.matches("input[data-field]")) updateDraftFromInputs(); });
+$("filmSlots").addEventListener("click", e=>{ const rem=e.target.closest("[data-remove]"); if(rem){ updateDraftFromInputs(); draft.films.splice(Number(rem.dataset.remove),1); renderEventModal(); } });
+$("filmSlots").addEventListener("pointerdown", e=>{ const el=e.target.closest(".stars"); if(!el) return; updateDraftFromInputs(); el.setPointerCapture?.(e.pointerId); setRatingFromPointer(el,e.clientX); });
+$("filmSlots").addEventListener("pointermove", e=>{ if(e.buttons!==1) return; const el=e.target.closest(".stars"); if(!el) return; updateDraftFromInputs(); setRatingFromPointer(el,e.clientX); });
 
-function allFilms(){
-  return loadEvents().map(normalizeEvent).flatMap(ev => ev.films.filter(f=>clean(f.title)).map((f,i)=>Object.assign({ eventId:ev.id, date:ev.date, slot:i+1 }, f)));
-}
+$("btnNew").addEventListener("click",()=>{ const ev=blankEvent(); currentEventId=ev.id; draft=ev; renderEventModal(); openOverlay($("modalEvent")); });
+$("btnAddThird").addEventListener("click",()=>{ updateDraftFromInputs(); if(draft.films.length<3){ draft.films.push(blankFilm()); renderEventModal(); } });
+$("btnEventCancel").addEventListener("click",()=>{ closeOverlay($("modalEvent")); currentEventId=null; draft=null; });
+$("btnEventSave").addEventListener("click",()=>{ updateDraftFromInputs(); draft.films=draft.films.map(f=>Object.assign(blankFilm(),f)).slice(0,3); const events=loadEvents(); const i=events.findIndex(e=>e.id===draft.id); if(i>=0) events[i]=draft; else events.push(draft); saveEvents(events); closeOverlay($("modalEvent")); currentEventId=null; draft=null; render(); toast("Filmabend gespeichert"); });
+$("btnEventDelete").addEventListener("click",()=>{ if(!draft) return; if(!confirm("Diesen Filmabend löschen?")) return; saveEvents(loadEvents().filter(e=>e.id!==draft.id)); closeOverlay($("modalEvent")); currentEventId=null; draft=null; render(); toast("Filmabend gelöscht"); });
+
+function allFilms(){ const out=[]; loadEvents().forEach(ev=>(ev.films||[]).forEach((f,i)=>{ if(clean(f.title)) out.push(Object.assign({},f,{date:ev.date,eventId:ev.id,slot:i+1})); })); return out; }
 function renderArchive(){
-  const filter=clean($("archiveFilter").value).toLowerCase();
-  const sort=$("archiveSort").value;
-  let films=allFilms().filter(f=>{
-    const hay = `${f.title} ${f.year} ${f.suggestedBy}`.toLowerCase();
-    return !filter || hay.includes(filter);
-  });
+  const q=clean($("archiveFilter").value).toLowerCase(); const sort=$("archiveSort").value; let films=allFilms();
+  if(q) films=films.filter(f=>[f.title,f.year,f.suggestedBy].some(v=>String(v||"").toLowerCase().includes(q)));
   films.sort((a,b)=>{
-    if(sort==="ratingDesc") return Number(b.rating||0)-Number(a.rating||0) || a.title.localeCompare(b.title);
-    if(sort==="ratingAsc") return Number(a.rating||0)-Number(b.rating||0) || a.title.localeCompare(b.title);
-    if(sort==="dateDesc") return b.date.localeCompare(a.date);
-    if(sort==="dateAsc") return a.date.localeCompare(b.date);
-    return a.title.localeCompare(b.title);
+    if(sort==="dateAsc") return String(a.date).localeCompare(String(b.date));
+    if(sort==="ratingDesc") return Number(b.rating||0)-Number(a.rating||0) || String(a.title).localeCompare(String(b.title));
+    if(sort==="ratingAsc") return Number(a.rating||0)-Number(b.rating||0) || String(a.title).localeCompare(String(b.title));
+    if(sort==="titleAsc") return String(a.title).localeCompare(String(b.title));
+    return String(b.date).localeCompare(String(a.date));
   });
-  const host=$("archiveList");
-  host.innerHTML="";
-  if(films.length===0){ host.innerHTML=`<div class="empty">Keine Filme gefunden.</div>`; return; }
-  films.forEach(f=>{
-    const div=document.createElement("div");
-    div.className="archiveItem";
-    div.innerHTML=`
-      <div class="archiveTop">
-        <div>
-          <div class="archiveTitle">${escapeHtml(f.title)}${f.year ? ` (${escapeHtml(f.year)})` : ""}</div>
-          <div class="archiveInfo">Filmabend: ${formatDate(f.date)} · ${f.slot}. Film · Vorschlag: ${escapeHtml(f.suggestedBy || "—")}${f.tmdbUrl ? ` · <a href="${escapeHtml(f.tmdbUrl)}" target="_blank" rel="noopener">TMDb</a>` : ""}</div>
-        </div>
-        <div class="ratingMini">${miniStars(f.rating)}</div>
-      </div>`;
-    host.appendChild(div);
-  });
+  const host=$("archiveList"); host.innerHTML="";
+  if(films.length===0){ host.innerHTML='<div class="empty">Keine Filme gefunden.</div>'; return; }
+  films.forEach(f=>{ const div=document.createElement("div"); div.className="archiveItem"; div.innerHTML=`<div class="archiveTitle">${escapeHtml(f.title)}${clean(f.year)?` <span class="movieMeta">(${escapeHtml(f.year)})</span>`:""}</div><div class="archiveInfo">${renderStarsSmall(f.rating)} ${ratingText(f.rating)} · Filmabend: ${formatDate(f.date)} · ${f.slot}. Film · Vorschlag: ${escapeHtml(f.suggestedBy||"—")}</div>`; host.appendChild(div); });
 }
+$("btnArchive").addEventListener("click",()=>{ renderArchive(); openOverlay($("modalArchive")); });
+$("btnArchiveClose").addEventListener("click",()=>closeOverlay($("modalArchive")));
+$("archiveFilter").addEventListener("input",renderArchive); $("archiveSort").addEventListener("change",renderArchive);
 
-function exportCSV(){
-  const events=loadEvents().map(normalizeEvent).sort((a,b)=>a.date.localeCompare(b.date));
-  if(events.length===0){ toast("Keine Daten zum Export"); return; }
-  const lines=["FilmabendID;Datum;FilmNr;Titel;Jahr;VorgeschlagenVon;Bewertung;TMDbID;TMDbURL"];
-  events.forEach(ev=>ev.films.forEach((f,i)=>{
-    if(!clean(f.title)) return;
-    lines.push([ev.id, ev.date, i+1, f.title, f.year, f.suggestedBy, Number(f.rating||0).toFixed(2), f.tmdbId, f.tmdbUrl].map(csvCell).join(";"));
-  }));
-  const blob=new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url; a.download=`cinesneak_archiv_${todayKey()}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-  toast("CSV exportiert");
-}
-function parseCsvLine(line, delimiter){
-  const out=[]; let cur="", inQ=false;
-  for(let i=0;i<line.length;i++){
-    const ch=line[i];
-    if(ch==='"'){ if(inQ && line[i+1]==='"'){ cur+='"'; i++; } else inQ=!inQ; }
-    else if(!inQ && ch===delimiter){ out.push(cur); cur=""; }
-    else cur+=ch;
-  }
-  out.push(cur); return out.map(s=>s.trim().replace(/^"|"$/g,""));
-}
-function importCSVText(text){
-  const rows=text.split(/\r?\n/).filter(l=>l.trim());
-  if(rows.length<2){ toast("CSV leer/ungültig"); return; }
-  const delimiter=rows[0].includes(";") ? ";" : ",";
-  const map=new Map();
-  for(let i=1;i<rows.length;i++){
-    const c=parseCsvLine(rows[i], delimiter);
-    if(c.length<4) continue;
-    const [id,date,filmNr,title,year,suggestedBy,rating,tmdbId,tmdbUrl]=c;
-    if(!date || !title) continue;
-    const evId=id || uid();
-    if(!map.has(evId)) map.set(evId, {id:evId, date, films:[blankFilm(), blankFilm()]});
-    const ev=map.get(evId);
-    const idx=Math.max(0, Math.min(APP.MAX_FILMS-1, Number(filmNr||1)-1));
-    while(ev.films.length<=idx) ev.films.push(blankFilm());
-    ev.films[idx]=Object.assign(blankFilm(), {title, year, suggestedBy, rating:Number(String(rating).replace(",",".")||0), tmdbId, tmdbUrl});
-  }
-  const events=[...map.values()].map(normalizeEvent);
-  if(events.length===0){ toast("Keine gültigen Daten gefunden"); return; }
-  saveEvents(events); render(); toast("CSV importiert");
-}
-
-$("btnNew").addEventListener("click", addNewEvent);
-$("btnEventSave").addEventListener("click", saveEventFromModal);
-$("btnEventCancel").addEventListener("click", ()=>{ closeOverlay($("modalEvent")); currentEventId=null; render(); });
-$("eventDate").addEventListener("change", ()=>{ const ev=currentEvent(); if(ev){ ev.date=$("eventDate").value || todayKey(); saveCurrentEvent(ev); $("eventTitle").textContent=`Filmabend vom ${formatDate(ev.date)}`; }});
-$("btnAddThird").addEventListener("click", ()=>{ const ev=currentEvent(); if(!ev) return; while(ev.films.length<3) ev.films.push(blankFilm()); saveCurrentEvent(ev); renderSlots(ev); });
-$("tmdbSearch").addEventListener("input", e=>{ clearTimeout(searchTimer); searchTimer=setTimeout(()=>searchTmdb(e.target.value), 320); });
-
-$("btnArchive").addEventListener("click", ()=>{ renderArchive(); openOverlay($("modalArchive")); });
-$("btnArchiveClose").addEventListener("click", ()=>closeOverlay($("modalArchive")));
-$("archiveFilter").addEventListener("input", renderArchive);
-$("archiveSort").addEventListener("change", renderArchive);
-
-$("btnSettings").addEventListener("click", ()=>{ $("tmdbKey").value=loadSettings().tmdbKey || ""; openOverlay($("modalSettings")); });
-$("btnSettingsCancel").addEventListener("click", ()=>closeOverlay($("modalSettings")));
-$("btnSettingsSave").addEventListener("click", ()=>{ saveSettings(Object.assign(loadSettings(), {tmdbKey:clean($("tmdbKey").value)})); closeOverlay($("modalSettings")); updateTmdbHint(); toast("API-Key gespeichert"); });
-
-$("btnExport").addEventListener("click", exportCSV);
-$("btnImport").addEventListener("click", ()=>{ $("fileInput").value=""; $("fileInput").click(); });
-$("fileInput").addEventListener("change", async()=>{ const f=$("fileInput").files && $("fileInput").files[0]; if(!f) return; try{ importCSVText(await f.text()); }catch{ toast("Import fehlgeschlagen"); } });
-$("btnDelete").addEventListener("click", ()=>openOverlay($("modalDelete")));
-$("btnDelCancel").addEventListener("click", ()=>closeOverlay($("modalDelete")));
-$("btnDelConfirm").addEventListener("click", ()=>{ localStorage.removeItem(APP.STORAGE_KEY); closeOverlay($("modalDelete")); render(); toast("Daten gelöscht"); });
-
-["modalEvent","modalArchive","modalSettings","modalDelete"].forEach(id=>{
-  const el=$(id); el.addEventListener("click", e=>{ if(e.target===el){ closeOverlay(el); if(id==="modalEvent"){ currentEventId=null; render(); } } });
-});
-document.addEventListener("keydown", e=>{ if(e.key!=="Escape") return; ["modalEvent","modalArchive","modalSettings","modalDelete"].forEach(id=>closeOverlay($(id))); currentEventId=null; render(); });
-
+function csvCell(s){ const v=(s??"").toString(); return '"'+v.replace(/"/g,'""')+'"'; }
+function exportCSV(){ const events=loadEvents(); if(!events.length){toast("Keine Daten zum Export");return;} const lines=["FilmabendID;Datum;FilmNr;Titel;Jahr;VorgeschlagenVon;Bewertung"]; events.sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(ev=>(ev.films||[]).forEach((f,i)=>lines.push([ev.id,ev.date,i+1,f.title,f.year,f.suggestedBy,Number(f.rating||0).toFixed(2)].map(csvCell).join(";")))); const blob=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="cinesneak_archiv.csv"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); toast("CSV exportiert"); }
+function parseCsvLine(line,delimiter){ const out=[]; let cur="",q=false; for(let i=0;i<line.length;i++){ const ch=line[i]; if(ch==='"'){ if(q&&line[i+1]==='"'){cur+='"';i++;} else q=!q; } else if(!q&&ch===delimiter){ out.push(cur); cur=""; } else cur+=ch; } out.push(cur); return out.map(s=>s.trim()); }
+function importCSVText(text){ const rows=text.split(/\r?\n/).filter(l=>l.trim()); if(rows.length<2){toast("CSV leer/ungültig");return;} const delim=rows[0].includes(";")?";":","; const map=new Map(); for(let i=1;i<rows.length;i++){ const c=parseCsvLine(rows[i],delim); if(c.length<4) continue; const [id,date,filmNr,title,year,suggestedBy,rating]=c; if(!id||!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue; if(!map.has(id)) map.set(id,{id,date,films:[blankFilm(),blankFilm()]}); const ev=map.get(id); const idx=Math.max(0,Math.min(2,Number(filmNr||1)-1)); while(ev.films.length<=idx) ev.films.push(blankFilm()); ev.films[idx]={title:clean(title),year:clean(year),suggestedBy:clean(suggestedBy),rating:Number(String(rating||0).replace(",","."))||0}; } const events=[...map.values()]; saveEvents(events); render(); toast(`Import ok (${events.length} Filmabende)`); }
+$("btnExport").addEventListener("click",exportCSV); $("btnImport").addEventListener("click",()=>{$("fileInput").value=""; $("fileInput").click();}); $("fileInput").addEventListener("change",async()=>{ const f=$("fileInput").files&&$("fileInput").files[0]; if(!f)return; try{importCSVText(await f.text());}catch{toast("Import fehlgeschlagen");} });
+$("btnDelete").addEventListener("click",()=>openOverlay($("modalDelete"))); $("delCancel").addEventListener("click",()=>closeOverlay($("modalDelete"))); $("delConfirm").addEventListener("click",()=>{ localStorage.removeItem(APP.STORAGE_KEY); closeOverlay($("modalDelete")); render(); toast("Daten gelöscht"); });
+["modalEvent","modalArchive","modalDelete"].forEach(id=>$(id).addEventListener("click",e=>{ if(e.target===$(id)){ closeOverlay($(id)); if(id==="modalEvent"){ currentEventId=null; draft=null; render(); } } }));
+document.addEventListener("keydown",e=>{ if(e.key!=="Escape")return; ["modalEvent","modalArchive","modalDelete"].forEach(id=>closeOverlay($(id))); currentEventId=null; draft=null; render(); });
 render();
 </script>
 </body>
