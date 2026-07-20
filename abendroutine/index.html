@@ -1,365 +1,98 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f1f1a" />
-  <title>Fitness-Tracker</title>
-  <style>
-    :root{
-      --bg:#0f1115;
-      --card:#151924;
-      --card2:#1a1f2c;
-      --text:#e8eaf0;
-      --muted:#a6adbb;
-      --muted2:#7f8796;
-      --line:#262c3a;
-      --btn:#232a3b;
-      --btn2:#2c3550;
-      --green:#cfe9d8;
-      --green2:#1f4b2b;
-      --red:#f0cfcf;
-      --red2:#5a1f1f;
-      --gold:#d6b36a;
-      --shadow:0 10px 30px rgba(0,0,0,0.35);
-      --radius:16px;
-    }
-    *{box-sizing:border-box;}
-    html,body{margin:0;padding:0;}
-    body{
-      min-height:100vh;
-      padding:18px 16px 28px;
-      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-      background:linear-gradient(180deg,#0b0d12,var(--bg));
-      color:var(--text);
-    }
-    .app{max-width:520px;margin:0 auto;}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;}
-    h1{font-size:22px;line-height:1.15;margin:0;font-weight:700;letter-spacing:0;}
-    .iconbar{display:flex;gap:8px;align-items:center;}
-    .iconbtn{
-      width:42px;height:38px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:rgba(0,0,0,0.18);
-      color:var(--text);
-      font-size:18px;
-      display:flex;align-items:center;justify-content:center;
-      cursor:pointer;
-      padding:0;
-    }
-    .iconbtn:active,button:active{transform:scale(0.99);}
-    .card{
-      background:rgba(21,25,36,0.92);
-      border:1px solid var(--line);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      padding:12px;
-      margin-top:12px;
-    }
-    .slim{padding:12px;}
-    .row{display:flex;gap:10px;align-items:center;}
-    .between{justify-content:space-between;}
-    .small{font-size:12px;color:var(--muted);line-height:1.35;}
-    .tiny{font-size:12px;color:var(--muted2);line-height:1.35;}
-
-    .todayline{
-      margin-bottom:12px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,0.12);
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-    }
-    .date{font-size:14px;font-weight:800;}
-    .status{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap;}
-    .status strong{color:var(--text);font-weight:800;}
-    .actions{display:flex;flex-direction:column;gap:10px;}
-
-    button{
-      width:100%;
-      padding:14px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:linear-gradient(180deg,var(--btn),var(--btn2));
-      color:var(--text);
-      font:inherit;
-      font-size:15px;
-      font-weight:700;
-      cursor:pointer;
-    }
-    button:disabled{opacity:.45;cursor:not-allowed;}
-    button.primary{background:linear-gradient(180deg,rgba(31,75,43,0.65),rgba(31,75,43,0.95));font-weight:800;}
-    button.danger{background:linear-gradient(180deg,rgba(90,31,31,0.65),rgba(90,31,31,0.95));font-weight:800;}
-    button.secondary{background:rgba(0,0,0,0.12);border:1px solid var(--line);}
-    button.ghost{
-      background:rgba(0,0,0,0.12);
-      border:1px solid var(--line);
-      padding:8px 10px;
-      border-radius:12px;
-      color:var(--text);
-      font-weight:700;
-    }
-    button.smallbtn{font-size:12px;padding:7px 9px;border-radius:12px;width:auto;white-space:nowrap;}
-
-    h2{font-size:15px;margin:0 0 8px;font-weight:700;}
-    h3{font-size:13px;margin:12px 0 8px;color:var(--text);font-weight:700;}
-    .seriesgrid{display:flex;flex-direction:column;gap:8px;}
-    .seriesitem{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:baseline;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
-      border-bottom:0;
-      padding-bottom:0;
-    }
-    .seriesitem b{font-size:12px;white-space:nowrap;color:var(--text);font-weight:800;}
-    .seriesitem span{text-align:right;color:var(--muted);font-size:12px;line-height:1.25;white-space:nowrap;}
-    .days10{display:flex;align-items:center;gap:6px;margin-top:12px;min-height:22px;}
-    .sq{
-      width:20px;height:20px;aspect-ratio:auto;
-      border-radius:6px;
-      border:1px solid var(--line);
-      display:flex;align-items:center;justify-content:center;
-      font-size:12px;font-weight:800;line-height:1;
-      background:rgba(75,59,31,0.25);
-      color:#d9d9d9;
-      user-select:none;
-    }
-    .sq.train{background:rgba(31,75,43,0.25);border-color:var(--line);color:#cfe9d8;}
-    .sq.notrain{background:rgba(90,31,31,0.25);border-color:var(--line);color:#f0cfcf;}
-    .sq.open{background:rgba(75,59,31,0.25);border-color:var(--line);color:#d9d9d9;}
-
-    details{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;}
-    details:first-of-type{border-top:0;padding-top:0;margin-top:0;}
-    summary{cursor:pointer;color:var(--muted);font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;list-style:none;}
-    summary::-webkit-details-marker{display:none;}
-    summary:after{content:"▾";color:var(--muted);font-size:12px;}
-    details[open] summary:after{content:"▴";}
-
-    .statgrid{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
-    .stat{flex:1 1 140px;background:rgba(0,0,0,0.12);border:1px solid var(--line);border-radius:14px;padding:12px;}
-    .stat .num{font-size:20px;font-weight:600;margin-bottom:2px;}
-    .stat .lbl{font-size:12px;color:var(--muted);}
-    .list{display:flex;flex-direction:column;gap:8px;}
-    .entry{background:rgba(0,0,0,0.12);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:14px;}
-    .entrytop{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px;}
-    .entrydate{font-weight:800;font-size:14px;}
-    .exlist{font-size:12px;color:var(--muted);line-height:1.35;white-space:pre-wrap;}
-    .compactlist{display:flex;flex-direction:column;gap:6px;}
-    .setline{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:6px 0;font-size:13px;line-height:1.3;}
-    .setline:last-child{border-bottom:0;}
-    .setline b{font-weight:700;}
-    .setline span{color:var(--muted);text-align:right;}
-    .monthrow{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:8px 0;font-size:13px;}
-    .monthrow:last-child{border-bottom:0;}
-    .monthrow b{font-size:13px;font-weight:800;}
-    .monthrow span{color:var(--muted);text-align:right;}
-    .historyrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:9px 0;}
-    .historyrow:last-child{border-bottom:0;}
-    .histmeta{font-size:13px;}
-    .histmeta b{display:block;color:var(--text);font-size:13px;font-weight:800;}
-    .histmeta span{color:var(--muted);font-size:12px;}
-
-    dialog{border:1px solid var(--line);border-radius:18px;background:rgba(21,25,36,0.98);color:var(--text);box-shadow:0 20px 60px rgba(0,0,0,0.55);width:min(94vw,520px);padding:0;}
-    dialog::backdrop{background:rgba(0,0,0,0.55);}
-    .modal{padding:14px;}
-    .modalhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;}
-    .modalhead h2{margin:0;font-size:16px;}
-    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px;}
-    select,input,textarea{width:100%;border:1px solid var(--line);background:rgba(0,0,0,0.18);color:var(--text);border-radius:14px;padding:12px;font:inherit;font-size:14px;outline:none;}
-    select option{background:#151924;color:var(--text);}
-    textarea{min-height:84px;resize:vertical;}
-    .formrow{display:grid;grid-template-columns:1.4fr .9fr auto;gap:8px;align-items:end;}
-    .catalogrow{display:grid;grid-template-columns:1.2fr .7fr .8fr auto;gap:8px;align-items:end;}
-    .exercisePreview{background:rgba(0,0,0,0.12);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:70px;white-space:pre-wrap;color:var(--muted);font-size:12px;line-height:1.35;}
-    .modalactions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap;}
-    .catalogList{display:grid;gap:8px;margin-top:10px;}
-    .catalogitem{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:8px;background:rgba(0,0,0,0.12);}
-    .cataloghandle{color:var(--muted2);font-size:12px;}
-    .catalogname{font-size:12px;color:var(--muted);line-height:1.25;}
-    .catalogname b{color:var(--text);font-size:13px;}
-    .settings-gap{margin-top:28px!important;padding-top:18px!important;border-top:1px solid var(--line)!important;}
-    .version{margin-top:12px;text-align:center;color:var(--muted2);font-size:12px;}
-    .hidden{display:none!important;}
-    .visuallyFile{position:absolute;left:-9999px;width:1px;height:1px;opacity:.01;}
-    .fileLabel{display:inline-flex;align-items:center;justify-content:center;border-radius:14px;padding:12px 14px;color:var(--text);background:rgba(0,0,0,0.12);border:1px solid var(--line);cursor:pointer;font-size:14px;}
-    .warn{color:var(--gold);}
-    @media(max-width:520px){
-      body{padding:18px 16px 28px;}
-      h1{font-size:22px;}
-      .formrow,.catalogrow{grid-template-columns:1fr;}
-      .catalogitem{grid-template-columns:auto 1fr auto auto auto;}
-      .monthrow{grid-template-columns:1fr auto;gap:5px;}
-      .monthrow span:nth-child(3),.monthrow span:nth-child(4){font-size:12px;}
-      .iconbtn{width:42px;height:38px;}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#dbeafe">
+<title>Fitness-Tracker</title>
+<style>
+:root{--bg:#edf4fa;--panel:#fff;--soft:#e2edf7;--ink:#14283b;--muted:#60768a;--line:#9eb5ca;--blue:#2e6f9e;--blue2:#1d4e73;--green:#2e7b62;--greenSoft:#def1e8;--red:#945057;--redSoft:#f5e5e7}
+*{box-sizing:border-box}html,body{margin:0}body{min-height:100vh;background:linear-gradient(#f7fbff,#e8f0f7);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:18px 14px 32px}
+button,input,select{font:inherit}.app{max-width:520px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--blue2);padding:4px 0 12px;margin-bottom:16px}h1{font-size:22px;margin:0;font-weight:750}h2{font-size:16px;margin:0}h3{font-size:14px;margin:0}
+.header-btn,.small-btn,.close{border:1px solid var(--blue2);background:#fff;color:var(--blue2);border-radius:0;font-weight:700;cursor:pointer}.header-btn{width:42px;height:38px;font-size:18px}.small-btn,.close{padding:7px 9px;font-size:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:0;padding:16px;margin-top:12px;box-shadow:0 8px 24px rgba(37,73,105,.08)}
+.hero{background:linear-gradient(135deg,#fbfdff,#dcebf7);border-color:var(--blue)}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;color:var(--blue2);margin-bottom:6px}.hero-title{font-size:27px;font-weight:800;line-height:1.1;margin-bottom:8px}.subtle{font-size:12px;color:var(--muted);line-height:1.45}.today-status{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);margin-top:16px;padding-top:12px;font-size:13px}.badge{border:1px solid var(--line);background:#fff;padding:6px 8px;font-weight:700}.badge.training{background:var(--greenSoft);border-color:#8abda9;color:#205a48}.badge.pause{background:var(--redSoft);border-color:#c99ca1;color:#753b40}
+.actions{display:grid;gap:10px;margin-top:12px}.primary,.secondary,.danger{width:100%;padding:14px;border-radius:0;font-weight:750;cursor:pointer}.primary{background:var(--blue);color:#fff;border:1px solid var(--blue2)}.secondary{background:#fff;color:var(--blue2);border:1px solid var(--blue2)}.danger{background:var(--redSoft);color:#7b383e;border:1px solid #b8747a}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{border-left:3px solid var(--blue);background:var(--soft);padding:11px 10px;min-height:72px}.metric .num{font-size:23px;font-weight:800}.metric .lbl{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.25}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.day{aspect-ratio:1;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:var(--muted);background:#f7fafc}.day b{font-size:13px;color:var(--ink)}.day.training{background:var(--greenSoft);border-color:#8abda9}.day.pause{background:var(--redSoft);border-color:#c99ca1}
+details{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}details:first-child{border-top:0;padding-top:0;margin-top:0}summary{list-style:none;cursor:pointer;color:var(--blue2);font-size:13px;font-weight:700;display:flex;justify-content:space-between}summary::-webkit-details-marker{display:none}summary:after{content:"+"}details[open] summary:after{content:"−"}
+.history-row,.edit-row,.stat-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.history-row:last-child,.edit-row:last-child,.stat-row:last-child{border-bottom:0}.row-title{font-size:13px;font-weight:700}.row-meta{font-size:11px;color:var(--muted);margin-top:3px}
+dialog{width:min(94vw,520px);max-height:88vh;overflow:auto;padding:0;border:1px solid var(--blue2);border-radius:0;background:#fff;color:var(--ink);box-shadow:0 24px 60px rgba(23,54,82,.25)}dialog::backdrop{background:rgba(20,42,62,.34)}.modal{padding:16px}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--blue2);margin-bottom:14px}
+.workout-list{display:grid;gap:8px;margin-top:14px}.workout-item{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;border:1px solid var(--line);background:#f8fbfd;padding:12px}.workout-item.done{background:var(--greenSoft);border-color:#8abda9}.workout-item input{width:22px;height:22px;accent-color:var(--green)}.workout-name{font-size:14px;font-weight:750}.workout-meta{font-size:12px;color:var(--muted);margin-top:2px}.completion{text-align:center;padding:18px 10px 6px;display:none}.completion.show{display:block}.completion .big{font-size:30px;font-weight:850;color:var(--green)}.modal-actions{display:grid;gap:8px;margin-top:16px}
+label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin:11px 0 5px}input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:0;background:#fff;color:var(--ink)}.form-grid{display:grid;grid-template-columns:1.4fr .7fr .9fr;gap:8px}.settings-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}.version{text-align:center;font-size:11px;color:var(--muted);margin-top:14px}
+@media(max-width:460px){.form-grid{grid-template-columns:1fr}.hero-title{font-size:24px}.metric .num{font-size:20px}}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header><h1>Fitness-Tracker</h1><div class="iconbar"><button class="iconbtn" id="settingsBtn" title="Einstellungen">⚙️</button><button class="iconbtn" id="trashBtn" title="Daten löschen">🗑️</button></div></header>
-    <section class="card slim"><div class="todayline"><div class="date" id="todayDate">Heute</div><div class="status">Status: <strong id="todayStatus">Offen</strong></div></div><div class="actions"><button class="primary" id="trainingBtn">Training</button><button class="danger" id="noTrainingBtn">Kein Training</button></div></section>
-    <section class="card"><h2>Serien</h2><div class="seriesgrid" id="seriesBox"></div><div class="days10" id="last10"></div></section>
-    <section class="card"><div class="row between"><h2 style="margin:0">Aktuelles Kettlebell-Set</h2><button class="ghost smallbtn" id="editSetBtn">Bearbeiten</button></div><div class="compactlist" id="currentSetBox" style="margin-top:10px"></div></section>
-    <section class="card"><details><summary>Statistiken</summary><div id="statsBox" style="margin-top:10px"></div></details></section>
-    <section class="card"><details><summary>Monatsübersichten</summary><div id="monthlyBox" style="margin-top:10px"></div></details></section>
-    <section class="card"><details><summary>Letzte 21 Tage</summary><div id="historyBox" style="margin-top:10px"></div></details></section>
-    <div class="version">Fitness-Tracker 3.1 · Statistik ab 01.01.2026</div>
+<div class="app">
+<header><h1>Fitness-Tracker</h1><button class="header-btn" id="settingsBtn" aria-label="Trainingsplan bearbeiten">⚙</button></header>
+<section class="panel hero"><div class="eyebrow">Heute</div><div class="hero-title" id="heroTitle">Bereit für dein Training?</div><div class="subtle" id="heroText">Ein kurzer Start ist besser als ein perfekter Plan. Öffne dein Set und hake die Übungen Schritt für Schritt ab.</div><div class="today-status"><span id="todayDate"></span><span class="badge" id="todayStatus">Offen</span></div></section>
+<div class="actions"><button class="primary" id="startTrainingBtn">Training starten</button><button class="secondary" id="pauseBtn">Heute Pause</button></div>
+<section class="metrics"><div class="metric"><div class="num" id="streakNum">0</div><div class="lbl">Aktuelle Serie</div></div><div class="metric"><div class="num" id="monthNum">0</div><div class="lbl">Trainingstage diesen Monat</div></div><div class="metric"><div class="num" id="quoteNum">0%</div><div class="lbl">Trainingsquote aktuelles Jahr</div></div></section>
+<section class="panel"><div class="section-head"><h2>Letzte 21 Tage</h2><span class="subtle">Training, Pause oder offen</span></div><div class="days" id="daysGrid"></div></section>
+<section class="panel"><details><summary>Verlauf und Details</summary><div id="historyList"></div></details><details><summary>Statistik</summary><div id="statsDetails"></div></details></section>
+<div class="version">Fitness-Tracker 4.1 · Statistik 2026 ab 20.07.2026</div>
+</div>
+<dialog id="trainingDialog"><div class="modal"><div class="modal-head"><div><h2>Heutiges Kettlebell-Training</h2><div class="subtle" id="trainingDate"></div></div><button class="close" data-close="trainingDialog">Schließen</button></div><div class="subtle">Hake die Übungen ab. Die Reihenfolge ist nur eine Empfehlung.</div><div class="workout-list" id="workoutList"></div><div class="completion" id="completionBox"><div class="big">Geschafft.</div><p class="subtle">Dein Training ist vollständig. Speichere den Tag als Trainingstag.</p></div><div class="modal-actions"><button class="primary" id="completeTrainingBtn">Training abschließen</button><button class="secondary" data-close="trainingDialog">Später fortsetzen</button></div></div></dialog>
+
+<dialog id="dayDialog">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Tag bearbeiten</h2>
+        <div class="subtle" id="dayDialogDate"></div>
+      </div>
+      <button class="close" data-close="dayDialog">Schließen</button>
+    </div>
+
+    <label for="dayStatus">Status</label>
+    <select id="dayStatus">
+      <option value="open">Offen</option>
+      <option value="training">Kettlebell-Training</option>
+      <option value="other_training">Anderes Training</option>
+      <option value="no_training">Pause</option>
+    </select>
+
+    <div id="otherTrainingFields" style="display:none">
+      <label for="otherTrainingName">Training / Aktivität</label>
+      <input id="otherTrainingName" placeholder="z. B. Wandern, Fahrradtour, Schwimmen">
+    </div>
+
+    <div class="modal-actions">
+      <button class="primary" id="saveDayBtn">Speichern</button>
+      <button class="secondary" data-close="dayDialog">Abbrechen</button>
+    </div>
   </div>
+</dialog>
 
-  <dialog id="trainingDialog"><div class="modal"><div class="modalhead"><h2 id="trainingDialogTitle">Training erfassen</h2><button class="ghost smallbtn" onclick="closeDialog(trainingDialog)">Schließen</button></div><div class="small" id="trainingDialogDate"></div><p class="tiny">Das aktuelle Kettlebell-Set ist vorausgefüllt. Du kannst Einträge für den Tag ergänzen, ändern oder löschen.</p><div class="formrow"><div><label for="exerciseSelect">Übung</label><select id="exerciseSelect"></select></div><div><label for="exerciseAmount" id="exerciseAmountLabel">Anzahl / Dauer</label><input id="exerciseAmount" inputmode="decimal" placeholder="z. B. 90" /></div><button class="secondary" id="addExerciseBtn">Hinzufügen</button></div><div class="tiny" id="exerciseModeHint" style="margin-top:8px"></div><label>Training des Tages</label><div class="exercisePreview" id="exercisePreview">Noch keine Übung erfasst.</div><div class="modalactions"><button class="ghost" id="clearExercisesBtn">Leeren</button><button class="secondary" onclick="closeDialog(trainingDialog)">Abbrechen</button><button class="primary" id="saveTrainingBtn">Speichern</button></div></div></dialog>
-
-  <dialog id="setDialog"><div class="modal"><div class="modalhead"><h2>Aktuelles Kettlebell-Set bearbeiten</h2><button class="ghost smallbtn" onclick="closeDialog(setDialog)">Schließen</button></div><p class="tiny">Diese Liste erscheint auf der Startseite und wird beim Erfassen eines Trainings als Vorlage übernommen.</p><div class="formrow"><div><label for="setExerciseSelect">Übung</label><select id="setExerciseSelect"></select></div><div><label for="setExerciseAmount" id="setExerciseAmountLabel">Anzahl / Dauer</label><input id="setExerciseAmount" inputmode="decimal" placeholder="z. B. 90" /></div><button class="secondary" id="addSetExerciseBtn">Hinzufügen</button></div><div class="tiny" id="setExerciseModeHint" style="margin-top:8px"></div><label>Kettlebell-Set</label><div class="exercisePreview" id="setPreview">Noch keine Übung erfasst.</div><div class="modalactions"><button class="ghost" id="clearSetBtn">Leeren</button><button class="secondary" onclick="closeDialog(setDialog)">Abbrechen</button><button class="primary" id="saveSetBtn">Speichern</button></div></div></dialog>
-
-  <dialog id="historyDialog"><div class="modal"><div class="modalhead"><h2>Tag ändern</h2><button class="ghost smallbtn" onclick="closeDialog(historyDialog)">Schließen</button></div><div class="small" id="historyDialogDate"></div><label for="historyStatusSelect">Status</label><select id="historyStatusSelect"><option value="open">Offen</option><option value="training">Training</option><option value="no_training">Kein Training</option></select><div id="historyTrainingFields"><div class="formrow"><div><label for="historyExerciseSelect">Übung</label><select id="historyExerciseSelect"></select></div><div><label for="historyExerciseAmount" id="historyExerciseAmountLabel">Anzahl / Dauer</label><input id="historyExerciseAmount" inputmode="decimal" placeholder="z. B. 90" /></div><button class="secondary" id="historyAddExerciseBtn">Hinzufügen</button></div><div class="tiny" id="historyExerciseModeHint" style="margin-top:8px"></div><label>Training</label><div class="exercisePreview" id="historyExercisePreview">Noch keine Übung erfasst.</div><button class="ghost smallbtn" id="historyClearExercisesBtn" style="margin-top:8px">Training leeren</button></div><div class="modalactions"><button class="secondary" onclick="closeDialog(historyDialog)">Abbrechen</button><button class="primary" id="saveHistoryBtn">Speichern</button></div></div></dialog>
-
-  <dialog id="settingsDialog"><div class="modal"><div class="modalhead"><h2>Einstellungen</h2><button class="ghost smallbtn" onclick="closeDialog(settingsDialog)">Schließen</button></div><h3>Übungskatalog</h3><p class="tiny">Die Reihenfolge bestimmt die Reihenfolge in den Dropdown-Menüs.</p><div class="catalogrow"><div><label for="newExerciseName">Neue Übung</label><input id="newExerciseName" placeholder="z. B. Kettlebell Swings" /></div><div><label for="newExerciseUnit">Einheit</label><input id="newExerciseUnit" placeholder="Wdh., Sek., Min." /></div><div><label for="newExerciseMode">Modus</label><select id="newExerciseMode"><option value="normal">normal</option><option value="unilateral">einseitig</option><option value="bilateral">beidseitig</option></select></div><button class="secondary" id="addCatalogExerciseBtn">Ergänzen</button></div><div class="catalogList" id="catalogList"></div><div class="settings-gap"><h3>Backup und Daten</h3><div class="row" style="flex-wrap:wrap"><button class="secondary" id="settingsExportStructuredBtn">CSV Übungsdaten exportieren</button><button class="secondary" id="settingsExportDailyBtn">CSV Tagesdaten exportieren</button><label class="fileLabel" for="fileInput">CSV importieren</label><input type="file" id="fileInput" class="visuallyFile" accept=".csv,.txt,text/csv,text/plain,application/csv,application/vnd.ms-excel" /><button class="danger" id="settingsResetBtn">Alle Daten löschen</button></div><p class="tiny">Der strukturierte Export schreibt jede Übung als eigene CSV-Zeile. Der Import kann diese Struktur sowie ältere Exporte mit JSON-Feld lesen.</p></div><div style="margin-top:18px"><h3>Startdatum</h3><p class="tiny">Für die Statistiklogik bleibt 2026 bewusst ab 01.01.2026 relevant. Dieses Feld steuert nur den frühesten Datenbereich der App.</p><div class="row"><input id="startDateInput" type="date" /><button class="secondary" id="saveStartDateBtn">Speichern</button></div></div><div class="version">Fitness-Tracker 3.1</div></div></dialog>
-
+<dialog id="settingsDialog"><div class="modal"><div class="modal-head"><div><h2>Trainingsplan bearbeiten</h2><div class="subtle">Diese Übungen erscheinen beim Start eines Trainings.</div></div><button class="close" data-close="settingsDialog">Schließen</button></div><div id="planEditor"></div><div class="settings-section"><h3>Übung hinzufügen</h3><div class="form-grid"><div><label for="newName">Übung</label><input id="newName" placeholder="z. B. Kettlebell Floor Press"></div><div><label for="newAmount">Wiederholungen</label><input id="newAmount" inputmode="decimal" placeholder="10"></div><div><label for="newMode">Ausführung</label><select id="newMode"><option value="normal">normal</option><option value="unilateral">einseitig</option><option value="bilateral">beidseitig</option></select></div></div><div class="modal-actions"><button class="primary" id="addPlanItemBtn">Übung hinzufügen</button></div></div><div class="settings-section"><h3>Daten</h3><div class="modal-actions"><button class="secondary" id="exportBtn">CSV exportieren</button><label for="fileInput" class="secondary" style="text-align:center;display:block;cursor:pointer">CSV importieren</label><input id="fileInput" type="file" accept=".csv,.txt,text/csv,text/plain" style="display:none"><button class="danger" id="resetBtn">Alle Einträge löschen</button></div></div><div class="version">Fitness-Tracker 4.1</div></div></dialog>
 <script>
 (function(){
-  const APP_VERSION='3.1';
-  const DEFAULT_START='2026-06-23';
-  const STAT_START='2026-01-01';
-  const STORAGE_ENTRIES='fitnessTrackerEntriesV2';
-  const STORAGE_SETTINGS='fitnessTrackerSettingsV2';
-  const $=id=>document.getElementById(id);
-  const pad=n=>String(n).padStart(2,'0');
-  const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  const parseDate=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d)};
-  const addDays=(s,n)=>{const d=parseDate(s);d.setDate(d.getDate()+n);return iso(d)};
-  const daysBetween=(a,b)=>Math.round((parseDate(b)-parseDate(a))/86400000);
-  const todayKey=()=>iso(new Date());
-  const yearStart=y=>`${y}-01-01`;
-  const yearEnd=y=>`${y}-12-31`;
-  const clampEndForYear=y=>String(y)===todayKey().slice(0,4)?todayKey():yearEnd(y);
-  const defaultExercises=[
-    {name:'Kettlebell Swings',unit:'Wdh.',mode:'normal'},
-    {name:'Kettlebell Squats',unit:'Wdh.',mode:'normal'},
-    {name:'Kettlebell Rows',unit:'Wdh.',mode:'bilateral'},
-    {name:'Liegestütze',unit:'Wdh.',mode:'normal'},
-    {name:'Plank',unit:'Sek.',mode:'normal'}
-  ];
-  const defaultSet=[
-    {name:'Kettlebell Swings',amount:'90',unit:'Wdh.',mode:'normal'},
-    {name:'Kettlebell Squats',amount:'24',unit:'Wdh.',mode:'normal'},
-    {name:'Kettlebell Rows',amount:'12',unit:'Wdh.',mode:'bilateral'},
-    {name:'Liegestütze',amount:'23',unit:'Wdh.',mode:'normal'},
-    {name:'Plank',amount:'60',unit:'Sek.',mode:'normal'}
-  ];
-  let entries=loadJson(STORAGE_ENTRIES,{});
-  let settings=Object.assign({startDate:DEFAULT_START,exercises:defaultExercises,kettlebellSet:defaultSet,version:APP_VERSION},loadJson(STORAGE_SETTINGS,{}));
-  settings.exercises=(settings.exercises&&settings.exercises.length?settings.exercises:defaultExercises).map(normalizeCatalog);
-  settings.kettlebellSet=(settings.kettlebellSet&&settings.kettlebellSet.length?settings.kettlebellSet:defaultSet).map(normalizeExercise);
-  let tempExercises=[],setTempExercises=[],historyTempExercises=[],editDate=null,historyEditDate=null;
-
-  function loadJson(k,fallback){try{return JSON.parse(localStorage.getItem(k))||fallback}catch(e){return fallback}}
-  function saveEntries(){localStorage.setItem(STORAGE_ENTRIES,JSON.stringify(entries))}
-  function saveSettings(){settings.version=APP_VERSION;localStorage.setItem(STORAGE_SETTINGS,JSON.stringify(settings))}
-  function normalizeCatalog(e){return {name:String(e.name||'Übung'),unit:String(e.unit||''),mode:['normal','unilateral','bilateral'].includes(e.mode)?e.mode:'normal'}}
-  function normalizeExercise(e){const cat=settings?.exercises?.find(x=>x.name===(e.name||e.exercise))||{};return {name:String(e.name||e.exercise||'Übung'),amount:String(e.amount??e.value??''),unit:String(e.unit??cat.unit??''),mode:['normal','unilateral','bilateral'].includes(e.mode)?e.mode:(cat.mode||'normal')}}
-  function modeLabel(m){return m==='bilateral'?'beidseitig':m==='unilateral'?'einseitig':'normal'}
-  function totalValue(ex){const n=parseGermanNumber(ex.amount);if(Number.isNaN(n))return '';return ex.mode==='bilateral'?n*2:n}
-  function parseGermanNumber(v){return Number(String(v).replace(',','.').trim())}
-  function displayExercise(ex){ex=normalizeExercise(ex);let suffix=ex.unit?` ${ex.unit}`:'';if(ex.mode==='bilateral'){const total=totalValue(ex);return `${ex.name}: ${ex.amount}${suffix} je Seite${total!==''?` / ${fmt(total)}${suffix} gesamt`:''}`}return `${ex.name}: ${ex.amount}${suffix}`}
-  function exerciseText(list){list=(list||[]).map(normalizeExercise);return list.length?list.map(displayExercise).join('\n'):'Noch keine Übung erfasst.'}
-  function fmt(n){return Number.isInteger(n)?String(n):String(Math.round(n*100)/100).replace('.',',')}
-  function getEntry(date){const e=entries[date];if(!e)return {status:'open',exercises:[]};return {status:e.status||'open',exercises:(e.exercises||[]).map(normalizeExercise),updatedAt:e.updatedAt||''}}
-  function setEntry(date,data){entries[date]={status:data.status,exercises:(data.exercises||[]).map(normalizeExercise),updatedAt:new Date().toISOString()};saveEntries();render()}
-  function deleteEntry(date){delete entries[date];saveEntries();render()}
-  function statusOf(date){return getEntry(date).status||'open'}
-  function statusLabel(s){return s==='training'?'Training':s==='no_training'?'Kein Training':'Offen'}
-  function formatDate(s){return parseDate(s).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'})}
-
-  function render(){
-    $('todayDate').textContent=formatDate(todayKey());
-    $('todayStatus').textContent=statusLabel(statusOf(todayKey()));
-    renderSeries();renderLast10();renderCurrentSet();renderStats();renderMonthly();renderHistory();populateExerciseSelects();renderCatalog();saveSettings();
-  }
-  function renderSeries(){
-    const start=settings.startDate||DEFAULT_START,end=todayKey();
-    const statuses=[];for(let d=start;d<=end;d=addDays(d,1))statuses.push([d,statusOf(d)]);
-    const cur=currentStreak(statuses,'training');
-    const best=bestStreak(statuses,'training');
-    const neg=bestStreak(statuses,'no_training');
-    $('seriesBox').innerHTML=`
-      <div class="seriesitem"><b>Aktuelle Serie</b><span>${cur.len?`${cur.len} Tage · seit ${shortDate(cur.start)}`:'0 Tage'}</span></div>
-      <div class="seriesitem"><b>Längste Serie</b><span>${best.len?`${best.len} Tage · ${shortDate(best.start)}–${shortDate(best.end)}`:'0 Tage'}</span></div>
-      <div class="seriesitem"><b>Längste negative Serie</b><span>${neg.len?`${neg.len} Tage · ${shortDate(neg.start)}–${shortDate(neg.end)}`:'0 Tage'}</span></div>`;
-  }
-  function currentStreak(arr,target){let len=0,start='',end='';for(let i=arr.length-1;i>=0;i--){if(arr[i][1]===target){len++;start=arr[i][0];if(!end)end=arr[i][0]}else break}return {len,start,end}}
-  function bestStreak(arr,target){let best={len:0,start:'',end:''},cur={len:0,start:'',end:''};for(const [d,s] of arr){if(s===target){if(!cur.len)cur.start=d;cur.len++;cur.end=d;if(cur.len>best.len)best={...cur}}else cur={len:0,start:'',end:''}}return best}
-  function shortDate(s){return s?parseDate(s).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'}):''}
-  function renderLast10(){const box=$('last10');box.innerHTML='';for(let i=9;i>=0;i--){const d=addDays(todayKey(),-i),s=statusOf(d),div=document.createElement('div');div.className='sq '+(s==='training'?'train':s==='no_training'?'notrain':'open');div.title=formatDate(d);div.textContent=s==='training'?'✓':s==='no_training'?'×':'?';box.appendChild(div)}}
-  function renderCurrentSet(){const box=$('currentSetBox');const set=(settings.kettlebellSet||[]).map(normalizeExercise);if(!set.length){box.innerHTML='<div class="tiny">Noch kein Kettlebell-Set angelegt.</div>';return}box.innerHTML=set.map(ex=>`<div class="setline"><b>${escapeHtml(ex.name)}</b><span>${escapeHtml(displayExercise(ex).replace(ex.name+': ',''))}</span></div>`).join('')}
-
-  function periodStats(start,end){const total=Math.max(0,daysBetween(start,end)+1);let training=0;for(let d=start;d<=end;d=addDays(d,1)){if(statusOf(d)==='training')training++}const without=Math.max(0,total-training);return {total,training,without,quote:total?Math.round(training/total*100):0}}
-  function statsBlock(title,s){return `<details><summary>${escapeHtml(title)}</summary><div class="statgrid"><div class="stat"><div class="num">${s.total}</div><div class="lbl">Gesamttage</div></div><div class="stat"><div class="num">${s.training}</div><div class="lbl">Trainingstage</div></div><div class="stat"><div class="num">${s.without}</div><div class="lbl">Ohne Training</div></div><div class="stat"><div class="num">${s.quote}%</div><div class="lbl">Trainingsquote</div></div></div></details>`}
-  function renderStats(){const box=$('statsBox');const currentYear=Number(todayKey().slice(0,4));let html='';for(let y=2026;y<=currentYear;y++){html+=statsBlock(String(y),periodStats(yearStart(y),clampEndForYear(y)))}html+=statsBlock('Gesamtstatistik',periodStats(STAT_START,todayKey()));box.innerHTML=html}
-  function renderMonthly(){const box=$('monthlyBox');const currentYear=Number(todayKey().slice(0,4));let html='';for(let y=2026;y<=currentYear;y++){let rows='';const maxMonth=y===currentYear?parseDate(todayKey()).getMonth():11;for(let m=0;m<=maxMonth;m++){const start=`${y}-${pad(m+1)}-01`;const last=new Date(y,m+1,0);let end=iso(last);if(y===currentYear&&m===parseDate(todayKey()).getMonth())end=todayKey();const s=periodStats(start,end);const label=parseDate(start).toLocaleDateString('de-DE',{month:'long',year:'numeric'});rows+=`<div class="monthrow"><b>${label}</b><span>${s.training}/${s.total} Training</span><span>${s.without} ohne</span><span>${s.quote}%</span></div>`}html+=`<details><summary>${y}</summary><div style="margin-top:8px">${rows}</div></details>`}box.innerHTML=html}
-  function renderHistory(){const box=$('historyBox');box.innerHTML='';for(let i=0;i<21;i++){const d=addDays(todayKey(),-i),e=getEntry(d);const row=document.createElement('div');row.className='historyrow';row.innerHTML=`<div class="histmeta"><b>${formatDate(d)}</b><span>${statusLabel(e.status)}${e.status==='training'&&e.exercises.length?' · '+escapeHtml(e.exercises.length+' Übungen'):''}</span></div><button class="ghost smallbtn" data-edit-history="${d}">Ändern</button>`;box.appendChild(row)}box.querySelectorAll('[data-edit-history]').forEach(btn=>btn.addEventListener('click',()=>openHistoryDialog(btn.dataset.editHistory)))}
-
-  function populateExerciseSelects(){for(const id of ['exerciseSelect','historyExerciseSelect','setExerciseSelect']){const sel=$(id);if(!sel)return;const current=sel.value;sel.innerHTML=settings.exercises.map(ex=>`<option value="${escapeAttr(ex.name)}">${escapeHtml(ex.name)}${ex.unit?' ('+escapeHtml(ex.unit)+')':''} · ${modeLabel(ex.mode)}</option>`).join('');if([...sel.options].some(o=>o.value===current))sel.value=current}updateExerciseInputHint('exercise');updateExerciseInputHint('history');updateExerciseInputHint('set')}
-  function selectedCatalog(prefix){const ids={exercise:'exerciseSelect',history:'historyExerciseSelect',set:'setExerciseSelect'};return settings.exercises.find(e=>e.name===$(ids[prefix]).value)||settings.exercises[0]||{mode:'normal',unit:''}}
-  function updateExerciseInputHint(prefix){const cat=selectedCatalog(prefix);const ids={exercise:['exerciseAmountLabel','exerciseModeHint'],history:['historyExerciseAmountLabel','historyExerciseModeHint'],set:['setExerciseAmountLabel','setExerciseModeHint']};const [labelId,hintId]=ids[prefix];const label=$(labelId),hint=$(hintId);if(!label||!hint)return;if(cat.mode==='bilateral'){label.textContent='Wert pro Seite';hint.textContent='Beidseitig: Ein Wert wird pro Seite erfasst und für die Statistik automatisch verdoppelt.'}else if(cat.mode==='unilateral'){label.textContent='Wert einseitig';hint.textContent='Einseitig: Der Wert wird genau so gezählt, wie du ihn einträgst.'}else{label.textContent='Anzahl / Dauer';hint.textContent='Normal: Der eingetragene Wert wird direkt gezählt.'}}
-  function renderCatalog(){const list=$('catalogList');if(!list)return;list.innerHTML='';settings.exercises.forEach((ex,idx)=>{const div=document.createElement('div');div.className='catalogitem';div.innerHTML=`<div class="cataloghandle">${idx+1}</div><div class="catalogname"><b>${escapeHtml(ex.name)}</b><br>${ex.unit?escapeHtml(ex.unit)+' · ':''}${modeLabel(ex.mode)}</div><button class="ghost smallbtn" title="Nach oben" data-move-ex="${idx}" data-dir="-1" ${idx===0?'disabled':''}>↑</button><button class="ghost smallbtn" title="Nach unten" data-move-ex="${idx}" data-dir="1" ${idx===settings.exercises.length-1?'disabled':''}>↓</button><button class="ghost smallbtn" title="Entfernen" data-remove-ex="${idx}">×</button>`;list.appendChild(div)});list.querySelectorAll('[data-move-ex]').forEach(btn=>btn.addEventListener('click',()=>{const idx=Number(btn.dataset.moveEx),dir=Number(btn.dataset.dir),next=idx+dir;if(next<0||next>=settings.exercises.length)return;const item=settings.exercises.splice(idx,1)[0];settings.exercises.splice(next,0,item);saveSettings();render()}));list.querySelectorAll('[data-remove-ex]').forEach(btn=>btn.addEventListener('click',()=>{if(settings.exercises.length<=1){alert('Mindestens eine Übung muss vorhanden bleiben.');return}settings.exercises.splice(Number(btn.dataset.removeEx),1);saveSettings();render()}))}
-
-  function openTrainingDialog(date){editDate=date;const existing=getEntry(date);tempExercises=existing.status==='training'&&existing.exercises.length?existing.exercises.map(normalizeExercise):(settings.kettlebellSet||[]).map(normalizeExercise);$('trainingDialogTitle').textContent=date===todayKey()?'Training erfassen':'Training bearbeiten';$('trainingDialogDate').textContent=formatDate(date);$('exerciseAmount').value='';updateExercisePreview();populateExerciseSelects();trainingDialog.showModal()}
-  function openSetDialog(){setTempExercises=(settings.kettlebellSet||[]).map(normalizeExercise);$('setExerciseAmount').value='';updateSetPreview();populateExerciseSelects();setDialog.showModal()}
-  function addExerciseTo(target){const map={main:['exerciseSelect','exerciseAmount',()=>tempExercises,(v)=>tempExercises=v,updateExercisePreview],history:['historyExerciseSelect','historyExerciseAmount',()=>historyTempExercises,(v)=>historyTempExercises=v,updateHistoryExercisePreview],set:['setExerciseSelect','setExerciseAmount',()=>setTempExercises,(v)=>setTempExercises=v,updateSetPreview]};const [selectId,amountId,get,set,renderFn]=map[target];const name=$(selectId).value,amount=$(amountId).value.trim();if(!name){alert('Bitte eine Übung auswählen.');return}if(!amount){alert('Bitte Anzahl oder Dauer eintragen.');return}const cat=settings.exercises.find(e=>e.name===name)||{unit:'',mode:'normal'};const arr=get();arr.push(normalizeExercise({name,amount,unit:cat.unit||'',mode:cat.mode||'normal'}));set(arr);$(amountId).value='';renderFn()}
-  function updateExercisePreview(){$('exercisePreview').innerHTML=renderEditableExerciseList(tempExercises,'main')}
-  function updateSetPreview(){$('setPreview').innerHTML=renderEditableExerciseList(setTempExercises,'set')}
-  function updateHistoryExercisePreview(){$('historyExercisePreview').innerHTML=renderEditableExerciseList(historyTempExercises,'history')}
-  function renderEditableExerciseList(list,target){list=(list||[]).map(normalizeExercise);if(!list.length)return 'Noch keine Übung erfasst.';return list.map((ex,i)=>`<div class="setline"><b>${escapeHtml(displayExercise(ex))}</b><span><button class="ghost smallbtn" onclick="editExercise('${target}',${i})">Bearbeiten</button> <button class="ghost smallbtn" onclick="removeExercise('${target}',${i})">×</button></span></div>`).join('')}
-  window.removeExercise=function(target,i){const obj={main:tempExercises,set:setTempExercises,history:historyTempExercises};obj[target].splice(i,1);if(target==='main')updateExercisePreview();if(target==='set')updateSetPreview();if(target==='history')updateHistoryExercisePreview()}
-  window.editExercise=function(target,i){const obj={main:tempExercises,set:setTempExercises,history:historyTempExercises};const ex=obj[target][i];const amount=prompt('Neuer Wert für '+ex.name,ex.amount);if(amount===null)return;ex.amount=amount.trim();if(target==='main')updateExercisePreview();if(target==='set')updateSetPreview();if(target==='history')updateHistoryExercisePreview()}
-  function openHistoryDialog(date){historyEditDate=date;const e=getEntry(date);historyTempExercises=(e.exercises||[]).map(normalizeExercise);$('historyDialogDate').textContent=formatDate(date);$('historyStatusSelect').value=e.status||'open';$('historyExerciseAmount').value='';updateHistoryTrainingVisibility();updateHistoryExercisePreview();populateExerciseSelects();historyDialog.showModal()}
-  function updateHistoryTrainingVisibility(){$('historyTrainingFields').classList.toggle('hidden',$('historyStatusSelect').value!=='training')}
-  function closeDialog(d){d.close()} window.closeDialog=closeDialog;
-
-  function exportStructuredCsv(){const rows=[['type','date','status','exercise_name','amount_input','unit','mode','amount_total','updated_at']];Object.entries(entries).sort().forEach(([date,e])=>{const exercises=(e.exercises||[]).map(normalizeExercise);if(exercises.length){exercises.forEach(ex=>rows.push(['entry',date,e.status||'open',ex.name,ex.amount,ex.unit,ex.mode,totalValue(ex),e.updatedAt||'']))}else rows.push(['entry',date,e.status||'open','','','','','',e.updatedAt||''])});settings.exercises.forEach(ex=>rows.push(['catalog','','',ex.name,'',ex.unit,ex.mode,'','']));(settings.kettlebellSet||[]).map(normalizeExercise).forEach(ex=>rows.push(['set','', '',ex.name,ex.amount,ex.unit,ex.mode,totalValue(ex),'']));downloadFile(`fitness-tracker-uebungsdaten-${todayKey()}.csv`,rows.map(r=>r.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8')}
-  function exportDailyCsv(){const rows=[['date','status','exercises_json','exercises_text','updated_at']];Object.entries(entries).sort().forEach(([date,e])=>rows.push([date,e.status||'open',JSON.stringify((e.exercises||[]).map(normalizeExercise)),exerciseText(e.exercises||[]),e.updatedAt||'']));downloadFile(`fitness-tracker-tagesdaten-${todayKey()}.csv`,rows.map(r=>r.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8')}
-  function csvCell(v){v=String(v??'');return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
-  function downloadFile(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
-  function importCsvFile(file){if(!file){alert('Keine Datei ausgewählt.');return}const reader=new FileReader();reader.onerror=()=>alert('Die Datei konnte nicht gelesen werden. Bitte erneut auswählen oder die CSV lokal in „Dateien“ speichern.');reader.onload=()=>{try{let text=String(reader.result||'');text=text.replace(/^\uFEFF/,'');const rows=parseCsv(text);if(!rows.length){alert('Keine Daten gefunden.');return}const headers=Object.keys(rows[0]).map(h=>h.toLowerCase());const hasType=headers.includes('type');if(hasType)importStructured(rows);else importDaily(rows);saveEntries();saveSettings();render();alert('Import abgeschlossen.')}catch(e){console.error(e);alert('Import fehlgeschlagen. Die CSV-Struktur wurde nicht erkannt.')}};reader.readAsText(file,'UTF-8')}
-  function importStructured(rows){const byDate={};const catalog=[],set=[];rows.forEach(row=>{if(row.type==='catalog'&&row.exercise_name)catalog.push(normalizeCatalog({name:row.exercise_name,unit:row.unit,mode:row.mode}));else if(row.type==='set'&&row.exercise_name)set.push(normalizeExercise({name:row.exercise_name,amount:row.amount_input,unit:row.unit,mode:row.mode}));else if(row.type==='entry'&&row.date){if(!byDate[row.date])byDate[row.date]={status:row.status||'open',exercises:[],updatedAt:row.updated_at||new Date().toISOString()};byDate[row.date].status=row.status||byDate[row.date].status;if(row.exercise_name)byDate[row.date].exercises.push(normalizeExercise({name:row.exercise_name,amount:row.amount_input,unit:row.unit,mode:row.mode}))}});Object.assign(entries,byDate);if(catalog.length)settings.exercises=catalog;if(set.length)settings.kettlebellSet=set}
-  function importDaily(rows){rows.forEach(row=>{const date=row.date;if(!date)return;let exercises=[];if(row.exercises_json){try{exercises=JSON.parse(row.exercises_json).map(normalizeExercise)}catch(e){}}if(!exercises.length&&row.exercises_text)exercises=noteToLegacyExercises(row.exercises_text);entries[date]={status:row.status||'open',exercises,updatedAt:row.updated_at||new Date().toISOString()}})}
-  function parseCsv(text){const rows=[];let row=[],cell='',q=false;for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(q&&ch==='"'&&next==='"'){cell+='"';i++}else if(ch==='"'){q=!q}else if(!q&&(ch===';'||ch===',')){row.push(cell);cell=''}else if(!q&&(ch==='\n'||ch==='\r')){if(ch==='\r'&&next==='\n')i++;row.push(cell);if(row.some(x=>x!==''))rows.push(row);row=[];cell=''}else cell+=ch}row.push(cell);if(row.some(x=>x!==''))rows.push(row);const headers=rows.shift()||[];return rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]||''])))}
-  function noteToLegacyExercises(text){return String(text).split(/\n+/).filter(Boolean).map(line=>{const [name,rest='']=line.split(':');const n=(rest.match(/[\d,.]+/)||[''])[0];return normalizeExercise({name:name.trim()||'Training',amount:n,unit:'',mode:'normal'})})}
-  function escapeHtml(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-  function escapeAttr(s){return escapeHtml(s).replace(/'/g,'&#39;')}
-
-  $('trainingBtn').addEventListener('click',()=>openTrainingDialog(todayKey()));
-  $('noTrainingBtn').addEventListener('click',()=>setEntry(todayKey(),{status:'no_training',exercises:[]}));
-  $('editSetBtn').addEventListener('click',openSetDialog);
-  $('exerciseSelect').addEventListener('change',()=>updateExerciseInputHint('exercise'));
-  $('historyExerciseSelect').addEventListener('change',()=>updateExerciseInputHint('history'));
-  $('setExerciseSelect').addEventListener('change',()=>updateExerciseInputHint('set'));
-  $('addExerciseBtn').addEventListener('click',()=>addExerciseTo('main'));
-  $('exerciseAmount').addEventListener('keydown',e=>{if(e.key==='Enter')addExerciseTo('main')});
-  $('clearExercisesBtn').addEventListener('click',()=>{tempExercises=[];updateExercisePreview()});
-  $('saveTrainingBtn').addEventListener('click',()=>{setEntry(editDate,{status:'training',exercises:tempExercises});closeDialog(trainingDialog)});
-  $('addSetExerciseBtn').addEventListener('click',()=>addExerciseTo('set'));
-  $('setExerciseAmount').addEventListener('keydown',e=>{if(e.key==='Enter')addExerciseTo('set')});
-  $('clearSetBtn').addEventListener('click',()=>{setTempExercises=[];updateSetPreview()});
-  $('saveSetBtn').addEventListener('click',()=>{settings.kettlebellSet=setTempExercises.map(normalizeExercise);saveSettings();render();closeDialog(setDialog)});
-  $('historyStatusSelect').addEventListener('change',updateHistoryTrainingVisibility);
-  $('historyAddExerciseBtn').addEventListener('click',()=>addExerciseTo('history'));
-  $('historyExerciseAmount').addEventListener('keydown',e=>{if(e.key==='Enter')addExerciseTo('history')});
-  $('historyClearExercisesBtn').addEventListener('click',()=>{historyTempExercises=[];updateHistoryExercisePreview()});
-  $('saveHistoryBtn').addEventListener('click',()=>{const status=$('historyStatusSelect').value;if(status==='open')deleteEntry(historyEditDate);else setEntry(historyEditDate,{status,exercises:status==='training'?historyTempExercises:[]});closeDialog(historyDialog)});
-  $('settingsBtn').addEventListener('click',()=>{$('startDateInput').value=settings.startDate;renderCatalog();settingsDialog.showModal()});
-  $('addCatalogExerciseBtn').addEventListener('click',()=>{const name=$('newExerciseName').value.trim(),unit=$('newExerciseUnit').value.trim(),mode=$('newExerciseMode').value;if(!name){alert('Bitte Übungsnamen eintragen.');return}if(settings.exercises.some(e=>e.name.toLowerCase()===name.toLowerCase())){alert('Diese Übung existiert bereits.');return}settings.exercises.push({name,unit,mode});saveSettings();$('newExerciseName').value='';$('newExerciseUnit').value='';$('newExerciseMode').value='normal';render()});
-  $('saveStartDateBtn').addEventListener('click',()=>{settings.startDate=$('startDateInput').value||DEFAULT_START;saveSettings();render();alert('Startdatum gespeichert.')});
-  $('settingsExportStructuredBtn').addEventListener('click',exportStructuredCsv);
-  $('settingsExportDailyBtn').addEventListener('click',exportDailyCsv);
-  $('fileInput').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f)importCsvFile(f);e.target.value=''});
-  $('trashBtn').addEventListener('click',resetAll);$('settingsResetBtn').addEventListener('click',resetAll);
-  function resetAll(){if(confirm('Wirklich alle Fitness-Tracker-Daten löschen?')){entries={};saveEntries();render()}}
-  render();
+const APP_VERSION='4.0',STAT_START='2026-01-01',SE='fitnessTrackerEntriesV2',SS='fitnessTrackerSettingsV2',SP='fitnessTrackerProgressV4';
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)},add=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)},today=()=>iso(new Date()),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const defaults=[{name:'Kettlebell Swings',amount:'90',unit:'Wdh.',mode:'normal'},{name:'Kettlebell Squats',amount:'24',unit:'Wdh.',mode:'normal'},{name:'Kettlebell Rows',amount:'12',unit:'Wdh.',mode:'bilateral'},{name:'Kettlebell Shoulder Press',amount:'10',unit:'Wdh.',mode:'bilateral'},{name:'Kettlebell Floor Press',amount:'10',unit:'Wdh.',mode:'unilateral'},{name:'Single Arm Overhead Triceps Extension',amount:'10',unit:'Wdh.',mode:'unilateral'}];
+function load(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}}function norm(e){return{name:String(e.name||e.exercise||'Übung'),amount:String(e.amount??e.value??''),unit:String(e.unit||'Wdh.'),mode:['normal','unilateral','bilateral'].includes(e.mode)?e.mode:'normal'}}
+let entries=load(SE,{}),old=load(SS,{}),settings={version:APP_VERSION,kettlebellSet:Array.isArray(old.kettlebellSet)&&old.kettlebellSet.length?old.kettlebellSet.map(norm):defaults.map(norm)},progress=load(SP,{}),checks=[];
+function save(){localStorage.setItem(SE,JSON.stringify(entries));localStorage.setItem(SS,JSON.stringify({...old,...settings,version:APP_VERSION}));localStorage.setItem(SP,JSON.stringify(progress))}
+function entry(d){const e=entries[d];return e?{status:e.status||'open',exercises:(e.exercises||[]).map(norm),updatedAt:e.updatedAt||''}:{status:'open',exercises:[]}}
+function setEntry(d,status,ex=[]){if(status==='open')delete entries[d];else entries[d]={status,exercises:ex.map(norm),updatedAt:new Date().toISOString()};save();render()}
+function label(s){return s==='training'?'Training':s==='no_training'?'Pause':'Offen'}function exLabel(e){return (e.mode==='normal'?e.amount:`${e.amount} je Seite`)+(e.unit?' '+e.unit:'')}function between(a,b){return Math.round((parse(b)-parse(a))/86400000)}
+function stats(a,b){let training=0,pause=0,total=Math.max(0,between(a,b)+1);for(let d=a;d<=b;d=add(d,1)){const s=entry(d).status;if(s==='training')training++;if(s==='no_training')pause++}return{total,training,pause,open:total-training-pause,quote:total?Math.round(training/total*100):0}}
+function streak(){let n=0;for(let d=today();d>=STAT_START;d=add(d,-1)){if(entry(d).status==='training')n++;else break}return n}
+function longDate(s){return parse(s).toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}function shortDate(s){return parse(s).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}
+function render(){const t=today(),e=entry(t),ys=stats(STAT_START,t),ms=stats(t.slice(0,7)+'-01',t);$('todayDate').textContent=longDate(t);$('todayStatus').textContent=label(e.status);$('todayStatus').className='badge '+(e.status==='training'?'training':e.status==='no_training'?'pause':'');$('heroTitle').textContent=e.status==='training'?'Training erledigt.':e.status==='no_training'?'Heute ist Pause.':'Bereit für dein Training?';$('heroText').textContent=e.status==='training'?'Der wichtigste Schritt ist gemacht. Morgen wartet die nächste Gelegenheit.':e.status==='no_training'?'Erholung gehört dazu. Du kannst den Status jederzeit ändern.':'Ein kurzer Start ist besser als ein perfekter Plan. Öffne dein Set und hake die Übungen Schritt für Schritt ab.';$('startTrainingBtn').textContent=e.status==='training'?'Training ansehen':'Training starten';$('pauseBtn').textContent=e.status==='no_training'?'Pause eingetragen':'Heute Pause';$('streakNum').textContent=streak();$('monthNum').textContent=ms.training;$('quoteNum').textContent=ys.quote+'%';renderDays();renderHistory();renderStats();renderPlan();save()}
+function renderDays(){const box=$('daysGrid');box.innerHTML='';for(let i=20;i>=0;i--){const d=add(today(),-i),s=entry(d).status,x=document.createElement('div');x.className='day '+(s==='training'?'training':s==='no_training'?'pause':'');x.title=longDate(d);x.innerHTML=`<b>${parse(d).toLocaleDateString('de-DE',{day:'2-digit'})}</b><span>${s==='training'?'✓':s==='no_training'?'–':'·'}</span>`;box.appendChild(x)}}
+function renderHistory(){const box=$('historyList');box.innerHTML='';for(let i=0;i<21;i++){const d=add(today(),-i),e=entry(d),r=document.createElement('div');r.className='history-row';r.innerHTML=`<div><div class="row-title">${esc(shortDate(d))}</div><div class="row-meta">${label(e.status)}${e.status==='training'&&e.exercises.length?' · '+e.exercises.length+' Übungen':''}</div></div><button class="small-btn" data-cycle="${d}">Ändern</button>`;box.appendChild(r)}box.querySelectorAll('[data-cycle]').forEach(b=>b.onclick=()=>{const d=b.dataset.cycle,s=entry(d).status;if(s==='open')setEntry(d,'training',settings.kettlebellSet);else if(s==='training')setEntry(d,'no_training',[]);else setEntry(d,'open',[])})}
+function renderStats(){const s=stats(STAT_START,today());$('statsDetails').innerHTML=[['Gesamttage',s.total],['Trainingstage',s.training],['Pausentage',s.pause],['Offene Tage',s.open],['Trainingsquote',s.quote+'%']].map(x=>`<div class="stat-row"><div class="row-title">${x[0]}</div><strong>${x[1]}</strong></div>`).join('')}
+function openTraining(){const t=today(),saved=progress[t];checks=Array(settings.kettlebellSet.length).fill(false);if(Array.isArray(saved)&&saved.length===checks.length)checks=saved.slice();if(entry(t).status==='training')checks=checks.map(()=>true);$('trainingDate').textContent=longDate(t);renderWorkout();$('trainingDialog').showModal()}
+function renderWorkout(){const box=$('workoutList');box.innerHTML=settings.kettlebellSet.length?settings.kettlebellSet.map((e,i)=>`<label class="workout-item ${checks[i]?'done':''}"><input type="checkbox" data-check="${i}" ${checks[i]?'checked':''}><span><div class="workout-name">${esc(e.name)}</div><div class="workout-meta">${esc(exLabel(e))}</div></span></label>`).join(''):'<div class="subtle">Noch keine Übung angelegt.</div>';box.querySelectorAll('[data-check]').forEach(c=>c.onchange=()=>{checks[+c.dataset.check]=c.checked;progress[today()]=checks.slice();save();renderWorkout()});const done=checks.length&&checks.every(Boolean);$('completionBox').classList.toggle('show',!!done);$('completeTrainingBtn').textContent=done?'Training abschließen':'Als Training speichern'}
+function renderPlan(){const box=$('planEditor');box.innerHTML=settings.kettlebellSet.length?settings.kettlebellSet.map((e,i)=>`<div class="edit-row"><div><div class="row-title">${esc(e.name)}</div><div class="row-meta">${esc(exLabel(e))} · ${e.mode==='normal'?'normal':e.mode==='bilateral'?'beidseitig':'einseitig'}</div></div><div style="display:flex;gap:5px"><button class="small-btn" data-up="${i}" ${i===0?'disabled':''}>↑</button><button class="small-btn" data-down="${i}" ${i===settings.kettlebellSet.length-1?'disabled':''}>↓</button><button class="small-btn" data-edit="${i}">✎</button><button class="small-btn" data-remove="${i}">×</button></div></div>`).join(''):'<div class="subtle">Noch keine Übung angelegt.</div>';box.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>move(+b.dataset.up,-1));box.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>move(+b.dataset.down,1));box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{settings.kettlebellSet.splice(+b.dataset.remove,1);progress={};save();render()});box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const i=+b.dataset.edit,e=settings.kettlebellSet[i],name=prompt('Name der Übung',e.name);if(name===null)return;const amount=prompt('Wiederholungen / Dauer',e.amount);if(amount===null)return;const mode=prompt('Modus: normal, einseitig oder beidseitig',e.mode==='unilateral'?'einseitig':e.mode==='bilateral'?'beidseitig':'normal');if(mode===null)return;settings.kettlebellSet[i]=norm({name:name.trim()||e.name,amount:amount.trim(),unit:'Wdh.',mode:mode.toLowerCase().startsWith('ein')?'unilateral':mode.toLowerCase().startsWith('bei')?'bilateral':'normal'});progress={};save();render()})}
+function move(i,d){const j=i+d;if(j<0||j>=settings.kettlebellSet.length)return;const x=settings.kettlebellSet.splice(i,1)[0];settings.kettlebellSet.splice(j,0,x);progress={};save();render()}
+function parseCsv(text){const rows=[];let row=[],cell='',q=false;for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(q&&ch==='"'&&next==='"'){cell+='"';i++}else if(ch==='"')q=!q;else if(!q&&(ch===';'||ch===',')){row.push(cell);cell=''}else if(!q&&(ch==='\n'||ch==='\r')){if(ch==='\r'&&next==='\n')i++;row.push(cell);if(row.some(x=>x!==''))rows.push(row);row=[];cell=''}else cell+=ch}row.push(cell);if(row.some(x=>x!==''))rows.push(row);const headers=rows.shift()||[];return rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]||''])))}
+function importCsv(file){if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const rows=parseCsv(String(reader.result||'').replace(/^\uFEFF/,''));rows.forEach(row=>{if(!row.date)return;let exercises=[];if(row.exercises_json){try{exercises=JSON.parse(row.exercises_json).map(norm)}catch(e){}}entries[row.date]={status:row.status||'open',exercises,updatedAt:row.updated_at||new Date().toISOString()}});save();render();alert('Import abgeschlossen.')}catch(e){alert('Import fehlgeschlagen.')}};reader.readAsText(file,'UTF-8')}
+function exportCsv(){const rows=[['date','status','activity','exercises_json','updated_at']];Object.entries(entries).sort().forEach(([d,e])=>rows.push([d,e.status||'open',JSON.stringify((e.exercises||[]).map(norm)),e.updatedAt||'']));const csv=rows.map(r=>r.map(v=>{v=String(v??'');return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(';')).join('\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`fitness-tracker-${today()}.csv`;a.click();URL.revokeObjectURL(url)}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());$('settingsBtn').onclick=()=>{$('settingsDialog').showModal();renderPlan()};$('startTrainingBtn').onclick=openTraining;$('pauseBtn').onclick=()=>{setEntry(today(),'no_training',[]);progress[today()]=[];save()};$('completeTrainingBtn').onclick=()=>{setEntry(today(),'training',settings.kettlebellSet);progress[today()]=settings.kettlebellSet.map(()=>true);save();$('trainingDialog').close()};$('addPlanItemBtn').onclick=()=>{const name=$('newName').value.trim(),amount=$('newAmount').value.trim(),mode=$('newMode').value;if(!name||!amount)return alert('Bitte Übung und Wiederholungen eintragen.');settings.kettlebellSet.push(norm({name,amount,unit:'Wdh.',mode}));$('newName').value='';$('newAmount').value='';$('newMode').value='normal';progress={};save();render()};$('exportBtn').onclick=exportCsv;$('fileInput').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importCsv(f);e.target.value=''};$('resetBtn').onclick=()=>{if(confirm('Wirklich alle Trainingseinträge löschen? Der Trainingsplan bleibt erhalten.')){entries={};progress={};save();render()}}
+render()
 })();
 </script>
 </body>
