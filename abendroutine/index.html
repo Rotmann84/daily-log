@@ -1,102 +1,1377 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#dbeafe">
-<title>Fitness-Tracker</title>
-<style>
-:root{--bg:#edf4fa;--panel:#fff;--soft:#e2edf7;--ink:#14283b;--muted:#60768a;--line:#9eb5ca;--blue:#2e6f9e;--blue2:#1d4e73;--green:#2e7b62;--greenSoft:#def1e8;--red:#945057;--redSoft:#f5e5e7}
-*{box-sizing:border-box}html,body{margin:0}body{min-height:100vh;background:linear-gradient(#f7fbff,#e8f0f7);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:18px 14px 32px}
-button,input,select{font:inherit}.app{max-width:520px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--blue2);padding:4px 0 12px;margin-bottom:16px}h1{font-size:22px;margin:0;font-weight:750}h2{font-size:16px;margin:0}h3{font-size:14px;margin:0}
-.header-btn,.small-btn,.close{border:1px solid var(--blue2);background:#fff;color:var(--blue2);border-radius:0;font-weight:700;cursor:pointer}.header-btn{width:42px;height:38px;font-size:18px}.small-btn,.close{padding:7px 9px;font-size:12px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:0;padding:16px;margin-top:12px;box-shadow:0 8px 24px rgba(37,73,105,.08)}
-.hero{background:linear-gradient(135deg,#fbfdff,#dcebf7);border-color:var(--blue)}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;color:var(--blue2);margin-bottom:6px}.hero-title{font-size:27px;font-weight:800;line-height:1.1;margin-bottom:8px}.subtle{font-size:12px;color:var(--muted);line-height:1.45}.today-status{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);margin-top:16px;padding-top:12px;font-size:13px}.badge{border:1px solid var(--line);background:#fff;padding:6px 8px;font-weight:700}.badge.training{background:var(--greenSoft);border-color:#8abda9;color:#205a48}.badge.pause{background:var(--redSoft);border-color:#c99ca1;color:#753b40}
-.actions{display:grid;gap:10px;margin-top:12px}.primary,.secondary,.danger{width:100%;padding:14px;border-radius:0;font-weight:750;cursor:pointer}.primary{background:var(--blue);color:#fff;border:1px solid var(--blue2)}.secondary{background:#fff;color:var(--blue2);border:1px solid var(--blue2)}.danger{background:var(--redSoft);color:#7b383e;border:1px solid #b8747a}
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{border-left:3px solid var(--blue);background:var(--soft);padding:11px 10px;min-height:72px}.metric .num{font-size:23px;font-weight:800}.metric .lbl{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.25}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.day{aspect-ratio:1;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:var(--muted);background:#f7fafc;padding:0;cursor:pointer;font-family:inherit}.day b{font-size:13px;color:var(--ink)}.day.training{background:var(--greenSoft);border-color:#8abda9}.day.pause{background:var(--redSoft);border-color:#c99ca1}
-details{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}details:first-child{border-top:0;padding-top:0;margin-top:0}summary{list-style:none;cursor:pointer;color:var(--blue2);font-size:13px;font-weight:700;display:flex;justify-content:space-between}summary::-webkit-details-marker{display:none}summary:after{content:"+"}details[open] summary:after{content:"−"}
-.history-row,.edit-row,.stat-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.history-row:last-child,.edit-row:last-child,.stat-row:last-child{border-bottom:0}.row-title{font-size:13px;font-weight:700}.row-meta{font-size:11px;color:var(--muted);margin-top:3px}
-dialog{width:min(94vw,520px);max-height:88vh;overflow:auto;padding:0;border:1px solid var(--blue2);border-radius:0;background:#fff;color:var(--ink);box-shadow:0 24px 60px rgba(23,54,82,.25)}dialog::backdrop{background:rgba(20,42,62,.34)}.modal{padding:16px}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--blue2);margin-bottom:14px}
-.workout-list{display:grid;gap:8px;margin-top:14px}.workout-item{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;border:1px solid var(--line);background:#f8fbfd;padding:12px}.workout-item.done{background:var(--greenSoft);border-color:#8abda9}.workout-item input{width:22px;height:22px;accent-color:var(--green)}.workout-name{font-size:14px;font-weight:750}.workout-meta{font-size:12px;color:var(--muted);margin-top:2px}.completion{text-align:center;padding:18px 10px 6px;display:none}.completion.show{display:block}.completion .big{font-size:30px;font-weight:850;color:var(--green)}.modal-actions{display:grid;gap:8px;margin-top:16px}
-label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin:11px 0 5px}input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:0;background:#fff;color:var(--ink)}.form-grid{display:grid;grid-template-columns:1.4fr .7fr .9fr;gap:8px}.settings-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}.version{text-align:center;font-size:11px;color:var(--muted);margin-top:14px}
-@media(max-width:460px){.form-grid{grid-template-columns:1fr}.hero-title{font-size:24px}.metric .num{font-size:20px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#dcefff">
+  <meta name="color-scheme" content="light">
+  <title>Fitness</title>
+  <style>
+    :root{
+      --bg:#eef7ff;
+      --panel:#ffffff;
+      --panel-2:#e2f1ff;
+      --line:#8eb9d8;
+      --line-dark:#5688aa;
+      --text:#173247;
+      --muted:#647f91;
+      --accent:#1673b1;
+      --accent-2:#0d5c91;
+      --success:#1d8a58;
+      --pause:#77838d;
+      --other:#8a59b5;
+      --danger:#b34040;
+      --shadow:0 8px 24px rgba(36, 89, 125, .10);
+      --safe-top:max(14px, env(safe-area-inset-top));
+      --safe-bottom:max(18px, env(safe-area-inset-bottom));
+    }
+
+    *{box-sizing:border-box}
+    html{min-height:100%;background:var(--bg)}
+    body{
+      margin:0;
+      min-height:100%;
+      background:
+        linear-gradient(180deg, #dcefff 0, #eef7ff 180px, #f8fbfe 100%);
+      color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    button,input,select,textarea{font:inherit}
+    button{touch-action:manipulation}
+    [hidden]{display:none!important}
+
+    .app{
+      width:min(760px, 100%);
+      min-height:100vh;
+      margin:0 auto;
+      padding-bottom:calc(30px + var(--safe-bottom));
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:grid;
+      grid-template-columns:52px 1fr 52px;
+      align-items:center;
+      min-height:68px;
+      padding:var(--safe-top) 14px 10px;
+      background:rgba(238,247,255,.94);
+      border-bottom:1px solid rgba(86,136,170,.35);
+      backdrop-filter:blur(14px);
+    }
+
+    .header-mark{
+      display:grid;
+      place-items:center;
+      font-size:26px;
+      line-height:1;
+      user-select:none;
+    }
+
+    .header-date{
+      text-align:center;
+      font-size:15px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    .icon-button{
+      width:44px;
+      height:44px;
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      background:var(--panel);
+      color:var(--text);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      font-size:21px;
+    }
+
+    .icon-button:active{transform:translateY(1px)}
+
+    main{padding:18px 14px 0}
+
+    .screen{display:block}
+    .screen[hidden]{display:none}
+
+    .today-card,
+    .calendar-card,
+    .series-card,
+    .settings-section,
+    .training-panel,
+    .finish-panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:0;
+      box-shadow:var(--shadow);
+    }
+
+    .today-card{padding:18px}
+    .eyebrow{
+      color:var(--muted);
+      text-transform:uppercase;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+    }
+
+    h1,h2,h3,p{margin-top:0}
+    .today-card h1{
+      margin:5px 0 8px;
+      font-size:clamp(27px, 7vw, 38px);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .today-status{
+      margin:0 0 16px;
+      color:var(--muted);
+      min-height:24px;
+    }
+
+    .action-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+
+    .primary,
+    .secondary,
+    .ghost,
+    .danger-button,
+    .small-button{
+      border-radius:0;
+      min-height:48px;
+      padding:11px 14px;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .primary{
+      border:1px solid var(--accent-2);
+      background:var(--accent);
+      color:#fff;
+    }
+
+    .primary:hover{background:var(--accent-2)}
+    .secondary{
+      border:1px solid var(--line-dark);
+      background:var(--panel-2);
+      color:var(--text);
+    }
+
+    .ghost{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+    }
+
+    .danger-button{
+      border:1px solid #973535;
+      background:#fff5f5;
+      color:var(--danger);
+    }
+
+    .small-button{
+      min-height:38px;
+      padding:7px 10px;
+      border:1px solid var(--line-dark);
+      background:#fff;
+      color:var(--text);
+      font-size:14px;
+    }
+
+    .series-card{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+    }
+
+    .series-value{
+      padding:17px 14px;
+      text-align:center;
+    }
+
+    .series-value + .series-value{border-left:1px solid var(--line)}
+    .series-value strong{
+      display:block;
+      font-size:30px;
+      line-height:1;
+      margin-bottom:5px;
+    }
+
+    .series-value span{
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .calendar-card{margin-top:14px;padding:16px}
+    .section-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:12px;
+    }
+
+    .section-head h2{margin:0;font-size:19px}
+    .section-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px 12px;
+      margin:0 0 13px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .legend span{display:inline-flex;align-items:center;gap:5px}
+    .dot{width:9px;height:9px;border:1px solid rgba(0,0,0,.15)}
+    .dot.training{background:#5bc38b}
+    .dot.pause{background:#a9b1b7}
+    .dot.other{background:#b78bd8}
+    .dot.open{background:#fff}
+
+    .calendar-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:6px;
+    }
+
+    .day-cell{
+      position:relative;
+      aspect-ratio:1/1;
+      min-width:0;
+      border:1px solid var(--line);
+      border-radius:0;
+      background:#fff;
+      color:var(--text);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:2px;
+      padding:3px;
+    }
+
+    .day-cell[data-status="training"]{background:#d9f4e5;border-color:#5ba77d}
+    .day-cell[data-status="pause"]{background:#e8ecef;border-color:#9aa4ab}
+    .day-cell[data-status="other"]{background:#f0e4fa;border-color:#9d73bd}
+    .day-cell.today{outline:3px solid var(--accent);outline-offset:-3px}
+    .day-cell.future{opacity:.42;cursor:not-allowed}
+    .day-number{font-weight:900;font-size:15px}
+    .day-month{font-size:9px;text-transform:uppercase;color:var(--muted)}
+    .day-icon{font-size:11px;line-height:1;min-height:11px}
+
+    .training-panel,
+    .finish-panel{
+      padding:22px 18px;
+      min-height:calc(100vh - 112px);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .training-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+
+    .training-counter{font-weight:900;color:var(--muted);font-size:13px}
+    .progress-track{
+      height:10px;
+      border:1px solid var(--line-dark);
+      background:#fff;
+      margin:16px 0 28px;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:var(--accent);
+      transition:width .25s ease;
+    }
+
+    .exercise-stage{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align:center;
+      padding:12px 0 26px;
+    }
+
+    .motivation{
+      min-height:24px;
+      color:var(--success);
+      font-weight:900;
+      letter-spacing:.02em;
+      margin-bottom:18px;
+    }
+
+    .exercise-name{
+      font-size:clamp(35px, 10vw, 58px);
+      line-height:1.03;
+      letter-spacing:-.04em;
+      margin:0;
+    }
+
+    .exercise-reps{
+      font-size:clamp(56px, 17vw, 96px);
+      font-weight:950;
+      line-height:1;
+      margin:21px 0 4px;
+      color:var(--accent-2);
+    }
+
+    .exercise-side{
+      min-height:26px;
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .training-actions{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+
+    .finish-panel{text-align:center;justify-content:center}
+    .finish-icon{font-size:58px;margin-bottom:12px}
+    .finish-panel h1{font-size:36px;margin-bottom:8px}
+    .finish-panel p{color:var(--muted)}
+    .finish-series{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      border:1px solid var(--line);
+      margin:22px 0;
+    }
+
+    .finish-series > div{padding:16px}
+    .finish-series > div + div{border-left:1px solid var(--line)}
+    .finish-series strong{display:block;font-size:32px}
+    .finish-series span{color:var(--muted);font-size:12px;font-weight:800}
+
+    .settings-screen h1{font-size:30px;margin:2px 0 16px}
+    .settings-section{padding:16px;margin-bottom:14px}
+    .settings-section h2{font-size:19px;margin-bottom:6px}
+    .settings-section > p{color:var(--muted);font-size:13px}
+
+    .exercise-list{display:grid;gap:8px;margin-top:13px}
+    .exercise-row{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:10px;
+      border:1px solid var(--line);
+      padding:11px;
+      background:#fbfdff;
+    }
+
+    .exercise-row strong{display:block;overflow-wrap:anywhere}
+    .exercise-meta{font-size:12px;color:var(--muted);margin-top:2px}
+    .row-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+    .row-actions button{
+      width:34px;height:34px;
+      border:1px solid var(--line);
+      border-radius:0;
+      background:#fff;
+      cursor:pointer;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      border:1px solid var(--line);
+      margin-top:12px;
+    }
+
+    .stat-box{padding:14px;text-align:center}
+    .stat-box:nth-child(even){border-left:1px solid var(--line)}
+    .stat-box:nth-child(n+3){border-top:1px solid var(--line)}
+    .stat-box strong{display:block;font-size:28px}
+    .stat-box span{font-size:12px;color:var(--muted);font-weight:800}
+
+    .year-select-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    select,input,textarea{
+      width:100%;
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      background:#fff;
+      color:var(--text);
+      padding:11px;
+      min-height:44px;
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      font-weight:800;
+      margin-bottom:5px;
+    }
+
+    .form-grid{display:grid;gap:11px}
+    .checkbox-line{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:var(--text);
+      font-weight:750;
+    }
+
+    .checkbox-line input{width:20px;height:20px;min-height:0;margin:0}
+    .button-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .button-row > *{flex:1 1 150px}
+
+    dialog{
+      width:min(520px, calc(100% - 24px));
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      padding:0;
+      color:var(--text);
+      background:var(--panel);
+      box-shadow:0 18px 60px rgba(15,52,77,.26);
+    }
+
+    dialog::backdrop{background:rgba(14,34,49,.48)}
+    .dialog-body{padding:18px}
+    .dialog-body h2{margin-bottom:5px}
+    .dialog-body > p{color:var(--muted);margin-bottom:16px}
+    .dialog-options{display:grid;gap:8px}
+    .dialog-options button{text-align:left}
+    .dialog-footer{display:flex;gap:8px;margin-top:14px}
+    .dialog-footer > *{flex:1}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:calc(18px + var(--safe-bottom));
+      transform:translate(-50%, 20px);
+      z-index:100;
+      width:min(460px, calc(100% - 28px));
+      border:1px solid var(--line-dark);
+      background:#173247;
+      color:#fff;
+      padding:12px 14px;
+      text-align:center;
+      font-weight:750;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+    }
+
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .muted-note{font-size:12px;color:var(--muted);margin-top:10px}
+    .empty-state{
+      border:1px dashed var(--line-dark);
+      padding:16px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    @media (min-width:560px){
+      main{padding-left:20px;padding-right:20px}
+      .action-grid{grid-template-columns:1.55fr 1fr}
+      .training-actions{grid-template-columns:1.7fr 1fr}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+    }
+  </style>
 </head>
 <body>
 <div class="app">
-<header><h1>Fitness-Tracker</h1><button class="header-btn" id="settingsBtn" aria-label="Trainingsplan bearbeiten">⚙</button></header>
-<section class="panel hero"><div class="eyebrow">Heute</div><div class="hero-title" id="heroTitle">Bereit für dein Training?</div><div class="subtle" id="heroText">Ein kurzer Start ist besser als ein perfekter Plan. Öffne dein Set und hake die Übungen Schritt für Schritt ab.</div><div class="today-status"><span id="todayDate"></span><span class="badge" id="todayStatus">Offen</span></div></section>
-<div class="actions"><button class="primary" id="startTrainingBtn">Training starten</button><button class="secondary" id="pauseBtn">Heute Pause</button></div>
-<section class="metrics"><div class="metric"><div class="num" id="streakNum">0</div><div class="lbl">Aktuelle Serie</div></div><div class="metric"><div class="num" id="monthNum">0</div><div class="lbl">Trainingstage diesen Monat</div></div><div class="metric"><div class="num" id="quoteNum">0%</div><div class="lbl">Trainingsquote aktuelles Jahr</div></div></section>
-<section class="panel"><div class="section-head"><h2>Letzte 21 Tage</h2><span class="subtle">Training, Pause oder offen</span></div><div class="days" id="daysGrid"></div></section>
-<section class="panel"><details><summary id="statsSummary">Statistik 2026</summary><div id="statsDetails"></div></details></section>
-<div class="version">Fitness-Tracker 4.1 · Statistik 2026 ab 20.07.2026</div>
+  <header id="appHeader">
+    <div class="header-mark" aria-hidden="true">🏋</div>
+    <div class="header-date" id="headerDate"></div>
+    <button class="icon-button" id="settingsButton" aria-label="Einstellungen öffnen">⚙</button>
+  </header>
+
+  <main>
+    <section class="screen" id="homeScreen">
+      <article class="today-card">
+        <div class="eyebrow">Heute</div>
+        <h1>Heute trainieren?</h1>
+        <p class="today-status" id="todayStatus">Der Tag ist noch offen.</p>
+        <div class="action-grid">
+          <button class="primary" id="startTrainingButton">Training starten</button>
+          <button class="secondary" id="pauseTodayButton">Heute Pause</button>
+        </div>
+      </article>
+
+      <article class="series-card" aria-label="Trainingsserien">
+        <div class="series-value">
+          <strong id="currentStreak">0</strong>
+          <span>Aktuelle Serie</span>
+        </div>
+        <div class="series-value">
+          <strong id="longestStreak">0</strong>
+          <span>Längste Serie</span>
+        </div>
+      </article>
+
+      <article class="calendar-card">
+        <div class="section-head">
+          <div>
+            <h2>Letzte 21 Tage</h2>
+            <p>Tippe auf einen Tag, um ihn zu bearbeiten.</p>
+          </div>
+        </div>
+        <div class="legend" aria-label="Legende">
+          <span><i class="dot training"></i> Training</span>
+          <span><i class="dot pause"></i> Pause</span>
+          <span><i class="dot other"></i> Andere Aktivität</span>
+          <span><i class="dot open"></i> Offen</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </article>
+    </section>
+
+    <section class="screen" id="trainingScreen" hidden>
+      <article class="training-panel">
+        <div class="training-top">
+          <div class="training-counter" id="trainingCounter">Übung 1 von 1</div>
+          <button class="small-button" id="cancelTrainingButton">Beenden</button>
+        </div>
+        <div class="progress-track" aria-label="Trainingsfortschritt">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="exercise-stage">
+          <div class="motivation" id="motivationText">Los geht's.</div>
+          <h1 class="exercise-name" id="exerciseName">Übung</h1>
+          <div class="exercise-reps" id="exerciseReps">0</div>
+          <div class="exercise-side" id="exerciseSide"></div>
+        </div>
+        <div class="training-actions">
+          <button class="primary" id="completeExerciseButton">Geschafft ✓</button>
+          <button class="ghost" id="skipExerciseButton">Überspringen</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="screen" id="finishScreen" hidden>
+      <article class="finish-panel">
+        <div class="finish-icon">✓</div>
+        <h1>Training abgeschlossen</h1>
+        <p>Stark. Du hast den heutigen Plan erledigt.</p>
+        <div class="finish-series">
+          <div><strong id="finishCurrentStreak">0</strong><span>Aktuelle Serie</span></div>
+          <div><strong id="finishLongestStreak">0</strong><span>Längste Serie</span></div>
+        </div>
+        <button class="primary" id="finishHomeButton">Zur Startseite</button>
+      </article>
+    </section>
+
+    <section class="screen settings-screen" id="settingsScreen" hidden>
+      <h1>Einstellungen</h1>
+
+      <article class="settings-section">
+        <div class="section-head">
+          <div>
+            <h2>Trainingsplan</h2>
+            <p>Die Übungen erscheinen beim Training genau in dieser Reihenfolge.</p>
+          </div>
+          <button class="small-button" id="addExerciseButton">+ Übung</button>
+        </div>
+        <div class="exercise-list" id="exerciseList"></div>
+      </article>
+
+      <article class="settings-section">
+        <h2 id="statsHeading">Statistik 2026</h2>
+        <p>2026 beginnt die Auswertung am 20.07.2026. Spätere Jahre beginnen automatisch am 01.01.</p>
+        <div class="year-select-row">
+          <label for="statsYear">Jahr auswählen</label>
+          <select id="statsYear"></select>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-box"><strong id="statTraining">0</strong><span>Trainingstage</span></div>
+          <div class="stat-box"><strong id="statOther">0</strong><span>Andere Aktivitäten</span></div>
+          <div class="stat-box"><strong id="statPause">0</strong><span>Pausentage</span></div>
+          <div class="stat-box"><strong id="statRate">0 %</strong><span>Aktivquote</span></div>
+        </div>
+        <p class="muted-note" id="statsPeriod"></p>
+      </article>
+
+      <article class="settings-section">
+        <h2>Daten sichern</h2>
+        <p>Exportiere alle Einträge und deinen Trainingsplan als CSV- bzw. JSON-Datei.</p>
+        <div class="button-row">
+          <button class="secondary" id="exportCsvButton">CSV exportieren</button>
+          <button class="secondary" id="exportBackupButton">Backup exportieren</button>
+          <button class="ghost" id="importButton">Backup importieren</button>
+        </div>
+        <input id="importFile" type="file" accept=".json,application/json" hidden>
+      </article>
+
+      <article class="settings-section">
+        <h2>App zurücksetzen</h2>
+        <p>Entfernt alle Einträge und stellt den Standard-Trainingsplan wieder her.</p>
+        <button class="danger-button" id="resetButton">Alle Daten löschen</button>
+      </article>
+
+      <button class="primary" id="closeSettingsButton">Zurück zur Startseite</button>
+    </section>
+  </main>
 </div>
-<dialog id="trainingDialog"><div class="modal"><div class="modal-head"><div><h2>Heutiges Kettlebell-Training</h2><div class="subtle" id="trainingDate"></div></div><button class="close" data-close="trainingDialog">Schließen</button></div><div class="subtle">Hake die Übungen ab. Die Reihenfolge ist nur eine Empfehlung.</div><div class="workout-list" id="workoutList"></div><div class="completion" id="completionBox"><div class="big">Geschafft.</div><p class="subtle">Dein Training ist vollständig. Speichere den Tag als Trainingstag.</p></div><div class="modal-actions"><button class="primary" id="completeTrainingBtn">Training abschließen</button><button class="secondary" data-close="trainingDialog">Später fortsetzen</button></div></div></dialog>
 
 <dialog id="dayDialog">
-  <div class="modal">
-    <div class="modal-head">
+  <form method="dialog" class="dialog-body">
+    <h2 id="dayDialogTitle">Tag bearbeiten</h2>
+    <p id="dayDialogSubtitle"></p>
+    <div class="dialog-options">
+      <button type="button" class="ghost" data-day-status="open">○ Offen</button>
+      <button type="button" class="ghost" data-day-status="training">✓ Kettlebell-Training</button>
+      <button type="button" class="ghost" data-day-status="other">◆ Andere Aktivität</button>
+      <button type="button" class="ghost" data-day-status="pause">– Pause</button>
+    </div>
+    <div id="otherActivityFields" class="form-grid" hidden style="margin-top:12px">
       <div>
-        <h2>Tag bearbeiten</h2>
-        <div class="subtle" id="dayDialogDate"></div>
+        <label for="otherActivityName">Aktivität</label>
+        <input id="otherActivityName" maxlength="80" placeholder="z. B. Gravelbike, Wandern, Fitnesscenter">
       </div>
-      <button class="close" data-close="dayDialog">Schließen</button>
+      <button type="button" class="primary" id="saveOtherActivityButton">Aktivität speichern</button>
     </div>
-
-    <label for="dayStatus">Status</label>
-    <select id="dayStatus">
-      <option value="open">Offen</option>
-      <option value="training">Kettlebell-Training</option>
-      <option value="other_training">Anderes Training</option>
-      <option value="no_training">Pause</option>
-    </select>
-
-    <div id="otherTrainingFields" style="display:none">
-      <label for="otherTrainingName">Training / Aktivität</label>
-      <input id="otherTrainingName" placeholder="z. B. Wandern, Fahrradtour, Schwimmen">
+    <div class="dialog-footer">
+      <button class="secondary" value="cancel">Abbrechen</button>
     </div>
-
-    <div class="modal-actions">
-      <button class="primary" id="saveDayBtn">Speichern</button>
-      <button class="secondary" data-close="dayDialog">Abbrechen</button>
-    </div>
-  </div>
+  </form>
 </dialog>
 
-<dialog id="settingsDialog"><div class="modal"><div class="modal-head"><div><h2>Trainingsplan bearbeiten</h2><div class="subtle">Diese Übungen erscheinen beim Start eines Trainings.</div></div><button class="close" data-close="settingsDialog">Schließen</button></div><div id="planEditor"></div><div class="settings-section"><h3>Übung hinzufügen</h3><div class="form-grid"><div><label for="newName">Übung</label><input id="newName" placeholder="z. B. Kettlebell Floor Press"></div><div><label for="newAmount">Wiederholungen</label><input id="newAmount" inputmode="decimal" placeholder="10"></div><div><label for="newMode">Ausführung</label><select id="newMode"><option value="normal">normal</option><option value="unilateral">einseitig</option><option value="bilateral">beidseitig</option></select></div></div><div class="modal-actions"><button class="primary" id="addPlanItemBtn">Übung hinzufügen</button></div></div><div class="settings-section"><h3>Daten</h3><div class="modal-actions"><button class="secondary" id="exportBtn">CSV exportieren</button><label for="fileInput" class="secondary" style="text-align:center;display:block;cursor:pointer">CSV importieren</label><input id="fileInput" type="file" accept=".csv,.txt,text/csv,text/plain" style="display:none"><button class="danger" id="resetBtn">Alle Einträge löschen</button></div></div><div class="version">Fitness-Tracker 4.1</div></div></dialog>
+<dialog id="exerciseDialog">
+  <form method="dialog" class="dialog-body" id="exerciseForm">
+    <h2 id="exerciseDialogTitle">Übung hinzufügen</h2>
+    <p>Lege Name, Wiederholungen und Ausführung fest.</p>
+    <div class="form-grid">
+      <div>
+        <label for="exerciseNameInput">Name</label>
+        <input id="exerciseNameInput" maxlength="60" required placeholder="z. B. Swings">
+      </div>
+      <div>
+        <label for="exerciseRepsInput">Wiederholungen</label>
+        <input id="exerciseRepsInput" type="number" min="1" max="999" required inputmode="numeric">
+      </div>
+      <label class="checkbox-line">
+        <input id="exerciseUnilateralInput" type="checkbox">
+        Einseitige Ausführung
+      </label>
+    </div>
+    <div class="dialog-footer">
+      <button type="submit" class="primary">Speichern</button>
+      <button class="secondary" value="cancel">Abbrechen</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
-(function(){
-const APP_VERSION='4.1',FIRST_STAT_START='2026-07-20',SE='fitnessTrackerEntriesV2',SS='fitnessTrackerSettingsV2',SP='fitnessTrackerProgressV4';
-const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)},add=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)},today=()=>iso(new Date()),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const defaults=[{name:'Kettlebell Swings',amount:'90',unit:'Wdh.',mode:'normal'},{name:'Kettlebell Squats',amount:'24',unit:'Wdh.',mode:'normal'},{name:'Kettlebell Rows',amount:'12',unit:'Wdh.',mode:'bilateral'},{name:'Kettlebell Shoulder Press',amount:'10',unit:'Wdh.',mode:'bilateral'},{name:'Kettlebell Floor Press',amount:'10',unit:'Wdh.',mode:'unilateral'},{name:'Single Arm Overhead Triceps Extension',amount:'10',unit:'Wdh.',mode:'unilateral'}];
-function load(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}}function norm(e){return{name:String(e.name||e.exercise||'Übung'),amount:String(e.amount??e.value??''),unit:String(e.unit||'Wdh.'),mode:['normal','unilateral','bilateral'].includes(e.mode)?e.mode:'normal'}}
-let entries=load(SE,{}),old=load(SS,{}),settings={version:APP_VERSION,kettlebellSet:Array.isArray(old.kettlebellSet)&&old.kettlebellSet.length?old.kettlebellSet.map(norm):defaults.map(norm)},progress=load(SP,{}),checks=[];
-function save(){localStorage.setItem(SE,JSON.stringify(entries));localStorage.setItem(SS,JSON.stringify({...old,...settings,version:APP_VERSION}));localStorage.setItem(SP,JSON.stringify(progress))}
-function entry(d){const e=entries[d];return e?{status:e.status||'open',exercises:(e.exercises||[]).map(norm),activity:String(e.activity||''),updatedAt:e.updatedAt||''}:{status:'open',exercises:[],activity:''}}
-function setEntry(d,status,ex=[],activity=''){if(status==='open')delete entries[d];else entries[d]={status,exercises:ex.map(norm),activity:String(activity||''),updatedAt:new Date().toISOString()};save();render()}
-function label(s){return s==='training'?'Kettlebell-Training':s==='other_training'?'Anderes Training':s==='no_training'?'Pause':'Offen'}function exLabel(e){return (e.mode==='normal'?e.amount:`${e.amount} je Seite`)+(e.unit?' '+e.unit:'')}function between(a,b){return Math.round((parse(b)-parse(a))/86400000)}
-function statStart(y){return y===2026?FIRST_STAT_START:`${y}-01-01`}
-function stats(a,b){let training=0,pause=0,total=Math.max(0,between(a,b)+1);for(let d=a;d<=b;d=add(d,1)){const s=entry(d).status;if(s==='training'||s==='other_training')training++;if(s==='no_training')pause++}return{total,training,pause,open:Math.max(0,total-training-pause),quote:total?Math.round(training/total*100):0}}
-function streak(){let n=0,y=+today().slice(0,4),start=statStart(y);for(let d=today();d>=start;d=add(d,-1)){if(['training','other_training'].includes(entry(d).status))n++;else break}return n}
-function longDate(s){return parse(s).toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}function shortDate(s){return parse(s).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}
-function render(){const t=today(),e=entry(t),y=+t.slice(0,4),ys=stats(statStart(y),t),ms=stats(t.slice(0,7)+'-01',t);$('todayDate').textContent=longDate(t);$('todayStatus').textContent=label(e.status);$('todayStatus').className='badge '+(['training','other_training'].includes(e.status)?'training':e.status==='no_training'?'pause':'');$('heroTitle').textContent=['training','other_training'].includes(e.status)?'Training erledigt.':e.status==='no_training'?'Heute ist Pause.':'Bereit für dein Training?';$('heroText').textContent=['training','other_training'].includes(e.status)?(e.activity?e.activity+' ist für heute eingetragen.':'Der wichtigste Schritt ist gemacht. Morgen wartet die nächste Gelegenheit.'):e.status==='no_training'?'Erholung gehört dazu. Du kannst den Status jederzeit ändern.':'Ein kurzer Start ist besser als ein perfekter Plan. Öffne dein Set und hake die Übungen Schritt für Schritt ab.';$('startTrainingBtn').textContent=e.status==='training'?'Training ansehen':'Training starten';$('pauseBtn').textContent=e.status==='no_training'?'Pause eingetragen':'Heute Pause';$('streakNum').textContent=streak();$('monthNum').textContent=ms.training;$('quoteNum').textContent=ys.quote+'%';$('statsSummary').textContent='Statistik '+y;renderDays();renderStats();renderPlan();save()}
-function renderDays(){const box=$('daysGrid');box.innerHTML='';for(let i=20;i>=0;i--){const d=add(today(),-i),e=entry(d),s=e.status,x=document.createElement('button');x.type='button';x.className='day '+(['training','other_training'].includes(s)?'training':s==='no_training'?'pause':'');x.title=longDate(d)+(e.activity?' · '+e.activity:'');x.setAttribute('aria-label',longDate(d)+': '+label(s));x.innerHTML=`<b>${parse(d).toLocaleDateString('de-DE',{day:'2-digit'})}</b><span>${['training','other_training'].includes(s)?'✓':s==='no_training'?'–':'·'}</span>`;x.onclick=()=>openDay(d);box.appendChild(x)}}
-function renderStats(){const now=+today().slice(0,4);let html='';for(let y=2026;y<=now;y++){const a=statStart(y),b=y===now?today():`${y}-12-31`,s=stats(a,b);html+=`<details ${y===now?'open':''}><summary>${y}${y<now?' · archiviert':''}</summary><div style="margin-top:8px"><div class="stat-row"><div class="row-title">Zeitraum</div><strong>${parse(a).toLocaleDateString('de-DE')}–${parse(b).toLocaleDateString('de-DE')}</strong></div>${[['Gesamttage',s.total],['Trainingstage',s.training],['Pausentage',s.pause],['Offene Tage',s.open],['Trainingsquote',s.quote+'%']].map(v=>`<div class="stat-row"><div class="row-title">${v[0]}</div><strong>${v[1]}</strong></div>`).join('')}</div></details>`}$('statsDetails').innerHTML=html}
-let selectedDay='';
-function openDay(d){selectedDay=d;const e=entry(d);$('dayDialogDate').textContent=longDate(d);$('dayStatus').value=e.status;$('otherTrainingName').value=e.activity||'';toggleOther();$('dayDialog').showModal()}
-function toggleOther(){$('otherTrainingFields').style.display=$('dayStatus').value==='other_training'?'block':'none'}
-function saveSelectedDay(){const s=$('dayStatus').value,a=$('otherTrainingName').value.trim();if(s==='other_training'&&!a)return alert('Bitte die Aktivität eintragen.');if(s==='training')setEntry(selectedDay,'training',settings.kettlebellSet);else if(s==='other_training')setEntry(selectedDay,'other_training',[],a);else if(s==='no_training')setEntry(selectedDay,'no_training',[]);else setEntry(selectedDay,'open',[]);$('dayDialog').close()}
-function openTraining(){const t=today(),saved=progress[t];checks=Array(settings.kettlebellSet.length).fill(false);if(Array.isArray(saved)&&saved.length===checks.length)checks=saved.slice();if(entry(t).status==='training')checks=checks.map(()=>true);$('trainingDate').textContent=longDate(t);renderWorkout();$('trainingDialog').showModal()}
-function renderWorkout(){const box=$('workoutList');box.innerHTML=settings.kettlebellSet.length?settings.kettlebellSet.map((e,i)=>`<label class="workout-item ${checks[i]?'done':''}"><input type="checkbox" data-check="${i}" ${checks[i]?'checked':''}><span><div class="workout-name">${esc(e.name)}</div><div class="workout-meta">${esc(exLabel(e))}</div></span></label>`).join(''):'<div class="subtle">Noch keine Übung angelegt.</div>';box.querySelectorAll('[data-check]').forEach(c=>c.onchange=()=>{checks[+c.dataset.check]=c.checked;progress[today()]=checks.slice();save();renderWorkout()});const done=checks.length&&checks.every(Boolean);$('completionBox').classList.toggle('show',!!done);$('completeTrainingBtn').textContent=done?'Training abschließen':'Als Training speichern'}
-function renderPlan(){const box=$('planEditor');box.innerHTML=settings.kettlebellSet.length?settings.kettlebellSet.map((e,i)=>`<div class="edit-row"><div><div class="row-title">${esc(e.name)}</div><div class="row-meta">${esc(exLabel(e))} · ${e.mode==='normal'?'normal':e.mode==='bilateral'?'beidseitig':'einseitig'}</div></div><div style="display:flex;gap:5px"><button class="small-btn" data-up="${i}" ${i===0?'disabled':''}>↑</button><button class="small-btn" data-down="${i}" ${i===settings.kettlebellSet.length-1?'disabled':''}>↓</button><button class="small-btn" data-edit="${i}">✎</button><button class="small-btn" data-remove="${i}">×</button></div></div>`).join(''):'<div class="subtle">Noch keine Übung angelegt.</div>';box.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>move(+b.dataset.up,-1));box.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>move(+b.dataset.down,1));box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{settings.kettlebellSet.splice(+b.dataset.remove,1);progress={};save();render()});box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const i=+b.dataset.edit,e=settings.kettlebellSet[i],name=prompt('Name der Übung',e.name);if(name===null)return;const amount=prompt('Wiederholungen / Dauer',e.amount);if(amount===null)return;const mode=prompt('Modus: normal, einseitig oder beidseitig',e.mode==='unilateral'?'einseitig':e.mode==='bilateral'?'beidseitig':'normal');if(mode===null)return;settings.kettlebellSet[i]=norm({name:name.trim()||e.name,amount:amount.trim(),unit:'Wdh.',mode:mode.toLowerCase().startsWith('ein')?'unilateral':mode.toLowerCase().startsWith('bei')?'bilateral':'normal'});progress={};save();render()})}
-function move(i,d){const j=i+d;if(j<0||j>=settings.kettlebellSet.length)return;const x=settings.kettlebellSet.splice(i,1)[0];settings.kettlebellSet.splice(j,0,x);progress={};save();render()}
-function parseCsv(text){const rows=[];let row=[],cell='',q=false;for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(q&&ch==='"'&&next==='"'){cell+='"';i++}else if(ch==='"')q=!q;else if(!q&&(ch===';'||ch===',')){row.push(cell);cell=''}else if(!q&&(ch==='\n'||ch==='\r')){if(ch==='\r'&&next==='\n')i++;row.push(cell);if(row.some(x=>x!==''))rows.push(row);row=[];cell=''}else cell+=ch}row.push(cell);if(row.some(x=>x!==''))rows.push(row);const headers=rows.shift()||[];return rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]||''])))}
-function importCsv(file){if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const rows=parseCsv(String(reader.result||'').replace(/^\uFEFF/,''));rows.forEach(row=>{if(!row.date)return;let exercises=[];if(row.exercises_json){try{exercises=JSON.parse(row.exercises_json).map(norm)}catch(e){}}entries[row.date]={status:row.status||'open',activity:row.activity||'',exercises,updatedAt:row.updated_at||new Date().toISOString()}});save();render();alert('Import abgeschlossen.')}catch(e){alert('Import fehlgeschlagen.')}};reader.readAsText(file,'UTF-8')}
-function exportCsv(){const rows=[['date','status','activity','exercises_json','updated_at']];Object.entries(entries).sort().forEach(([d,e])=>rows.push([d,e.status||'open',e.activity||'',JSON.stringify((e.exercises||[]).map(norm)),e.updatedAt||'']));const csv=rows.map(r=>r.map(v=>{v=String(v??'');return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(';')).join('\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`fitness-tracker-${today()}.csv`;a.click();URL.revokeObjectURL(url)}
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());$('dayStatus').onchange=toggleOther;$('saveDayBtn').onclick=saveSelectedDay;$('settingsBtn').onclick=()=>{$('settingsDialog').showModal();renderPlan()};$('startTrainingBtn').onclick=openTraining;$('pauseBtn').onclick=()=>{setEntry(today(),'no_training',[]);progress[today()]=[];save()};$('completeTrainingBtn').onclick=()=>{setEntry(today(),'training',settings.kettlebellSet);progress[today()]=settings.kettlebellSet.map(()=>true);save();$('trainingDialog').close()};$('addPlanItemBtn').onclick=()=>{const name=$('newName').value.trim(),amount=$('newAmount').value.trim(),mode=$('newMode').value;if(!name||!amount)return alert('Bitte Übung und Wiederholungen eintragen.');settings.kettlebellSet.push(norm({name,amount,unit:'Wdh.',mode}));$('newName').value='';$('newAmount').value='';$('newMode').value='normal';progress={};save();render()};$('exportBtn').onclick=exportCsv;$('fileInput').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importCsv(f);e.target.value=''};$('resetBtn').onclick=()=>{if(confirm('Wirklich alle Trainingseinträge löschen? Der Trainingsplan bleibt erhalten.')){entries={};progress={};save();render()}}
-render()
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'fitnessTracker42';
+  const APP_VERSION = 1;
+  const TRACKING_START = '2026-07-20';
+
+  const defaultExercises = [
+    { id: cryptoId(), name: 'Swings', reps: 90, unilateral: false },
+    { id: cryptoId(), name: 'Squats', reps: 24, unilateral: false },
+    { id: cryptoId(), name: 'Rows', reps: 12, unilateral: true },
+    { id: cryptoId(), name: 'Liegestütze', reps: 23, unilateral: false },
+    { id: cryptoId(), name: 'Plank', reps: 60, unilateral: false }
+  ];
+
+  const state = loadState();
+  let activeScreen = 'home';
+  let selectedDate = null;
+  let editingExerciseId = null;
+  let workout = null;
+  let toastTimer = null;
+
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+  const els = {
+    header: $('#appHeader'),
+    headerDate: $('#headerDate'),
+    settingsButton: $('#settingsButton'),
+    homeScreen: $('#homeScreen'),
+    trainingScreen: $('#trainingScreen'),
+    finishScreen: $('#finishScreen'),
+    settingsScreen: $('#settingsScreen'),
+    todayStatus: $('#todayStatus'),
+    startTrainingButton: $('#startTrainingButton'),
+    pauseTodayButton: $('#pauseTodayButton'),
+    currentStreak: $('#currentStreak'),
+    longestStreak: $('#longestStreak'),
+    calendarGrid: $('#calendarGrid'),
+    trainingCounter: $('#trainingCounter'),
+    progressBar: $('#progressBar'),
+    motivationText: $('#motivationText'),
+    exerciseName: $('#exerciseName'),
+    exerciseReps: $('#exerciseReps'),
+    exerciseSide: $('#exerciseSide'),
+    cancelTrainingButton: $('#cancelTrainingButton'),
+    completeExerciseButton: $('#completeExerciseButton'),
+    skipExerciseButton: $('#skipExerciseButton'),
+    finishCurrentStreak: $('#finishCurrentStreak'),
+    finishLongestStreak: $('#finishLongestStreak'),
+    finishHomeButton: $('#finishHomeButton'),
+    exerciseList: $('#exerciseList'),
+    addExerciseButton: $('#addExerciseButton'),
+    statsHeading: $('#statsHeading'),
+    statsYear: $('#statsYear'),
+    statTraining: $('#statTraining'),
+    statOther: $('#statOther'),
+    statPause: $('#statPause'),
+    statRate: $('#statRate'),
+    statsPeriod: $('#statsPeriod'),
+    exportCsvButton: $('#exportCsvButton'),
+    exportBackupButton: $('#exportBackupButton'),
+    importButton: $('#importButton'),
+    importFile: $('#importFile'),
+    resetButton: $('#resetButton'),
+    closeSettingsButton: $('#closeSettingsButton'),
+    dayDialog: $('#dayDialog'),
+    dayDialogTitle: $('#dayDialogTitle'),
+    dayDialogSubtitle: $('#dayDialogSubtitle'),
+    otherActivityFields: $('#otherActivityFields'),
+    otherActivityName: $('#otherActivityName'),
+    saveOtherActivityButton: $('#saveOtherActivityButton'),
+    exerciseDialog: $('#exerciseDialog'),
+    exerciseDialogTitle: $('#exerciseDialogTitle'),
+    exerciseForm: $('#exerciseForm'),
+    exerciseNameInput: $('#exerciseNameInput'),
+    exerciseRepsInput: $('#exerciseRepsInput'),
+    exerciseUnilateralInput: $('#exerciseUnilateralInput'),
+    toast: $('#toast')
+  };
+
+  function cryptoId() {
+    if (globalThis.crypto?.randomUUID) return crypto.randomUUID();
+    return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+  }
+
+  function initialState() {
+    return {
+      version: APP_VERSION,
+      exercises: defaultExercises.map(item => ({...item})),
+      days: {}
+    };
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return initialState();
+      const parsed = JSON.parse(raw);
+      return normalizeState(parsed);
+    } catch (error) {
+      console.warn('Gespeicherte Daten konnten nicht geladen werden.', error);
+      return initialState();
+    }
+  }
+
+  function normalizeState(input) {
+    const safe = initialState();
+    if (!input || typeof input !== 'object') return safe;
+
+    if (Array.isArray(input.exercises) && input.exercises.length) {
+      safe.exercises = input.exercises
+        .filter(item => item && typeof item.name === 'string')
+        .map(item => ({
+          id: typeof item.id === 'string' ? item.id : cryptoId(),
+          name: item.name.trim().slice(0, 60) || 'Übung',
+          reps: clampNumber(item.reps, 1, 999, 1),
+          unilateral: Boolean(item.unilateral)
+        }));
+    }
+
+    if (input.days && typeof input.days === 'object') {
+      for (const [date, entry] of Object.entries(input.days)) {
+        if (!isIsoDate(date) || !entry || typeof entry !== 'object') continue;
+        if (!['training', 'pause', 'other'].includes(entry.status)) continue;
+        safe.days[date] = {
+          status: entry.status,
+          detail: typeof entry.detail === 'string' ? entry.detail.slice(0, 80) : '',
+          completedAt: typeof entry.completedAt === 'string' ? entry.completedAt : ''
+        };
+      }
+    }
+
+    return safe;
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function clampNumber(value, min, max, fallback) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return fallback;
+    return Math.min(max, Math.max(min, Math.round(number)));
+  }
+
+  function isIsoDate(value) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(new Date(value + 'T12:00:00').getTime());
+  }
+
+  function localDate(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function parseIso(dateString) {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day, 12, 0, 0, 0);
+  }
+
+  function addDays(dateString, amount) {
+    const date = parseIso(dateString);
+    date.setDate(date.getDate() + amount);
+    return localDate(date);
+  }
+
+  function formatDate(dateString, options = {}) {
+    const defaults = { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Intl.DateTimeFormat('de-DE', {...defaults, ...options}).format(parseIso(dateString));
+  }
+
+  function today() {
+    return localDate();
+  }
+
+  function setScreen(name) {
+    activeScreen = name;
+    els.homeScreen.hidden = name !== 'home';
+    els.trainingScreen.hidden = name !== 'training';
+    els.finishScreen.hidden = name !== 'finish';
+    els.settingsScreen.hidden = name !== 'settings';
+    els.settingsButton.hidden = name === 'training' || name === 'finish';
+    window.scrollTo({top: 0, behavior: 'instant'});
+  }
+
+  function renderAll() {
+    els.headerDate.textContent = formatDate(today(), {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'});
+    renderHome();
+    renderExerciseList();
+    renderYearOptions();
+    renderStats();
+  }
+
+  function renderHome() {
+    const todayEntry = state.days[today()];
+    if (!todayEntry) {
+      els.todayStatus.textContent = 'Der Tag ist noch offen.';
+      els.startTrainingButton.textContent = 'Training starten';
+      els.pauseTodayButton.textContent = 'Heute Pause';
+    } else if (todayEntry.status === 'training') {
+      els.todayStatus.textContent = 'Training ist für heute erledigt.';
+      els.startTrainingButton.textContent = 'Training erneut starten';
+      els.pauseTodayButton.textContent = 'Auf Pause ändern';
+    } else if (todayEntry.status === 'pause') {
+      els.todayStatus.textContent = 'Heute ist als Pausentag eingetragen.';
+      els.startTrainingButton.textContent = 'Doch trainieren';
+      els.pauseTodayButton.textContent = 'Pause eingetragen';
+    } else {
+      els.todayStatus.textContent = todayEntry.detail
+        ? `Andere Aktivität: ${todayEntry.detail}`
+        : 'Eine andere Aktivität ist eingetragen.';
+      els.startTrainingButton.textContent = 'Kettlebell-Training starten';
+      els.pauseTodayButton.textContent = 'Auf Pause ändern';
+    }
+
+    const streaks = calculateStreaks();
+    els.currentStreak.textContent = streaks.current;
+    els.longestStreak.textContent = streaks.longest;
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    els.calendarGrid.innerHTML = '';
+    const end = today();
+    const start = addDays(end, -20);
+
+    for (let cursor = start; cursor <= end; cursor = addDays(cursor, 1)) {
+      const entry = state.days[cursor];
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'day-cell';
+      button.dataset.date = cursor;
+      button.dataset.status = entry?.status || 'open';
+      if (cursor === end) button.classList.add('today');
+
+      const date = parseIso(cursor);
+      const icon = entry?.status === 'training' ? '✓'
+        : entry?.status === 'pause' ? '–'
+        : entry?.status === 'other' ? '◆' : '';
+
+      button.innerHTML = `
+        <span class="day-number">${date.getDate()}</span>
+        <span class="day-month">${new Intl.DateTimeFormat('de-DE',{month:'short'}).format(date).replace('.','')}</span>
+        <span class="day-icon">${icon}</span>
+      `;
+      button.setAttribute('aria-label', `${formatDate(cursor)}: ${statusLabel(entry)}`);
+      button.addEventListener('click', () => openDayDialog(cursor));
+      els.calendarGrid.appendChild(button);
+    }
+  }
+
+  function statusLabel(entry) {
+    if (!entry) return 'Offen';
+    if (entry.status === 'training') return 'Kettlebell-Training';
+    if (entry.status === 'pause') return 'Pause';
+    if (entry.status === 'other') return entry.detail ? `Andere Aktivität: ${entry.detail}` : 'Andere Aktivität';
+    return 'Offen';
+  }
+
+  function openDayDialog(date) {
+    if (date > today()) return;
+    selectedDate = date;
+    els.dayDialogTitle.textContent = 'Tag bearbeiten';
+    els.dayDialogSubtitle.textContent = formatDate(date);
+    els.otherActivityFields.hidden = true;
+    els.otherActivityName.value = state.days[date]?.status === 'other' ? state.days[date].detail || '' : '';
+    els.dayDialog.showModal();
+  }
+
+  function setDay(date, status, detail = '') {
+    if (status === 'open') {
+      delete state.days[date];
+    } else {
+      state.days[date] = {
+        status,
+        detail: status === 'other' ? detail.trim().slice(0, 80) : '',
+        completedAt: new Date().toISOString()
+      };
+    }
+    saveState();
+    renderAll();
+  }
+
+  function calculateStreaks() {
+    const activeDates = new Set(
+      Object.entries(state.days)
+        .filter(([, entry]) => entry.status === 'training' || entry.status === 'other')
+        .map(([date]) => date)
+    );
+
+    const sorted = [...activeDates].sort();
+    let longest = 0;
+    let running = 0;
+    let previous = null;
+
+    for (const date of sorted) {
+      if (previous && addDays(previous, 1) === date) {
+        running += 1;
+      } else {
+        running = 1;
+      }
+      longest = Math.max(longest, running);
+      previous = date;
+    }
+
+    let current = 0;
+    let cursor = today();
+    if (!activeDates.has(cursor)) cursor = addDays(cursor, -1);
+    while (activeDates.has(cursor)) {
+      current += 1;
+      cursor = addDays(cursor, -1);
+    }
+
+    return { current, longest };
+  }
+
+  function startWorkout() {
+    if (!state.exercises.length) {
+      showToast('Lege zuerst mindestens eine Übung an.');
+      openSettings();
+      return;
+    }
+    workout = {
+      index: 0,
+      skipped: 0,
+      startedAt: new Date().toISOString()
+    };
+    setScreen('training');
+    renderWorkout();
+  }
+
+  function renderWorkout() {
+    if (!workout) return;
+    const exercise = state.exercises[workout.index];
+    if (!exercise) {
+      finishWorkout();
+      return;
+    }
+
+    const total = state.exercises.length;
+    const done = workout.index;
+    els.trainingCounter.textContent = `Übung ${workout.index + 1} von ${total}`;
+    els.progressBar.style.width = `${(done / total) * 100}%`;
+    els.exerciseName.textContent = exercise.name;
+    els.exerciseReps.textContent = exercise.reps;
+    els.exerciseSide.textContent = exercise.unilateral ? 'je Seite' : '';
+    els.motivationText.textContent = motivationForProgress(done, total);
+  }
+
+  function motivationForProgress(done, total) {
+    if (done === 0) return 'Los geht’s.';
+    const ratio = done / total;
+    if (ratio < .5) return 'Starker Anfang.';
+    if (ratio === .5) return 'Halbzeit.';
+    if (ratio < .8) return 'Du bist gut im Rhythmus.';
+    if (ratio < 1) return 'Fast geschafft.';
+    return 'Stark.';
+  }
+
+  function nextExercise(skipped = false) {
+    if (!workout) return;
+    if (skipped) workout.skipped += 1;
+    workout.index += 1;
+    if (workout.index >= state.exercises.length) {
+      els.progressBar.style.width = '100%';
+      finishWorkout();
+    } else {
+      renderWorkout();
+    }
+  }
+
+  function finishWorkout() {
+    setDay(today(), 'training');
+    const streaks = calculateStreaks();
+    els.finishCurrentStreak.textContent = streaks.current;
+    els.finishLongestStreak.textContent = streaks.longest;
+    workout = null;
+    setScreen('finish');
+  }
+
+  function cancelWorkout() {
+    if (!confirm('Training wirklich beenden? Der heutige Tag bleibt unverändert.')) return;
+    workout = null;
+    setScreen('home');
+    renderHome();
+  }
+
+  function openSettings() {
+    setScreen('settings');
+    renderExerciseList();
+    renderYearOptions();
+    renderStats();
+  }
+
+  function renderExerciseList() {
+    els.exerciseList.innerHTML = '';
+    if (!state.exercises.length) {
+      els.exerciseList.innerHTML = '<div class="empty-state">Noch keine Übungen vorhanden.</div>';
+      return;
+    }
+
+    state.exercises.forEach((exercise, index) => {
+      const row = document.createElement('div');
+      row.className = 'exercise-row';
+      row.innerHTML = `
+        <div>
+          <strong>${escapeHtml(exercise.name)}</strong>
+          <div class="exercise-meta">${exercise.reps} ${exercise.unilateral ? 'je Seite' : 'Wiederholungen'}</div>
+        </div>
+        <div class="row-actions">
+          <button type="button" data-action="up" title="Nach oben" ${index === 0 ? 'disabled' : ''}>↑</button>
+          <button type="button" data-action="down" title="Nach unten" ${index === state.exercises.length - 1 ? 'disabled' : ''}>↓</button>
+          <button type="button" data-action="edit" title="Bearbeiten">✎</button>
+          <button type="button" data-action="delete" title="Löschen">×</button>
+        </div>
+      `;
+
+      row.querySelector('[data-action="up"]').addEventListener('click', () => moveExercise(index, -1));
+      row.querySelector('[data-action="down"]').addEventListener('click', () => moveExercise(index, 1));
+      row.querySelector('[data-action="edit"]').addEventListener('click', () => openExerciseDialog(exercise.id));
+      row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteExercise(exercise.id));
+      els.exerciseList.appendChild(row);
+    });
+  }
+
+  function moveExercise(index, offset) {
+    const target = index + offset;
+    if (target < 0 || target >= state.exercises.length) return;
+    [state.exercises[index], state.exercises[target]] = [state.exercises[target], state.exercises[index]];
+    saveState();
+    renderExerciseList();
+  }
+
+  function openExerciseDialog(id = null) {
+    editingExerciseId = id;
+    const exercise = state.exercises.find(item => item.id === id);
+    els.exerciseDialogTitle.textContent = exercise ? 'Übung bearbeiten' : 'Übung hinzufügen';
+    els.exerciseNameInput.value = exercise?.name || '';
+    els.exerciseRepsInput.value = exercise?.reps || '';
+    els.exerciseUnilateralInput.checked = Boolean(exercise?.unilateral);
+    els.exerciseDialog.showModal();
+    setTimeout(() => els.exerciseNameInput.focus(), 50);
+  }
+
+  function saveExercise(event) {
+    event.preventDefault();
+    const name = els.exerciseNameInput.value.trim();
+    const reps = clampNumber(els.exerciseRepsInput.value, 1, 999, 1);
+    if (!name) return;
+
+    if (editingExerciseId) {
+      const exercise = state.exercises.find(item => item.id === editingExerciseId);
+      if (exercise) {
+        exercise.name = name.slice(0, 60);
+        exercise.reps = reps;
+        exercise.unilateral = els.exerciseUnilateralInput.checked;
+      }
+    } else {
+      state.exercises.push({
+        id: cryptoId(),
+        name: name.slice(0, 60),
+        reps,
+        unilateral: els.exerciseUnilateralInput.checked
+      });
+    }
+
+    saveState();
+    renderExerciseList();
+    els.exerciseDialog.close();
+    showToast('Trainingsplan gespeichert.');
+  }
+
+  function deleteExercise(id) {
+    const exercise = state.exercises.find(item => item.id === id);
+    if (!exercise) return;
+    if (!confirm(`„${exercise.name}“ wirklich löschen?`)) return;
+    state.exercises = state.exercises.filter(item => item.id !== id);
+    saveState();
+    renderExerciseList();
+  }
+
+  function availableYears() {
+    const startYear = Number(TRACKING_START.slice(0,4));
+    const currentYear = new Date().getFullYear();
+    const entryYears = Object.keys(state.days).map(date => Number(date.slice(0,4)));
+    const maxYear = Math.max(currentYear, startYear, ...entryYears);
+    const years = [];
+    for (let year = startYear; year <= maxYear; year += 1) years.push(year);
+    return years.reverse();
+  }
+
+  function renderYearOptions() {
+    const previousValue = Number(els.statsYear.value) || new Date().getFullYear();
+    const years = availableYears();
+    els.statsYear.innerHTML = years.map(year => `<option value="${year}">${year}</option>`).join('');
+    els.statsYear.value = years.includes(previousValue) ? String(previousValue) : String(years[0]);
+  }
+
+  function yearStart(year) {
+    return year === 2026 ? TRACKING_START : `${year}-01-01`;
+  }
+
+  function yearEnd(year) {
+    const candidate = `${year}-12-31`;
+    return year === new Date().getFullYear() && today() < candidate ? today() : candidate;
+  }
+
+  function renderStats() {
+    const year = Number(els.statsYear.value) || new Date().getFullYear();
+    const start = yearStart(year);
+    const end = yearEnd(year);
+    els.statsHeading.textContent = `Statistik ${year}`;
+
+    let training = 0;
+    let other = 0;
+    let pause = 0;
+
+    for (const [date, entry] of Object.entries(state.days)) {
+      if (date < start || date > end) continue;
+      if (entry.status === 'training') training += 1;
+      if (entry.status === 'other') other += 1;
+      if (entry.status === 'pause') pause += 1;
+    }
+
+    const documented = training + other + pause;
+    const active = training + other;
+    const rate = documented ? Math.round(active / documented * 100) : 0;
+
+    els.statTraining.textContent = training;
+    els.statOther.textContent = other;
+    els.statPause.textContent = pause;
+    els.statRate.textContent = `${rate} %`;
+    els.statsPeriod.textContent = `Auswertungszeitraum: ${formatDate(start, {day:'2-digit',month:'2-digit',year:'numeric'})} bis ${formatDate(end, {day:'2-digit',month:'2-digit',year:'numeric'})}. Offene Tage fließen nicht in die Quote ein.`;
+  }
+
+  function exportCsv() {
+    const rows = [['Datum','Status','Aktivität','Erfasst am']];
+    Object.keys(state.days).sort().forEach(date => {
+      const entry = state.days[date];
+      rows.push([
+        date,
+        entry.status,
+        entry.detail || '',
+        entry.completedAt || ''
+      ]);
+    });
+
+    const csv = rows.map(row => row.map(csvCell).join(';')).join('\n');
+    downloadBlob('\ufeff' + csv, `fitness-daten-${today()}.csv`, 'text/csv;charset=utf-8');
+  }
+
+  function csvCell(value) {
+    return `"${String(value).replaceAll('"','""')}"`;
+  }
+
+  function exportBackup() {
+    const payload = {
+      app: 'Fitness Tracker 4.2',
+      exportedAt: new Date().toISOString(),
+      data: state
+    };
+    downloadBlob(JSON.stringify(payload, null, 2), `fitness-backup-${today()}.json`, 'application/json');
+  }
+
+  async function importBackup(file) {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const imported = normalizeState(parsed.data || parsed);
+      if (!confirm('Vorhandene Daten durch dieses Backup ersetzen?')) return;
+      state.exercises = imported.exercises;
+      state.days = imported.days;
+      state.version = APP_VERSION;
+      saveState();
+      renderAll();
+      showToast('Backup importiert.');
+    } catch (error) {
+      console.error(error);
+      alert('Die Datei konnte nicht importiert werden.');
+    } finally {
+      els.importFile.value = '';
+    }
+  }
+
+  function downloadBlob(content, filename, type) {
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function resetApp() {
+    const answer = prompt('Zum Löschen bitte RESET eingeben:');
+    if (answer !== 'RESET') return;
+    const fresh = initialState();
+    state.exercises = fresh.exercises;
+    state.days = fresh.days;
+    state.version = APP_VERSION;
+    saveState();
+    renderAll();
+    showToast('App wurde zurückgesetzt.');
+  }
+
+  function showToast(message) {
+    clearTimeout(toastTimer);
+    els.toast.textContent = message;
+    els.toast.classList.add('show');
+    toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2600);
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'",'&#039;');
+  }
+
+  els.settingsButton.addEventListener('click', openSettings);
+  els.closeSettingsButton.addEventListener('click', () => {
+    setScreen('home');
+    renderHome();
+  });
+
+  els.startTrainingButton.addEventListener('click', startWorkout);
+  els.pauseTodayButton.addEventListener('click', () => {
+    setDay(today(), 'pause');
+    showToast('Pause für heute eingetragen.');
+  });
+
+  els.completeExerciseButton.addEventListener('click', () => nextExercise(false));
+  els.skipExerciseButton.addEventListener('click', () => nextExercise(true));
+  els.cancelTrainingButton.addEventListener('click', cancelWorkout);
+  els.finishHomeButton.addEventListener('click', () => {
+    setScreen('home');
+    renderHome();
+  });
+
+  $$('[data-day-status]').forEach(button => {
+    button.addEventListener('click', () => {
+      const status = button.dataset.dayStatus;
+      if (status === 'other') {
+        els.otherActivityFields.hidden = false;
+        setTimeout(() => els.otherActivityName.focus(), 50);
+        return;
+      }
+      setDay(selectedDate, status);
+      els.dayDialog.close();
+      showToast(status === 'open' ? 'Tag ist wieder offen.' : 'Tag aktualisiert.');
+    });
+  });
+
+  els.saveOtherActivityButton.addEventListener('click', () => {
+    const detail = els.otherActivityName.value.trim();
+    if (!detail) {
+      els.otherActivityName.focus();
+      return;
+    }
+    setDay(selectedDate, 'other', detail);
+    els.dayDialog.close();
+    showToast('Andere Aktivität gespeichert.');
+  });
+
+  els.addExerciseButton.addEventListener('click', () => openExerciseDialog());
+  els.exerciseForm.addEventListener('submit', saveExercise);
+  els.statsYear.addEventListener('change', renderStats);
+  els.exportCsvButton.addEventListener('click', exportCsv);
+  els.exportBackupButton.addEventListener('click', exportBackup);
+  els.importButton.addEventListener('click', () => els.importFile.click());
+  els.importFile.addEventListener('change', () => {
+    const [file] = els.importFile.files;
+    if (file) importBackup(file);
+  });
+  els.resetButton.addEventListener('click', resetApp);
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && activeScreen === 'home') renderAll();
+  });
+
+  renderAll();
+  setScreen('home');
 })();
 </script>
 </body>
