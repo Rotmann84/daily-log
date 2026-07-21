@@ -355,6 +355,47 @@
       gap:10px;
     }
 
+    .rest-stage{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align:center;
+      padding:4px 0 12px;
+    }
+    .rest-label{
+      color:var(--muted);
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .rest-countdown{
+      font-size:clamp(62px,18vw,96px);
+      line-height:1;
+      font-weight:950;
+      color:var(--accent-2);
+      margin:14px 0 12px;
+      font-variant-numeric:tabular-nums;
+    }
+    .rest-next{
+      color:var(--muted);
+      font-weight:800;
+      min-height:24px;
+    }
+    .rest-progress-track{
+      width:min(360px,90%);
+      height:10px;
+      border:1px solid var(--line-dark);
+      background:#fff;
+      margin:18px auto 0;
+    }
+    .rest-progress-bar{
+      height:100%;
+      width:100%;
+      background:var(--accent);
+      transition:width .2s linear;
+    }
 
     .exercise-stage.swap{animation:exerciseSwap .22s ease}
     @keyframes exerciseSwap{
@@ -598,13 +639,21 @@
         <div class="progress-track" aria-label="Trainingsfortschritt">
           <div class="progress-bar" id="progressBar"></div>
         </div>
-        <div class="exercise-stage">
+        <div class="exercise-stage" id="exerciseStage">
           <div class="motivation" id="motivationText">Los geht's.</div>
           <h1 class="exercise-name" id="exerciseName">Übung</h1>
           <div class="exercise-reps" id="exerciseReps">0</div>
           <div class="exercise-side" id="exerciseSide"></div>
         </div>
-        <div class="training-actions">
+        <div class="rest-stage" id="restStage" hidden aria-live="polite">
+          <div class="rest-label">Pause</div>
+          <div class="rest-countdown" id="restCountdown">01:00</div>
+          <div class="rest-next" id="restNext">Als Nächstes: Übung</div>
+          <div class="rest-progress-track" aria-label="Verbleibende Pausenzeit">
+            <div class="rest-progress-bar" id="restProgressBar"></div>
+          </div>
+        </div>
+        <div class="training-actions" id="trainingActions">
           <button class="primary" id="completeExerciseButton">Geschafft ✓</button>
           <button class="ghost" id="skipExerciseButton">Überspringen</button>
         </div>
@@ -636,6 +685,21 @@
           <button class="small-button" id="addExerciseButton">+ Übung</button>
         </div>
         <div class="exercise-list" id="exerciseList"></div>
+      </article>
+
+      <article class="settings-section">
+        <h2>Trainingsablauf</h2>
+        <p>Nach jeder abgeschlossenen Übung läuft die festgelegte Mindestpause. Danach erscheint automatisch die nächste Übung.</p>
+        <div class="form-grid">
+          <label class="checkbox-line">
+            <input id="restTimerEnabled" type="checkbox">
+            Pausentimer verwenden
+          </label>
+          <div>
+            <label for="restSeconds">Pausenzeit in Sekunden</label>
+            <input id="restSeconds" type="number" min="5" max="600" step="5" inputmode="numeric">
+          </div>
+        </div>
       </article>
 
       <article class="settings-section">
@@ -748,6 +812,8 @@
   let selectedDate = null;
   let editingExerciseId = null;
   let workout = null;
+  let restInterval = null;
+  let restEndsAt = 0;
   let toastTimer = null;
 
   const $ = (selector) => document.querySelector(selector);
@@ -774,6 +840,12 @@
     exerciseName: $('#exerciseName'),
     exerciseReps: $('#exerciseReps'),
     exerciseSide: $('#exerciseSide'),
+    exerciseStage: $('#exerciseStage'),
+    restStage: $('#restStage'),
+    restCountdown: $('#restCountdown'),
+    restNext: $('#restNext'),
+    restProgressBar: $('#restProgressBar'),
+    trainingActions: $('#trainingActions'),
     cancelTrainingButton: $('#cancelTrainingButton'),
     completeExerciseButton: $('#completeExerciseButton'),
     skipExerciseButton: $('#skipExerciseButton'),
@@ -782,6 +854,8 @@
     finishHomeButton: $('#finishHomeButton'),
     exerciseList: $('#exerciseList'),
     addExerciseButton: $('#addExerciseButton'),
+    restTimerEnabled: $('#restTimerEnabled'),
+    restSeconds: $('#restSeconds'),
     statsHeading: $('#statsHeading'),
     statsYear: $('#statsYear'),
     statTraining: $('#statTraining'),
@@ -820,6 +894,10 @@
     return {
       version: APP_VERSION,
       exercises: defaultExercises.map(item => ({...item})),
+      settings: {
+        restTimerEnabled: true,
+        restSeconds: 60
+      },
       days: {}
     };
   }
@@ -849,6 +927,11 @@
           reps: clampNumber(item.reps, 1, 999, 1),
           unilateral: Boolean(item.unilateral)
         }));
+    }
+
+    if (input.settings && typeof input.settings === 'object') {
+      safe.settings.restTimerEnabled = input.settings.restTimerEnabled !== false;
+      safe.settings.restSeconds = clampNumber(input.settings.restSeconds, 5, 600, 60);
     }
 
     if (input.days && typeof input.days === 'object') {
@@ -921,6 +1004,7 @@
     els.headerDate.textContent = formatDate(today(), {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'});
     renderHome();
     renderExerciseList();
+    renderTrainingSettings();
     renderYearOptions();
     renderStats();
   }
@@ -1060,6 +1144,7 @@
   }
 
   function startWorkout() {
+    stopRestTimer();
     if (!state.exercises.length) {
       showToast('Lege zuerst mindestens eine Übung an.');
       openSettings();
@@ -1076,6 +1161,10 @@
 
   function renderWorkout() {
     if (!workout) return;
+    stopRestTimer();
+    els.exerciseStage.hidden = false;
+    els.restStage.hidden = true;
+    els.trainingActions.hidden = false;
     const exercise = state.exercises[workout.index];
     if (!exercise) {
       finishWorkout();
@@ -1090,7 +1179,7 @@
     els.exerciseReps.textContent = exercise.reps;
     els.exerciseSide.textContent = exercise.unilateral ? 'je Seite' : '';
     els.motivationText.textContent = motivationForProgress(done, total);
-    const stage = document.querySelector('.exercise-stage');
+    const stage = els.exerciseStage;
     stage.classList.remove('swap');
     void stage.offsetWidth;
     stage.classList.add('swap');
@@ -1109,16 +1198,65 @@
   function nextExercise(skipped = false) {
     if (!workout) return;
     if (skipped) workout.skipped += 1;
-    workout.index += 1;
-    if (workout.index >= state.exercises.length) {
+
+    const isLastExercise = workout.index >= state.exercises.length - 1;
+    if (isLastExercise) {
       els.progressBar.style.width = '100%';
       finishWorkout();
-    } else {
-      renderWorkout();
+      return;
     }
+
+    if (!skipped && state.settings.restTimerEnabled && state.settings.restSeconds > 0) {
+      startRestTimer();
+      return;
+    }
+
+    workout.index += 1;
+    renderWorkout();
+  }
+
+  function startRestTimer() {
+    if (!workout) return;
+    const duration = clampNumber(state.settings.restSeconds, 5, 600, 60);
+    const nextExercise = state.exercises[workout.index + 1];
+    restEndsAt = Date.now() + duration * 1000;
+
+    els.exerciseStage.hidden = true;
+    els.restStage.hidden = false;
+    els.trainingActions.hidden = true;
+    els.restNext.textContent = `Als Nächstes: ${nextExercise?.name || 'nächste Übung'}`;
+    updateRestTimer(duration);
+
+    restInterval = window.setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((restEndsAt - Date.now()) / 1000));
+      updateRestTimer(remaining);
+      if (remaining <= 0) {
+        stopRestTimer();
+        if (!workout) return;
+        workout.index += 1;
+        renderWorkout();
+      }
+    }, 200);
+  }
+
+  function updateRestTimer(remaining) {
+    const total = clampNumber(state.settings.restSeconds, 5, 600, 60);
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    els.restCountdown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    els.restProgressBar.style.width = `${Math.max(0, Math.min(100, remaining / total * 100))}%`;
+  }
+
+  function stopRestTimer() {
+    if (restInterval !== null) {
+      clearInterval(restInterval);
+      restInterval = null;
+    }
+    restEndsAt = 0;
   }
 
   function finishWorkout() {
+    stopRestTimer();
     setDay(today(), 'training');
     const streaks = calculateStreaks();
     els.finishCurrentStreak.textContent = streaks.current;
@@ -1129,6 +1267,7 @@
 
   function cancelWorkout() {
     if (!confirm('Training wirklich beenden? Der heutige Tag bleibt unverändert.')) return;
+    stopRestTimer();
     workout = null;
     setScreen('home');
     renderHome();
@@ -1137,8 +1276,23 @@
   function openSettings() {
     setScreen('settings');
     renderExerciseList();
+    renderTrainingSettings();
     renderYearOptions();
     renderStats();
+  }
+
+  function renderTrainingSettings() {
+    els.restTimerEnabled.checked = state.settings.restTimerEnabled;
+    els.restSeconds.value = state.settings.restSeconds;
+    els.restSeconds.disabled = !state.settings.restTimerEnabled;
+  }
+
+  function saveTrainingSettings() {
+    state.settings.restTimerEnabled = els.restTimerEnabled.checked;
+    state.settings.restSeconds = clampNumber(els.restSeconds.value, 5, 600, 60);
+    els.restSeconds.value = state.settings.restSeconds;
+    els.restSeconds.disabled = !state.settings.restTimerEnabled;
+    saveState();
   }
 
   function renderExerciseList() {
@@ -1404,6 +1558,7 @@
     if (answer !== 'RESET') return;
     const fresh = initialState();
     state.exercises = fresh.exercises;
+    state.settings = fresh.settings;
     state.days = fresh.days;
     state.version = APP_VERSION;
     saveState();
@@ -1474,6 +1629,8 @@
 
   els.addExerciseButton.addEventListener('click', () => openExerciseDialog());
   els.exerciseForm.addEventListener('submit', saveExercise);
+  els.restTimerEnabled.addEventListener('change', saveTrainingSettings);
+  els.restSeconds.addEventListener('change', saveTrainingSettings);
   els.statsYear.addEventListener('change', renderStats);
   els.exportCsvButton.addEventListener('click', exportCsv);
   els.exportBackupButton.addEventListener('click', exportBackup);
@@ -1485,7 +1642,17 @@
   els.resetButton.addEventListener('click', resetApp);
 
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && activeScreen === 'home') renderAll();
+    if (document.hidden) return;
+    if (activeScreen === 'home') renderAll();
+    if (activeScreen === 'training' && restInterval !== null) {
+      const remaining = Math.max(0, Math.ceil((restEndsAt - Date.now()) / 1000));
+      updateRestTimer(remaining);
+      if (remaining <= 0 && workout) {
+        stopRestTimer();
+        workout.index += 1;
+        renderWorkout();
+      }
+    }
   });
 
   renderAll();
