@@ -351,8 +351,31 @@
 
     .training-actions{
       display:grid;
-      grid-template-columns:1fr;
-      gap:10px;
+      grid-template-columns:repeat(3, 1fr);
+      gap:8px;
+    }
+
+    .difficulty-button{
+      min-width:0;
+      min-height:48px;
+      padding:10px 6px;
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      background:#fff;
+      color:var(--text);
+      font-size:14px;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .difficulty-button[data-rating="medium"]{
+      background:var(--panel-2);
+    }
+
+    .difficulty-button:active{transform:translateY(1px)}
+
+    .skip-training-button{
+      grid-column:1 / -1;
     }
 
     .rest-stage{
@@ -573,7 +596,7 @@
     @media (min-width:560px){
       main{padding-left:20px;padding-right:20px}
       .action-grid{grid-template-columns:1.55fr 1fr}
-      .training-actions{grid-template-columns:1.7fr 1fr}
+      .training-actions{grid-template-columns:repeat(3,1fr)}
     }
 
     @media (prefers-reduced-motion:reduce){
@@ -654,8 +677,10 @@
           </div>
         </div>
         <div class="training-actions" id="trainingActions">
-          <button class="primary" id="completeExerciseButton">Geschafft ✓</button>
-          <button class="ghost" id="skipExerciseButton">Überspringen</button>
+          <button class="difficulty-button" data-rating="easy">Leicht</button>
+          <button class="difficulty-button" data-rating="medium">Mittel</button>
+          <button class="difficulty-button" data-rating="hard">Schwer</button>
+          <button class="ghost skip-training-button" id="skipExerciseButton">Überspringen</button>
         </div>
       </article>
     </section>
@@ -796,7 +821,7 @@
   'use strict';
 
   const STORAGE_KEY = 'fitnessTracker42';
-  const APP_VERSION = 1;
+  const APP_VERSION = 2;
   const TRACKING_START = '2026-07-20';
 
   const defaultExercises = [
@@ -847,7 +872,7 @@
     restProgressBar: $('#restProgressBar'),
     trainingActions: $('#trainingActions'),
     cancelTrainingButton: $('#cancelTrainingButton'),
-    completeExerciseButton: $('#completeExerciseButton'),
+    difficultyButtons: $$('[data-rating]'),
     skipExerciseButton: $('#skipExerciseButton'),
     finishCurrentStreak: $('#finishCurrentStreak'),
     finishLongestStreak: $('#finishLongestStreak'),
@@ -898,7 +923,8 @@
         restTimerEnabled: true,
         restSeconds: 60
       },
-      days: {}
+      days: {},
+      progression: {}
     };
   }
 
@@ -943,6 +969,29 @@
           detail: typeof entry.detail === 'string' ? entry.detail.slice(0, 80) : '',
           completedAt: typeof entry.completedAt === 'string' ? entry.completedAt : ''
         };
+      }
+    }
+
+    if (input.progression && typeof input.progression === 'object') {
+      for (const exercise of safe.exercises) {
+        const source = input.progression[exercise.id];
+        if (!source || typeof source !== 'object') continue;
+        const ratings = Array.isArray(source.ratings) ? source.ratings
+          .filter(item => item && ['easy','medium','hard'].includes(item.rating))
+          .map(item => ({
+            date: isIsoDate(item.date) ? item.date : today(),
+            reps: clampNumber(item.reps, 1, 999, exercise.reps),
+            rating: item.rating
+          }))
+          .filter(item => item.reps === exercise.reps)
+          .slice(-10) : [];
+        const history = Array.isArray(source.history) ? source.history.slice(-100).map(item => ({
+          from: clampNumber(item.from, 1, 999, exercise.reps),
+          to: clampNumber(item.to, 1, 999, exercise.reps),
+          reason: item.reason === 'hard' ? 'hard' : 'easy',
+          date: isIsoDate(item.date) ? item.date : today()
+        })) : [];
+        safe.progression[exercise.id] = { ratings, history };
       }
     }
 
@@ -1195,6 +1244,90 @@
     return 'Stark.';
   }
 
+  function progressionFor(exercise) {
+    if (!state.progression || typeof state.progression !== 'object') state.progression = {};
+    if (!state.progression[exercise.id]) state.progression[exercise.id] = { ratings: [], history: [] };
+    return state.progression[exercise.id];
+  }
+
+  function rateExercise(rating) {
+    if (!workout || !['easy','medium','hard'].includes(rating)) return;
+    const exercise = state.exercises[workout.index];
+    if (!exercise) return;
+
+    const progression = progressionFor(exercise);
+    progression.ratings = progression.ratings
+      .filter(item => item.reps === exercise.reps)
+      .slice(-9);
+    progression.ratings.push({ date: today(), reps: exercise.reps, rating });
+    saveState();
+
+    evaluateProgression(exercise, progression);
+    nextExercise(false);
+  }
+
+  function evaluateProgression(exercise, progression) {
+    const ratings = progression.ratings.filter(item => item.reps === exercise.reps).slice(-10);
+    if (ratings.length < 10) return;
+
+    const easy = ratings.filter(item => item.rating === 'easy').length;
+    const hard = ratings.filter(item => item.rating === 'hard').length;
+    const lastThree = ratings.slice(-3).map(item => item.rating);
+
+    let direction = null;
+    if (easy >= 8 && !lastThree.includes('hard')) direction = 'up';
+    if (hard >= 5 || lastThree.every(item => item === 'hard')) direction = 'down';
+    if (!direction) return;
+
+    const step = progressionStep(exercise);
+    const proposed = direction === 'up'
+      ? Math.min(999, exercise.reps + step)
+      : Math.max(1, exercise.reps - step);
+    if (proposed === exercise.reps) return;
+
+    const reason = direction === 'up'
+      ? `${easy} der letzten 10 Bewertungen waren „leicht“.`
+      : `${hard} der letzten 10 Bewertungen waren „schwer“.`;
+    const accepted = confirm(
+      `Anpassung für ${exercise.name}
+
+${reason}
+
+Vorschlag: ${exercise.reps} → ${proposed}
+
+Übernehmen?`
+    );
+
+    const previous = exercise.reps;
+    if (accepted) {
+      exercise.reps = proposed;
+      progression.history.push({
+        from: previous,
+        to: proposed,
+        reason: direction === 'up' ? 'easy' : 'hard',
+        date: today()
+      });
+      progression.history = progression.history.slice(-100);
+    }
+
+    // Nach jeder Entscheidung beginnt eine neue Bewertungsphase.
+    progression.ratings = [];
+    saveState();
+    if (accepted) showToast(`${exercise.name}: auf ${proposed} angepasst.`);
+  }
+
+  function progressionStep(exercise) {
+    const name = exercise.name.toLocaleLowerCase('de');
+    if (name.includes('plank') || name.includes('halte')) return 5;
+    if (name.includes('swing')) return 5;
+    if (name.includes('squat') || name.includes('kniebeuge')) return 2;
+    if (name.includes('row') || name.includes('rudern')) return 1;
+    if (name.includes('liegestütz') || name.includes('push')) return 1;
+    if (exercise.reps <= 15) return 1;
+    if (exercise.reps <= 30) return 2;
+    return 5;
+  }
+
   function nextExercise(skipped = false) {
     if (!workout) return;
     if (skipped) workout.skipped += 1;
@@ -1355,6 +1488,9 @@
       const exercise = state.exercises.find(item => item.id === editingExerciseId);
       if (exercise) {
         exercise.name = name.slice(0, 60);
+        if (exercise.reps !== reps && state.progression?.[exercise.id]) {
+          state.progression[exercise.id].ratings = [];
+        }
         exercise.reps = reps;
         exercise.unilateral = els.exerciseUnilateralInput.checked;
       }
@@ -1378,6 +1514,7 @@
     if (!exercise) return;
     if (!confirm(`„${exercise.name}“ wirklich löschen?`)) return;
     state.exercises = state.exercises.filter(item => item.id !== id);
+    if (state.progression) delete state.progression[id];
     saveState();
     renderExerciseList();
   }
@@ -1482,7 +1619,7 @@
 
   function exportBackup() {
     const payload = {
-      app: 'Fitness Tracker 4.2',
+      app: 'Fitness Tracker 4.5',
       exportedAt: new Date().toISOString(),
       data: state
     };
@@ -1505,7 +1642,9 @@
         const imported = normalizeState(parsed.data || parsed);
         if (!confirm('Vorhandene Daten durch dieses Backup ersetzen?')) return;
         state.exercises = imported.exercises;
+        state.settings = imported.settings;
         state.days = imported.days;
+        state.progression = imported.progression;
         state.version = APP_VERSION;
         saveState();
         renderAll();
@@ -1560,6 +1699,7 @@
     state.exercises = fresh.exercises;
     state.settings = fresh.settings;
     state.days = fresh.days;
+    state.progression = fresh.progression;
     state.version = APP_VERSION;
     saveState();
     renderAll();
@@ -1594,7 +1734,9 @@
     showToast('Pause für heute eingetragen.');
   });
 
-  els.completeExerciseButton.addEventListener('click', () => nextExercise(false));
+  els.difficultyButtons.forEach(button => {
+    button.addEventListener('click', () => rateExercise(button.dataset.rating));
+  });
   els.skipExerciseButton.addEventListener('click', () => nextExercise(true));
   els.cancelTrainingButton.addEventListener('click', cancelWorkout);
   els.finishHomeButton.addEventListener('click', () => {
