@@ -1,1 +1,958 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#dcefff">
+  <meta name="color-scheme" content="light">
+  <title>Alkohol-Tracker</title>
+  <style>
+    :root{
+      --bg:#eef7ff;
+      --panel:#ffffff;
+      --panel-2:#e2f1ff;
+      --line:#8eb9d8;
+      --line-dark:#5688aa;
+      --text:#173247;
+      --muted:#647f91;
+      --accent:#1673b1;
+      --accent-2:#0d5c91;
+      --success:#1d8a58;
+      --danger:#b34040;
+      --open:#ffffff;
+      --shadow:0 8px 24px rgba(36,89,125,.10);
+      --safe-top:max(14px, env(safe-area-inset-top));
+      --safe-bottom:max(18px, env(safe-area-inset-bottom));
+    }
 
+    *{box-sizing:border-box}
+    html{min-height:100%;background:var(--bg)}
+    body{
+      margin:0;
+      min-height:100%;
+      background:linear-gradient(180deg,#dcefff 0,#eef7ff 180px,#f8fbfe 100%);
+      color:var(--text);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    button,input,select,textarea{font:inherit}
+    button{touch-action:manipulation}
+    [hidden]{display:none!important}
+
+    .app{
+      width:min(760px,100%);
+      min-height:100vh;
+      margin:0 auto;
+      padding-bottom:calc(30px + var(--safe-bottom));
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:grid;
+      grid-template-columns:52px 1fr 52px;
+      align-items:center;
+      min-height:68px;
+      padding:var(--safe-top) 14px 10px;
+      background:rgba(238,247,255,.94);
+      border-bottom:1px solid rgba(86,136,170,.35);
+      backdrop-filter:blur(14px);
+    }
+
+    .header-mark{
+      display:grid;
+      place-items:center;
+      font-size:25px;
+      line-height:1;
+      user-select:none;
+    }
+
+    .header-date{
+      text-align:center;
+      font-size:15px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    .icon-button{
+      width:44px;
+      height:44px;
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      background:var(--panel);
+      color:var(--text);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      padding:0;
+    }
+
+    .icon-button svg{width:22px;height:22px}
+    .icon-button:active{transform:translateY(1px)}
+
+    main{padding:18px 14px 0}
+
+    .today-card,.calendar-card,.series-card,.settings-section{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:0;
+      box-shadow:var(--shadow);
+    }
+
+    .today-card{padding:18px}
+    .eyebrow{
+      color:var(--muted);
+      text-transform:uppercase;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+    }
+
+    h1,h2,h3,p{margin-top:0}
+    .today-card h1{
+      margin:5px 0 8px;
+      font-size:clamp(27px,7vw,38px);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .today-status{
+      margin:0 0 16px;
+      color:var(--muted);
+      min-height:24px;
+    }
+
+    .today-status strong{color:var(--text)}
+
+    .action-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+
+    .primary,.secondary,.ghost,.danger-button,.small-button,.file-label{
+      border-radius:0;
+      min-height:48px;
+      padding:11px 14px;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .primary{
+      border:1px solid #176b45;
+      background:var(--success);
+      color:#fff;
+    }
+
+    .danger-button{
+      border:1px solid #973535;
+      background:var(--danger);
+      color:#fff;
+    }
+
+    .secondary,.file-label{
+      border:1px solid var(--line-dark);
+      background:var(--panel-2);
+      color:var(--text);
+      text-align:center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .ghost{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+    }
+
+    .small-button{
+      min-height:38px;
+      padding:7px 10px;
+      border:1px solid var(--line-dark);
+      background:#fff;
+      color:var(--text);
+      font-size:14px;
+    }
+
+    .series-card{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+    }
+
+    .series-value{
+      padding:17px 12px;
+      text-align:center;
+      min-width:0;
+    }
+
+    .series-value + .series-value{border-left:1px solid var(--line)}
+    .series-value strong{
+      display:block;
+      font-size:30px;
+      line-height:1;
+      margin-bottom:5px;
+    }
+
+    .series-value span{
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .series-detail{
+      display:block;
+      margin-top:5px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:650;
+      line-height:1.3;
+    }
+
+    .calendar-card{margin-top:14px;padding:16px}
+    .section-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:12px;
+    }
+
+    .section-head h2{margin:0;font-size:19px}
+    .section-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px 12px;
+      margin:0 0 13px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .legend span{display:inline-flex;align-items:center;gap:5px}
+    .dot{width:9px;height:9px;border:1px solid rgba(0,0,0,.15)}
+    .dot.free{background:#5bc38b}
+    .dot.alcohol{background:#d96a6a}
+    .dot.open{background:#fff}
+
+    .calendar-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:6px;
+    }
+
+    .day-cell{
+      position:relative;
+      aspect-ratio:1/1;
+      min-width:0;
+      border:1px solid var(--line);
+      border-radius:0;
+      background:#fff;
+      color:var(--text);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:4px 2px;
+    }
+
+    .day-cell.free{background:#dff4e9;border-color:#62b88a}
+    .day-cell.alcohol{background:#fae3e3;border-color:#cb7575}
+    .day-cell.today{outline:2px solid var(--accent);outline-offset:1px}
+    .day-cell.future{opacity:.35;cursor:default}
+    .day-weekday{
+      font-size:10px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+    }
+    .day-number{font-size:19px;font-weight:900;line-height:1.1}
+    .day-symbol{font-size:12px;font-weight:900;line-height:1}
+
+    dialog{
+      width:min(690px,calc(100% - 20px));
+      max-height:calc(100dvh - 20px);
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      padding:0;
+      color:var(--text);
+      background:var(--panel);
+      box-shadow:0 24px 70px rgba(23,50,71,.28);
+    }
+
+    dialog::backdrop{background:rgba(23,50,71,.42);backdrop-filter:blur(3px)}
+    .dialog-shell{padding:18px}
+    .dialog-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .dialog-head h2{margin:0;font-size:22px}
+    .dialog-head p{margin:5px 0 0;color:var(--muted);font-size:13px}
+    .close-button{
+      width:40px;height:40px;min-width:40px;
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      background:#fff;color:var(--text);
+      cursor:pointer;font-size:21px;
+    }
+
+    .choice-grid{display:grid;gap:10px}
+    .reason-wrap{margin-top:14px}
+    label{font-size:13px;font-weight:800;color:var(--muted)}
+    textarea,input,select{
+      width:100%;
+      border:1px solid var(--line-dark);
+      border-radius:0;
+      background:#fff;
+      color:var(--text);
+      padding:12px;
+    }
+    textarea{min-height:92px;resize:vertical;margin-top:6px}
+
+    .dialog-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .settings-section{padding:16px;margin-top:14px;box-shadow:none}
+    .settings-section:first-of-type{margin-top:0}
+    .settings-section h3{margin:0 0 12px;font-size:17px}
+    .settings-grid{display:grid;gap:10px}
+    .tiny{color:var(--muted);font-size:12px;line-height:1.45;margin:9px 0 0}
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .stat-box{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:13px;
+    }
+
+    .stat-box strong{display:block;font-size:25px;line-height:1.1}
+    .stat-box span{color:var(--muted);font-size:12px;font-weight:750}
+    .stats-period{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
+
+    .danger-zone{border-color:#d5a0a0;background:#fffafa}
+    .version{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:calc(18px + var(--safe-bottom));
+      z-index:100;
+      transform:translateX(-50%) translateY(20px);
+      background:#173247;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:0;
+      opacity:0;
+      pointer-events:none;
+      transition:.18s ease;
+      font-size:13px;
+      font-weight:750;
+      max-width:calc(100% - 28px);
+      text-align:center;
+    }
+
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+    @media(min-width:560px){
+      .action-grid{grid-template-columns:1fr 1fr}
+      .settings-grid.two{grid-template-columns:1fr 1fr}
+      .stats-grid{grid-template-columns:repeat(4,1fr)}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-mark" aria-hidden="true">🍷</div>
+    <div class="header-date" id="headerDate">Alkohol-Tracker</div>
+    <button class="icon-button" id="settingsButton" type="button" title="Einstellungen" aria-label="Einstellungen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"></path>
+      </svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="today-card">
+      <div class="eyebrow">Heute</div>
+      <h1 id="todayTitle">—</h1>
+      <p class="today-status">Status: <strong id="todayStatus">Offen</strong></p>
+      <div class="action-grid">
+        <button class="primary" id="freeButton" type="button">Kein Alkohol</button>
+        <button class="danger-button" id="alcoholButton" type="button">Alkohol</button>
+      </div>
+    </section>
+
+    <section class="series-card" id="seriesCard">
+      <div class="series-value">
+        <strong id="currentStreakValue">0</strong>
+        <span>Aktuelle Serie</span>
+        <small class="series-detail" id="currentStreakDetail">Noch keine Serie</small>
+      </div>
+      <div class="series-value">
+        <strong id="bestStreakValue">0</strong>
+        <span>Längste Serie</span>
+        <small class="series-detail" id="bestStreakDetail">Noch keine Serie</small>
+      </div>
+    </section>
+
+    <section class="calendar-card">
+      <div class="section-head">
+        <div>
+          <h2>Letzte 21 Tage</h2>
+          <p>Tippe auf einen Tag, um ihn zu bearbeiten.</p>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="dot free"></i>Kein Alkohol</span>
+        <span><i class="dot alcohol"></i>Alkohol</span>
+        <span><i class="dot open"></i>Offen</span>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
+
+    <div class="version">Alkohol-Tracker 1.0 · neues Kalenderdesign</div>
+  </main>
+</div>
+
+<dialog id="editDialog">
+  <div class="dialog-shell">
+    <div class="dialog-head">
+      <div>
+        <h2>Status bearbeiten</h2>
+        <p id="editDialogDate">—</p>
+      </div>
+      <button class="close-button" type="button" data-close="editDialog" aria-label="Schließen">×</button>
+    </div>
+
+    <div class="choice-grid">
+      <button class="primary" id="dialogFreeButton" type="button">Kein Alkohol</button>
+      <button class="danger-button" id="dialogAlcoholButton" type="button">Alkohol</button>
+      <button class="ghost" id="dialogOpenButton" type="button">Offen</button>
+    </div>
+
+    <div class="reason-wrap" id="reasonWrap" hidden>
+      <label for="reasonInput">Anlass oder Notiz (optional)</label>
+      <textarea id="reasonInput" maxlength="500" placeholder="z. B. Geburtstag, Konzert, Restaurant …"></textarea>
+      <div class="dialog-actions">
+        <button class="ghost" id="reasonCancelButton" type="button">Zurück</button>
+        <button class="danger-button" id="reasonSaveButton" type="button">Alkohol speichern</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="settingsDialog">
+  <div class="dialog-shell">
+    <div class="dialog-head">
+      <div>
+        <h2>Einstellungen</h2>
+        <p>Statistiken, Backup und Datenverwaltung</p>
+      </div>
+      <button class="close-button" type="button" data-close="settingsDialog" aria-label="Schließen">×</button>
+    </div>
+
+    <section class="settings-section">
+      <h3>Statistiken</h3>
+      <label for="statsPeriodSelect">Zeitraum auswählen</label>
+      <select id="statsPeriodSelect"></select>
+      <div class="stats-grid">
+        <div class="stat-box"><strong id="statRecorded">0</strong><span>Erfasste Tage</span></div>
+        <div class="stat-box"><strong id="statFree">0</strong><span>Alkoholfrei</span></div>
+        <div class="stat-box"><strong id="statAlcohol">0</strong><span>Alkohol</span></div>
+        <div class="stat-box"><strong id="statRate">0 %</strong><span>Quote alkoholfrei</span></div>
+      </div>
+      <div class="stats-period" id="statsPeriodText">Offene Tage fließen nicht in die Quote ein.</div>
+    </section>
+
+    <section class="settings-section">
+      <h3>Backup und Daten</h3>
+      <div class="settings-grid two">
+        <button class="secondary" id="exportCsvButton" type="button">CSV exportieren</button>
+        <label class="file-label" for="importFile">CSV importieren</label>
+      </div>
+      <input class="visually-hidden" id="importFile" type="file" accept=".csv,text/csv,text/plain">
+      <p class="tiny">Der Import unterstützt weiterhin das bisherige Format: <strong>Datum;Alkohol;Anlass</strong>. Vorhandene Einträge werden anhand des Datums ergänzt oder aktualisiert.</p>
+    </section>
+
+    <section class="settings-section danger-zone">
+      <h3>Daten löschen</h3>
+      <button class="danger-button" id="resetButton" type="button">Alle lokalen Daten löschen</button>
+      <p class="tiny">Diese Aktion kann nicht rückgängig gemacht werden. Vorher am besten eine CSV-Datei exportieren.</p>
+    </section>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  const STORAGE_KEY = 'alcohol-tracker-v7';
+  const META_KEY = 'alcohol-tracker-v7:meta';
+  const LEGACY_KEYS = ['alcoholTrackerEntries','alcohol-tracker-v6','alcohol-tracker'];
+  const MAX_REASON_LENGTH = 500;
+
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2,'0');
+  const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const parseIso = value => {
+    const [y,m,d] = String(value).split('-').map(Number);
+    return new Date(y,m-1,d);
+  };
+  const addDays = (value, amount) => {
+    const date = typeof value === 'string' ? parseIso(value) : new Date(value);
+    date.setDate(date.getDate()+amount);
+    return iso(date);
+  };
+  const today = () => iso(new Date());
+
+  const state = {
+    entries: loadEntries(),
+    selectedDate: today()
+  };
+
+  function normalizeEntry(entry){
+    if (!entry || typeof entry !== 'object') return null;
+    if (entry.a === 0 || entry.status === 'free' || entry.alcohol === false) return {a:0};
+    if (entry.a === 1 || entry.status === 'alcohol' || entry.alcohol === true){
+      return {a:1,r:String(entry.r ?? entry.reason ?? entry.note ?? '').slice(0,MAX_REASON_LENGTH)};
+    }
+    return null;
+  }
+
+  function loadEntries(){
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw){
+      for (const key of LEGACY_KEYS){
+        raw = localStorage.getItem(key);
+        if (raw) break;
+      }
+    }
+    if (!raw) return {};
+    try{
+      const parsed = JSON.parse(raw);
+      const source = parsed.entries || parsed.days || parsed;
+      const result = {};
+      Object.entries(source || {}).forEach(([date,entry])=>{
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+        const normalized = normalizeEntry(entry);
+        if (normalized) result[date] = normalized;
+      });
+      return result;
+    }catch{
+      return {};
+    }
+  }
+
+  function saveEntries(){
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state.entries));
+    const keys = Object.keys(state.entries).sort();
+    if (keys.length){
+      localStorage.setItem(META_KEY,JSON.stringify({trackStart:keys[0],trackEnd:keys[keys.length-1]}));
+    }else{
+      localStorage.removeItem(META_KEY);
+    }
+  }
+
+  function formatLongDate(value){
+    return new Intl.DateTimeFormat('de-DE',{
+      weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'
+    }).format(parseIso(value));
+  }
+
+  function formatShortDate(value){
+    if (!value) return '—';
+    return new Intl.DateTimeFormat('de-DE',{
+      day:'2-digit',month:'2-digit',year:'2-digit'
+    }).format(parseIso(value));
+  }
+
+  function statusOf(date){
+    const entry = state.entries[date];
+    if (!entry) return 'open';
+    return entry.a === 1 ? 'alcohol' : 'free';
+  }
+
+  function statusLabel(status){
+    if (status === 'free') return 'Kein Alkohol';
+    if (status === 'alcohol') return 'Alkohol';
+    return 'Offen';
+  }
+
+  function setEntry(date,status,reason=''){
+    if (status === 'open'){
+      delete state.entries[date];
+    }else if (status === 'free'){
+      state.entries[date] = {a:0};
+    }else{
+      state.entries[date] = {a:1,r:String(reason).trim().slice(0,MAX_REASON_LENGTH)};
+    }
+    saveEntries();
+    render();
+  }
+
+  function calculateCurrentStreak(){
+    let cursor = today();
+    if (statusOf(cursor) !== 'free') return {length:0,start:null,end:null};
+
+    let length = 0;
+    let start = cursor;
+    while (statusOf(cursor) === 'free'){
+      length += 1;
+      start = cursor;
+      cursor = addDays(cursor,-1);
+    }
+    return {length,start,end:today()};
+  }
+
+  function calculateBestStreak(){
+    const keys = Object.keys(state.entries).sort();
+    if (!keys.length) return {length:0,start:null,end:null};
+
+    let best = {length:0,start:null,end:null};
+    let current = {length:0,start:null,end:null};
+    let previousDate = null;
+
+    keys.forEach(date=>{
+      const isConsecutive = previousDate && addDays(previousDate,1) === date;
+      if (statusOf(date) === 'free'){
+        if (!isConsecutive || current.length === 0){
+          current = {length:1,start:date,end:date};
+        }else{
+          current.length += 1;
+          current.end = date;
+        }
+        if (current.length > best.length) best = {...current};
+      }else{
+        current = {length:0,start:null,end:null};
+      }
+      previousDate = date;
+    });
+
+    return best;
+  }
+
+  function renderHeaderAndToday(){
+    const key = today();
+    $('headerDate').textContent = 'Alkohol-Tracker';
+    $('todayTitle').textContent = formatLongDate(key);
+    const status = statusOf(key);
+    $('todayStatus').textContent = statusLabel(status);
+    $('todayStatus').style.color = status === 'free' ? 'var(--success)' : status === 'alcohol' ? 'var(--danger)' : 'var(--text)';
+  }
+
+  function renderSeries(){
+    const current = calculateCurrentStreak();
+    const best = calculateBestStreak();
+
+    $('currentStreakValue').textContent = current.length;
+    $('currentStreakDetail').textContent = current.length
+      ? `seit ${formatShortDate(current.start)}`
+      : 'Heute noch keine laufende Serie';
+
+    $('bestStreakValue').textContent = best.length;
+    $('bestStreakDetail').textContent = best.length
+      ? `${formatShortDate(best.start)} – ${formatShortDate(best.end)}`
+      : 'Noch keine Serie';
+  }
+
+  function renderCalendar(){
+    const grid = $('calendarGrid');
+    grid.innerHTML = '';
+    const end = today();
+    const start = addDays(end,-20);
+    const weekday = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+
+    for (let cursor=start; cursor<=end; cursor=addDays(cursor,1)){
+      const status = statusOf(cursor);
+      const date = parseIso(cursor);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `day-cell ${status}${cursor===end?' today':''}`;
+      button.title = `${formatLongDate(cursor)}: ${statusLabel(status)}`;
+      button.innerHTML = `
+        <span class="day-weekday">${weekday[date.getDay()]}</span>
+        <span class="day-number">${date.getDate()}</span>
+        <span class="day-symbol">${status==='free'?'✓':status==='alcohol'?'×':'?'}</span>
+      `;
+      button.addEventListener('click',()=>openEditDialog(cursor));
+      grid.appendChild(button);
+    }
+  }
+
+  function getAvailableYears(){
+    const years = new Set(Object.keys(state.entries).map(date=>date.slice(0,4)));
+    years.add(today().slice(0,4));
+    return [...years].sort((a,b)=>Number(b)-Number(a));
+  }
+
+  function renderStatsOptions(){
+    const select = $('statsPeriodSelect');
+    const previous = select.value || 'all';
+    select.innerHTML = '<option value="all">Gesamt</option>';
+    getAvailableYears().forEach(year=>{
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      select.appendChild(option);
+    });
+    select.value = [...select.options].some(option=>option.value===previous) ? previous : today().slice(0,4);
+    renderStatistics();
+  }
+
+  function renderStatistics(){
+    const selected = $('statsPeriodSelect').value || 'all';
+    const dates = Object.keys(state.entries)
+      .filter(date=>selected==='all' || date.startsWith(selected+'-'))
+      .sort();
+
+    const recorded = dates.length;
+    const alcohol = dates.filter(date=>state.entries[date].a===1).length;
+    const free = recorded-alcohol;
+    const rate = recorded ? Math.round(free/recorded*100) : 0;
+
+    $('statRecorded').textContent = recorded;
+    $('statFree').textContent = free;
+    $('statAlcohol').textContent = alcohol;
+    $('statRate').textContent = `${rate} %`;
+
+    if (!dates.length){
+      $('statsPeriodText').textContent = `Für ${selected==='all'?'den Gesamtzeitraum':selected} liegen noch keine Einträge vor. Offene Tage fließen nicht in die Quote ein.`;
+    }else{
+      $('statsPeriodText').textContent =
+        `Zeitraum: ${formatShortDate(dates[0])} bis ${formatShortDate(dates[dates.length-1])}. Offene Tage fließen nicht in die Quote ein.`;
+    }
+  }
+
+  function render(){
+    renderHeaderAndToday();
+    renderSeries();
+    renderCalendar();
+    renderStatsOptions();
+  }
+
+  function openEditDialog(date){
+    state.selectedDate = date;
+    $('editDialogDate').textContent = formatLongDate(date);
+    $('reasonWrap').hidden = true;
+    $('reasonInput').value = state.entries[date]?.r || '';
+    $('editDialog').showModal();
+  }
+
+  function showReasonEditor(){
+    $('reasonWrap').hidden = false;
+    setTimeout(()=>$('reasonInput').focus(),0);
+  }
+
+  function closeDialog(id){
+    const dialog = $(id);
+    if (dialog.open) dialog.close();
+  }
+
+  function toast(message){
+    const element = $('toast');
+    element.textContent = message;
+    element.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(()=>element.classList.remove('show'),1600);
+  }
+
+  function csvCell(value){
+    return `"${String(value ?? '').replaceAll('"','""')}"`;
+  }
+
+  function exportCsv(){
+    const dates = Object.keys(state.entries).sort();
+    if (!dates.length){
+      toast('Keine Daten zum Exportieren');
+      return;
+    }
+    const rows = [['Datum','Alkohol','Anlass']];
+    dates.forEach(date=>{
+      const entry = state.entries[date];
+      rows.push([date,entry.a===1?'Ja':'Nein',entry.a===1?(entry.r||''):'']);
+    });
+    const csv = '\ufeff'+rows.map(row=>row.map(csvCell).join(';')).join('\n');
+    const blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `alkohol-tracker-${today()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    toast('CSV exportiert');
+  }
+
+  function detectDelimiter(line){
+    return (line.match(/;/g)||[]).length >= (line.match(/,/g)||[]).length ? ';' : ',';
+  }
+
+  function parseCsvLine(line,delimiter){
+    const values=[];
+    let current='';
+    let quoted=false;
+    for (let i=0;i<line.length;i++){
+      const char=line[i];
+      if (char==='"'){
+        if (quoted && line[i+1]==='"'){
+          current+='"';
+          i++;
+        }else{
+          quoted=!quoted;
+        }
+      }else if (char===delimiter && !quoted){
+        values.push(current.trim());
+        current='';
+      }else{
+        current+=char;
+      }
+    }
+    values.push(current.trim());
+    return values;
+  }
+
+  async function importCsv(file){
+    try{
+      const text = await file.text();
+      const lines = text.replace(/^\ufeff/,'').split(/\r?\n/).filter(line=>line.trim());
+      if (lines.length<2) throw new Error('CSV enthält keine Daten');
+
+      const delimiter = detectDelimiter(lines[0]);
+      const header = parseCsvLine(lines[0],delimiter).map(value=>value.toLowerCase());
+      const dateIndex = header.findIndex(value=>value.includes('datum'));
+      const alcoholIndex = header.findIndex(value=>value==='alkohol' || value.includes('status'));
+      const reasonIndex = header.findIndex(value=>value.includes('anlass') || value.includes('grund') || value.includes('notiz'));
+
+      if (dateIndex<0 || alcoholIndex<0) throw new Error('Spalten Datum und Alkohol fehlen');
+
+      const imported = {};
+      let count=0;
+
+      for (let i=1;i<lines.length;i++){
+        const columns = parseCsvLine(lines[i],delimiter);
+        const date = String(columns[dateIndex]||'').trim();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+
+        const value = String(columns[alcoholIndex]||'').trim().toLowerCase();
+        if (['ja','1','true','alkohol','yes'].includes(value)){
+          imported[date] = {a:1,r:String(reasonIndex>=0?columns[reasonIndex]||'':'').slice(0,MAX_REASON_LENGTH)};
+          count++;
+        }else if (['nein','0','false','kein alkohol','alkoholfrei','no'].includes(value)){
+          imported[date] = {a:0};
+          count++;
+        }
+      }
+
+      if (!count) throw new Error('Keine gültigen Einträge gefunden');
+      if (!confirm(`${count} Einträge importieren? Einträge mit gleichem Datum werden aktualisiert.`)) return;
+
+      state.entries = {...state.entries,...imported};
+      saveEntries();
+      render();
+      toast(`${count} Einträge importiert`);
+    }catch(error){
+      alert(`Import fehlgeschlagen: ${error.message}`);
+    }finally{
+      $('importFile').value='';
+    }
+  }
+
+  $('freeButton').addEventListener('click',()=>{
+    setEntry(today(),'free');
+    toast('Kein Alkohol gespeichert');
+  });
+
+  $('alcoholButton').addEventListener('click',()=>{
+    openEditDialog(today());
+    showReasonEditor();
+  });
+
+  $('settingsButton').addEventListener('click',()=>{
+    renderStatsOptions();
+    $('settingsDialog').showModal();
+  });
+
+  $('dialogFreeButton').addEventListener('click',()=>{
+    setEntry(state.selectedDate,'free');
+    closeDialog('editDialog');
+    toast('Kein Alkohol gespeichert');
+  });
+
+  $('dialogAlcoholButton').addEventListener('click',showReasonEditor);
+
+  $('dialogOpenButton').addEventListener('click',()=>{
+    setEntry(state.selectedDate,'open');
+    closeDialog('editDialog');
+    toast('Tag auf Offen gesetzt');
+  });
+
+  $('reasonCancelButton').addEventListener('click',()=>{
+    $('reasonWrap').hidden=true;
+  });
+
+  $('reasonSaveButton').addEventListener('click',()=>{
+    setEntry(state.selectedDate,'alcohol',$('reasonInput').value);
+    closeDialog('editDialog');
+    toast('Alkohol gespeichert');
+  });
+
+  $('statsPeriodSelect').addEventListener('change',renderStatistics);
+  $('exportCsvButton').addEventListener('click',exportCsv);
+  $('importFile').addEventListener('change',event=>{
+    const file = event.target.files?.[0];
+    if (file) importCsv(file);
+  });
+
+  $('resetButton').addEventListener('click',()=>{
+    if (!confirm('Wirklich alle lokal gespeicherten Daten löschen?')) return;
+    if (!confirm('Letzte Bestätigung: Alle Einträge werden unwiderruflich gelöscht.')) return;
+    state.entries={};
+    saveEntries();
+    render();
+    closeDialog('settingsDialog');
+    toast('Alle Daten gelöscht');
+  });
+
+  document.querySelectorAll('[data-close]').forEach(button=>{
+    button.addEventListener('click',()=>closeDialog(button.dataset.close));
+  });
+
+  document.querySelectorAll('dialog').forEach(dialog=>{
+    dialog.addEventListener('click',event=>{
+      const rect=dialog.getBoundingClientRect();
+      const inside=event.clientX>=rect.left&&event.clientX<=rect.right&&event.clientY>=rect.top&&event.clientY<=rect.bottom;
+      if (!inside) dialog.close();
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
