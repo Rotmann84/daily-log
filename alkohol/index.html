@@ -385,7 +385,7 @@
 <div class="app">
   <header>
     <div class="header-mark" aria-hidden="true">🍷</div>
-    <div class="header-date" id="headerDate">Alkohol-Tracker</div>
+    <div class="header-date" id="headerDate">—</div>
     <button class="icon-button" id="settingsButton" type="button" title="Einstellungen" aria-label="Einstellungen">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
         <circle cx="12" cy="12" r="3"></circle>
@@ -397,7 +397,6 @@
   <main>
     <section class="today-card">
       <div class="eyebrow">Heute</div>
-      <h1 id="todayTitle">—</h1>
       <p class="today-status">Status: <strong id="todayStatus">Offen</strong></p>
       <div class="action-grid">
         <button class="primary" id="freeButton" type="button">Kein Alkohol</button>
@@ -433,7 +432,7 @@
       <div class="calendar-grid" id="calendarGrid"></div>
     </section>
 
-    <div class="version">Alkohol-Tracker 1.0 · neues Kalenderdesign</div>
+    <div class="version">Alkohol-Tracker v2.0</div>
   </main>
 </div>
 
@@ -658,8 +657,9 @@
 
   function renderHeaderAndToday(){
     const key = today();
-    $('headerDate').textContent = 'Alkohol-Tracker';
-    $('todayTitle').textContent = formatLongDate(key);
+    $('headerDate').textContent = new Intl.DateTimeFormat('de-DE',{
+      weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'
+    }).format(parseIso(key));
     const status = statusOf(key);
     $('todayStatus').textContent = statusLabel(status);
     $('todayStatus').style.color = status === 'free' ? 'var(--success)' : status === 'alcohol' ? 'var(--danger)' : 'var(--text)';
@@ -720,7 +720,10 @@
       option.textContent = year;
       select.appendChild(option);
     });
-    select.value = [...select.options].some(option=>option.value===previous) ? previous : today().slice(0,4);
+    const currentYear = today().slice(0,4);
+    select.value = [...select.options].some(option=>option.value===previous)
+      ? previous
+      : currentYear;
     renderStatistics();
   }
 
@@ -894,7 +897,10 @@
   });
 
   $('settingsButton').addEventListener('click',()=>{
+    $('statsPeriodSelect').value = today().slice(0,4);
     renderStatsOptions();
+    $('statsPeriodSelect').value = today().slice(0,4);
+    renderStatistics();
     $('settingsDialog').showModal();
   });
 
