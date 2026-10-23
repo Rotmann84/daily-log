@@ -432,7 +432,7 @@
       <div class="calendar-grid" id="calendarGrid"></div>
     </section>
 
-    <div class="version">Alkohol-Tracker v2.0</div>
+    <div class="version">Alkohol-Tracker v2.1</div>
   </main>
 </div>
 
@@ -483,7 +483,7 @@
         <div class="stat-box"><strong id="statAlcohol">0</strong><span>Alkohol</span></div>
         <div class="stat-box"><strong id="statRate">0 %</strong><span>Quote alkoholfrei</span></div>
       </div>
-      <div class="stats-period" id="statsPeriodText">Offene Tage fließen nicht in die Quote ein.</div>
+      <div class="stat-box" id="maxRateBox" style="margin-top:10px"><strong id="statMaxRate">100,00 %</strong><span>Maximalquote zum Jahresende</span><p class="tiny">Wenn alle anderen Tage alkoholfrei bleiben.</p></div><div class="stats-period" id="statsPeriodText">Offene Tage fließen nicht in die Quote ein.</div>
     </section>
 
     <section class="settings-section">
@@ -496,6 +496,7 @@
       <p class="tiny">Der Import unterstützt weiterhin das bisherige Format: <strong>Datum;Alkohol;Anlass</strong>. Vorhandene Einträge werden anhand des Datums ergänzt oder aktualisiert.</p>
     </section>
 
+    <section class="settings-section"><h3>Meilensteine</h3><label><input type="checkbox" id="milestoneEnabled" checked> Hinweise bei erreichten Serien anzeigen</label><p class="tiny">5, 10, 21, 30, 50 und 100 Tage. Allgemeine Hinweise, keine individuelle Gesundheitsprognose.</p></section>
     <section class="settings-section danger-zone">
       <h3>Daten löschen</h3>
       <button class="danger-button" id="resetButton" type="button">Alle lokalen Daten löschen</button>
@@ -504,6 +505,7 @@
   </div>
 </dialog>
 
+<dialog id="milestoneDialog"><div class="dialog-shell"><div class="dialog-head"><h2 id="milestoneTitle">Meilenstein</h2><button class="close-button" type="button" data-close="milestoneDialog">×</button></div><p id="milestoneText"></p><p class="tiny">Gesundheitliche Veränderungen sind individuell.</p><button class="primary" type="button" id="milestoneOk">Weiter</button></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -514,6 +516,15 @@
   const META_KEY = 'alcohol-tracker-v7:meta';
   const LEGACY_KEYS = ['alcoholTrackerEntries','alcohol-tracker-v6','alcohol-tracker'];
   const MAX_REASON_LENGTH = 500;
+  const MILESTONE_SETTING_KEY = 'alcohol-tracker:milestones-enabled';
+  const MILESTONES = {
+    5:'In den ersten alkoholfreien Tagen können sich Schlaf und Erholung verbessern.',
+    10:'Nach rund zehn Tagen berichten manche Menschen über besseren Schlaf und mehr Energie.',
+    21:'Drei Wochen ohne Alkohol können helfen, Gewohnheiten und Auslöser bewusster wahrzunehmen.',
+    30:'Nach etwa einem Monat können sich bei manchen Menschen Blutdruck und Leberwerte verbessern.',
+    50:'Eine längere alkoholfreie Phase vermeidet weitere alkoholbedingte Belastungen.',
+    100:'100 Tage ohne Alkohol: Langfristige Vorteile hängen vom gesamten Konsummuster ab.'
+  };
 
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2,'0');
@@ -603,6 +614,8 @@
   }
 
   function setEntry(date,status,reason=''){
+    const before = calculateCurrentStreak().length;
+    const wasFree = statusOf(date) === 'free';
     if (status === 'open'){
       delete state.entries[date];
     }else if (status === 'free'){
@@ -612,6 +625,14 @@
     }
     saveEntries();
     render();
+    if (date === today() && status === 'free' && !wasFree && localStorage.getItem(MILESTONE_SETTING_KEY) !== 'false'){
+      const after = calculateCurrentStreak().length;
+      if (after > before && MILESTONES[after]){
+        $('milestoneTitle').textContent = `${after} Tage alkoholfrei!`;
+        $('milestoneText').textContent = MILESTONES[after];
+        $('milestoneDialog').showModal();
+      }
+    }
   }
 
   function calculateCurrentStreak(){
@@ -742,6 +763,14 @@
     $('statFree').textContent = free;
     $('statAlcohol').textContent = alcohol;
     $('statRate').textContent = `${rate} %`;
+    const isYear = /^\d{4}$/.test(selected);
+    $('maxRateBox').hidden = !isYear;
+    if (isYear){
+      const year = Number(selected);
+      const daysInYear = new Date(year,1,29).getMonth() === 1 ? 366 : 365;
+      const maximum = (daysInYear-alcohol)/daysInYear*100;
+      $('statMaxRate').textContent = `${maximum.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} %`;
+    }
 
     if (!dates.length){
       $('statsPeriodText').textContent = `Für ${selected==='all'?'den Gesamtzeitraum':selected} liegen noch keine Einträge vor. Offene Tage fließen nicht in die Quote ein.`;
@@ -929,6 +958,9 @@
   });
 
   $('statsPeriodSelect').addEventListener('change',renderStatistics);
+  $('milestoneEnabled').checked = localStorage.getItem(MILESTONE_SETTING_KEY) !== 'false';
+  $('milestoneEnabled').addEventListener('change',()=>localStorage.setItem(MILESTONE_SETTING_KEY,String($('milestoneEnabled').checked)));
+  $('milestoneOk').addEventListener('click',()=>closeDialog('milestoneDialog'));
   $('exportCsvButton').addEventListener('click',exportCsv);
   $('importFile').addEventListener('change',event=>{
     const file = event.target.files?.[0];
