@@ -326,28 +326,53 @@
       margin-top:16px;
     }
 
-    .settings-section{padding:16px;margin-top:14px;box-shadow:none}
+    #settingsDialog .dialog-shell{padding:12px}
+    #settingsDialog .dialog-head{margin-bottom:10px}
+    .settings-section{padding:10px;margin-top:8px;box-shadow:none}
     .settings-section:first-of-type{margin-top:0}
-    .settings-section h3{margin:0 0 12px;font-size:17px}
-    .settings-grid{display:grid;gap:10px}
+    .settings-section h3{margin:0 0 6px;font-size:16px}
+    .settings-section .tiny{margin-top:5px}
+    .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+    .settings-grid button,.settings-grid .file-label,.danger-zone button{
+      min-height:44px;padding:6px 8px;font-size:14px;
+    }
+    .stats-period-control{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
+    .stats-period-control select{width:auto;min-height:44px;padding:4px 8px}
+    .milestone-toggle{display:flex;align-items:center;gap:8px;min-height:44px}
+    .milestone-toggle input{width:auto;margin:0;flex:none}
     .tiny{color:var(--muted);font-size:12px;line-height:1.45;margin:9px 0 0}
 
     .stats-grid{
       display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:8px;
-      margin-top:12px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:6px;
+      margin-top:6px;
     }
 
     .stat-box{
       border:1px solid var(--line);
       background:#fff;
-      padding:13px;
+      padding:7px 9px;
     }
 
-    .stat-box strong{display:block;font-size:25px;line-height:1.1}
+    .stat-box strong{display:block;font-size:22px;line-height:1.1}
     .stat-box span{color:var(--muted);font-size:12px;font-weight:750}
-    .stats-period{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
+    #maxRateBox{grid-column:1 / -1;display:flex;align-items:center;gap:10px}
+    #maxRateBox strong{white-space:nowrap}
+    #maxRateBox .tiny{margin:2px 0 0}
+    .stats-period{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
+
+    .annual-goal{
+      display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;
+      margin-top:8px;padding:10px;border:1px solid var(--line);background:var(--panel-2);
+    }
+    .annual-goal h4{margin:0 0 4px;font-size:15px}
+    .annual-goal-fields{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+    .annual-goal-fields input{width:5.25rem;min-height:44px;padding:4px 6px}
+    .annual-goal-fields button{min-height:44px;padding:6px 8px;background:var(--panel)}
+    .annual-budget{flex:1 1 175px;max-width:260px;border-left:2px solid var(--line-dark);padding-left:10px}
+    .annual-budget output{display:block;font-size:22px;font-weight:850;line-height:1.15}
+    .annual-budget-label{font-size:12px;font-weight:750;color:var(--muted)}
 
     .danger-zone{border-color:#d5a0a0;background:#fffafa}
     .version{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}
@@ -376,8 +401,7 @@
 
     @media(min-width:560px){
       .action-grid{grid-template-columns:1fr 1fr}
-      .settings-grid.two{grid-template-columns:1fr 1fr}
-      .stats-grid{grid-template-columns:repeat(4,1fr)}
+      .stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     }
   </style>
 </head>
@@ -475,20 +499,46 @@
 
     <section class="settings-section">
       <h3>Statistiken</h3>
-      <label for="statsPeriodSelect">Zeitraum auswählen</label>
-      <select id="statsPeriodSelect"></select>
+      <div class="stats-period-control">
+        <label for="statsPeriodSelect">Zeitraum auswählen</label>
+        <select id="statsPeriodSelect"></select>
+      </div>
       <div class="stats-grid">
         <div class="stat-box"><strong id="statRecorded">0</strong><span>Erfasste Tage</span></div>
         <div class="stat-box"><strong id="statFree">0</strong><span>Alkoholfrei</span></div>
         <div class="stat-box"><strong id="statAlcohol">0</strong><span>Alkohol</span></div>
         <div class="stat-box"><strong id="statRate">0 %</strong><span>Quote alkoholfrei</span></div>
+        <div class="stat-box" id="maxRateBox" hidden>
+          <strong id="statMaxRate">100 %</strong>
+          <div>
+            <span>Maximalquote zum Jahresende</span>
+            <p class="tiny">Wenn alle anderen Tage alkoholfrei bleiben.</p>
+          </div>
+        </div>
       </div>
-      <div class="stat-box" id="maxRateBox" style="margin-top:10px"><strong id="statMaxRate">100,00 %</strong><span>Maximalquote zum Jahresende</span><p class="tiny">Wenn alle anderen Tage alkoholfrei bleiben.</p></div><div class="stats-period" id="statsPeriodText">Offene Tage fließen nicht in die Quote ein.</div>
+      <div class="stats-period" id="statsPeriodText">Offene Tage fließen nicht in die Quote ein.</div>
+      <div class="annual-goal" id="annualGoal" hidden>
+        <form id="annualGoalForm" aria-labelledby="annualGoalTitle">
+          <h4 id="annualGoalTitle">Jahresziel</h4>
+          <label for="annualGoalInput">Alkoholfreie Tage in Prozent</label>
+          <div class="annual-goal-fields">
+            <input id="annualGoalInput" type="number" min="0" max="100" step="1" inputmode="numeric" aria-describedby="annualGoalHint">
+            <span aria-hidden="true">%</span>
+            <button class="secondary" type="submit">Speichern</button>
+          </div>
+          <p class="tiny" id="annualGoalHint">Optional. Leer speichern, um das Ziel zu entfernen.</p>
+        </form>
+        <div class="annual-budget">
+          <span class="annual-budget-label" id="annualBudgetLabel">Restbudget für Trinktage</span>
+          <output id="annualBudget" aria-labelledby="annualBudgetLabel" aria-describedby="annualBudgetHint">–</output>
+          <p class="tiny" id="annualBudgetHint">Sobald ein Ziel gespeichert ist, erscheint hier das Budget.</p>
+        </div>
+      </div>
     </section>
 
     <section class="settings-section">
       <h3>Backup und Daten</h3>
-      <div class="settings-grid two">
+      <div class="settings-grid">
         <button class="secondary" id="exportCsvButton" type="button">CSV exportieren</button>
         <label class="file-label" for="importFile">CSV importieren</label>
       </div>
@@ -496,7 +546,11 @@
       <p class="tiny">Der Import unterstützt weiterhin das bisherige Format: <strong>Datum;Alkohol;Anlass</strong>. Vorhandene Einträge werden anhand des Datums ergänzt oder aktualisiert.</p>
     </section>
 
-    <section class="settings-section"><h3>Meilensteine</h3><label><input type="checkbox" id="milestoneEnabled" checked> Hinweise bei erreichten Serien anzeigen</label><p class="tiny">5, 10, 21, 30, 50 und 100 Tage. Allgemeine Hinweise, keine individuelle Gesundheitsprognose.</p></section>
+    <section class="settings-section">
+      <h3>Meilensteine</h3>
+      <label class="milestone-toggle"><input type="checkbox" id="milestoneEnabled" checked> Hinweise bei erreichten Serien anzeigen</label>
+      <p class="tiny">5, 10, 21, 30, 50 und 100 Tage. Allgemeine Hinweise, keine individuelle Gesundheitsprognose.</p>
+    </section>
     <section class="settings-section danger-zone">
       <h3>Daten löschen</h3>
       <button class="danger-button" id="resetButton" type="button">Alle lokalen Daten löschen</button>
@@ -514,6 +568,7 @@
 
   const STORAGE_KEY = 'alcohol-tracker-v7';
   const META_KEY = 'alcohol-tracker-v7:meta';
+  const ANNUAL_GOALS_KEY = 'alcohol-tracker:annual-goals';
   const LEGACY_KEYS = ['alcoholTrackerEntries','alcohol-tracker-v6','alcohol-tracker'];
   const MAX_REASON_LENGTH = 500;
   const MILESTONE_SETTING_KEY = 'alcohol-tracker:milestones-enabled';
@@ -725,8 +780,20 @@
     }
   }
 
+  function loadAnnualGoals(){
+    try{
+      const goals = JSON.parse(localStorage.getItem(ANNUAL_GOALS_KEY));
+      return Object.fromEntries(Object.entries(goals ?? {}).filter(([year, goal])=>
+        /^\d{4}$/.test(year) && Number.isInteger(goal) && goal>=0 && goal<=100
+      ));
+    }catch{
+      return {};
+    }
+  }
+
   function getAvailableYears(){
     const years = new Set(Object.keys(state.entries).map(date=>date.slice(0,4)));
+    Object.keys(loadAnnualGoals()).forEach(year=>years.add(year));
     years.add(today().slice(0,4));
     return [...years].sort((a,b)=>Number(b)-Number(a));
   }
@@ -765,11 +832,13 @@
     $('statRate').textContent = `${rate} %`;
     const isYear = /^\d{4}$/.test(selected);
     $('maxRateBox').hidden = !isYear;
+    $('annualGoal').hidden = !isYear;
     if (isYear){
       const year = Number(selected);
       const daysInYear = new Date(year,1,29).getMonth() === 1 ? 366 : 365;
-      const maximum = (daysInYear-alcohol)/daysInYear*100;
-      $('statMaxRate').textContent = `${maximum.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} %`;
+      const maximum = Math.round((daysInYear-alcohol)/daysInYear*100);
+      $('statMaxRate').textContent = `${maximum} %`;
+      renderAnnualGoal(selected,daysInYear,alcohol);
     }
 
     if (!dates.length){
@@ -778,6 +847,26 @@
       $('statsPeriodText').textContent =
         `Zeitraum: ${formatShortDate(dates[0])} bis ${formatShortDate(dates[dates.length-1])}. Offene Tage fließen nicht in die Quote ein.`;
     }
+  }
+
+  function renderAnnualGoal(year,daysInYear,alcohol){
+    const goal = loadAnnualGoals()[year];
+    $('annualGoalTitle').textContent = `Jahresziel ${year}`;
+    $('annualGoalInput').value = goal ?? '';
+    const budget = $('annualBudget');
+    const hint = $('annualBudgetHint');
+    if (goal === undefined){
+      budget.textContent = '–';
+      hint.textContent = 'Sobald ein Ziel gespeichert ist, erscheint hier das Budget.';
+      return;
+    }
+
+    const allowed = Math.floor(daysInYear*(100-goal)/100);
+    const remaining = allowed-alcohol;
+    budget.textContent = remaining === 1 ? '1 Tag' : `${Math.max(0,remaining)} Tage`;
+    hint.textContent = remaining < 0
+      ? `${alcohol} von ${allowed} Trinktagen genutzt. Das Budget ist überschritten.`
+      : `${alcohol} von ${allowed} Trinktagen genutzt.`;
   }
 
   function render(){
@@ -958,6 +1047,24 @@
   });
 
   $('statsPeriodSelect').addEventListener('change',renderStatistics);
+  $('annualGoalForm').addEventListener('submit',event=>{
+    event.preventDefault();
+    const year = $('statsPeriodSelect').value;
+    if (!/^\d{4}$/.test(year)) return;
+
+    const input = $('annualGoalInput');
+    if (input.validity.badInput || !input.checkValidity()) return;
+    const goals = loadAnnualGoals();
+    const removeGoal = input.value === '';
+    if (removeGoal){
+      delete goals[year];
+    }else{
+      goals[year] = input.valueAsNumber;
+    }
+    localStorage.setItem(ANNUAL_GOALS_KEY,JSON.stringify(goals));
+    renderStatsOptions();
+    toast(removeGoal ? 'Jahresziel entfernt' : 'Jahresziel gespeichert');
+  });
   $('milestoneEnabled').checked = localStorage.getItem(MILESTONE_SETTING_KEY) !== 'false';
   $('milestoneEnabled').addEventListener('change',()=>localStorage.setItem(MILESTONE_SETTING_KEY,String($('milestoneEnabled').checked)));
   $('milestoneOk').addEventListener('click',()=>closeDialog('milestoneDialog'));
@@ -969,8 +1076,9 @@
 
   $('resetButton').addEventListener('click',()=>{
     if (!confirm('Wirklich alle lokal gespeicherten Daten löschen?')) return;
-    if (!confirm('Letzte Bestätigung: Alle Einträge werden unwiderruflich gelöscht.')) return;
+    if (!confirm('Letzte Bestätigung: Alle Einträge und Jahresziele werden unwiderruflich gelöscht.')) return;
     state.entries={};
+    localStorage.removeItem(ANNUAL_GOALS_KEY);
     saveEntries();
     render();
     closeDialog('settingsDialog');
