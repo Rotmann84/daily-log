@@ -362,6 +362,18 @@
     #maxRateBox .tiny{margin:2px 0 0}
     .stats-period{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
 
+    .annual-goal{
+      display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;
+      margin-top:8px;padding:10px;border:1px solid var(--line);background:var(--panel-2);
+    }
+    .annual-goal h4{margin:0 0 4px;font-size:15px}
+    .annual-goal-fields{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+    .annual-goal-fields input{width:5.25rem;min-height:44px;padding:4px 6px}
+    .annual-goal-fields button{min-height:44px;padding:6px 8px;background:var(--panel)}
+    .annual-budget{flex:1 1 175px;max-width:260px;border-left:2px solid var(--line-dark);padding-left:10px}
+    .annual-budget output{display:block;font-size:22px;font-weight:850;line-height:1.15}
+    .annual-budget-label{font-size:12px;font-weight:750;color:var(--muted)}
+
     .danger-zone{border-color:#d5a0a0;background:#fffafa}
     .version{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}
 
@@ -505,6 +517,23 @@
         </div>
       </div>
       <div class="stats-period" id="statsPeriodText">Offene Tage fließen nicht in die Quote ein.</div>
+      <div class="annual-goal" id="annualGoal" hidden>
+        <form id="annualGoalForm" aria-labelledby="annualGoalTitle">
+          <h4 id="annualGoalTitle">Jahresziel</h4>
+          <label for="annualGoalInput">Alkoholfreie Tage in Prozent</label>
+          <div class="annual-goal-fields">
+            <input id="annualGoalInput" type="number" min="0" max="100" step="1" inputmode="numeric" aria-describedby="annualGoalHint">
+            <span aria-hidden="true">%</span>
+            <button class="secondary" type="submit">Speichern</button>
+          </div>
+          <p class="tiny" id="annualGoalHint">Optional. Leer speichern, um das Ziel zu entfernen.</p>
+        </form>
+        <div class="annual-budget">
+          <span class="annual-budget-label" id="annualBudgetLabel">Restbudget für Trinktage</span>
+          <output id="annualBudget" aria-labelledby="annualBudgetLabel" aria-describedby="annualBudgetHint">–</output>
+          <p class="tiny" id="annualBudgetHint">Sobald ein Ziel gespeichert ist, erscheint hier das Budget.</p>
+        </div>
+      </div>
     </section>
 
     <section class="settings-section">
@@ -539,6 +568,7 @@
 
   const STORAGE_KEY = 'alcohol-tracker-v7';
   const META_KEY = 'alcohol-tracker-v7:meta';
+  const ANNUAL_GOALS_KEY = 'alcohol-tracker:annual-goals';
   const LEGACY_KEYS = ['alcoholTrackerEntries','alcohol-tracker-v6','alcohol-tracker'];
   const MAX_REASON_LENGTH = 500;
   const MILESTONE_SETTING_KEY = 'alcohol-tracker:milestones-enabled';
@@ -750,8 +780,20 @@
     }
   }
 
+  function loadAnnualGoals(){
+    try{
+      const goals = JSON.parse(localStorage.getItem(ANNUAL_GOALS_KEY));
+      return Object.fromEntries(Object.entries(goals ?? {}).filter(([year, goal])=>
+        /^\d{4}$/.test(year) && Number.isInteger(goal) && goal>=0 && goal<=100
+      ));
+    }catch{
+      return {};
+    }
+  }
+
   function getAvailableYears(){
     const years = new Set(Object.keys(state.entries).map(date=>date.slice(0,4)));
+    Object.keys(loadAnnualGoals()).forEach(year=>years.add(year));
     years.add(today().slice(0,4));
     return [...years].sort((a,b)=>Number(b)-Number(a));
   }
@@ -790,11 +832,13 @@
     $('statRate').textContent = `${rate} %`;
     const isYear = /^\d{4}$/.test(selected);
     $('maxRateBox').hidden = !isYear;
+    $('annualGoal').hidden = !isYear;
     if (isYear){
       const year = Number(selected);
       const daysInYear = new Date(year,1,29).getMonth() === 1 ? 366 : 365;
       const maximum = Math.round((daysInYear-alcohol)/daysInYear*100);
       $('statMaxRate').textContent = `${maximum} %`;
+      renderAnnualGoal(selected,daysInYear,alcohol);
     }
 
     if (!dates.length){
@@ -803,6 +847,26 @@
       $('statsPeriodText').textContent =
         `Zeitraum: ${formatShortDate(dates[0])} bis ${formatShortDate(dates[dates.length-1])}. Offene Tage fließen nicht in die Quote ein.`;
     }
+  }
+
+  function renderAnnualGoal(year,daysInYear,alcohol){
+    const goal = loadAnnualGoals()[year];
+    $('annualGoalTitle').textContent = `Jahresziel ${year}`;
+    $('annualGoalInput').value = goal ?? '';
+    const budget = $('annualBudget');
+    const hint = $('annualBudgetHint');
+    if (goal === undefined){
+      budget.textContent = '–';
+      hint.textContent = 'Sobald ein Ziel gespeichert ist, erscheint hier das Budget.';
+      return;
+    }
+
+    const allowed = Math.floor(daysInYear*(100-goal)/100);
+    const remaining = allowed-alcohol;
+    budget.textContent = remaining === 1 ? '1 Tag' : `${Math.max(0,remaining)} Tage`;
+    hint.textContent = remaining < 0
+      ? `${alcohol} von ${allowed} Trinktagen genutzt. Das Budget ist überschritten.`
+      : `${alcohol} von ${allowed} Trinktagen genutzt.`;
   }
 
   function render(){
@@ -983,6 +1047,24 @@
   });
 
   $('statsPeriodSelect').addEventListener('change',renderStatistics);
+  $('annualGoalForm').addEventListener('submit',event=>{
+    event.preventDefault();
+    const year = $('statsPeriodSelect').value;
+    if (!/^\d{4}$/.test(year)) return;
+
+    const input = $('annualGoalInput');
+    if (input.validity.badInput || !input.checkValidity()) return;
+    const goals = loadAnnualGoals();
+    const removeGoal = input.value === '';
+    if (removeGoal){
+      delete goals[year];
+    }else{
+      goals[year] = input.valueAsNumber;
+    }
+    localStorage.setItem(ANNUAL_GOALS_KEY,JSON.stringify(goals));
+    renderStatsOptions();
+    toast(removeGoal ? 'Jahresziel entfernt' : 'Jahresziel gespeichert');
+  });
   $('milestoneEnabled').checked = localStorage.getItem(MILESTONE_SETTING_KEY) !== 'false';
   $('milestoneEnabled').addEventListener('change',()=>localStorage.setItem(MILESTONE_SETTING_KEY,String($('milestoneEnabled').checked)));
   $('milestoneOk').addEventListener('click',()=>closeDialog('milestoneDialog'));
@@ -994,8 +1076,9 @@
 
   $('resetButton').addEventListener('click',()=>{
     if (!confirm('Wirklich alle lokal gespeicherten Daten löschen?')) return;
-    if (!confirm('Letzte Bestätigung: Alle Einträge werden unwiderruflich gelöscht.')) return;
+    if (!confirm('Letzte Bestätigung: Alle Einträge und Jahresziele werden unwiderruflich gelöscht.')) return;
     state.entries={};
+    localStorage.removeItem(ANNUAL_GOALS_KEY);
     saveEntries();
     render();
     closeDialog('settingsDialog');
